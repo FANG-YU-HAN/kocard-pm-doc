@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KOCARD 订阅体系现状</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --mobile: #2563eb;
+    --desktop: #0f766e;
+    --cloud: #7c3aed;
+    --pay: #d97706;
+    --danger: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #f3f4f6;
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1480px; margin: 0 auto; padding: 40px 32px 56px; }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--cloud); font-weight: 700; }
+  h1 { font-size: 34px; line-height: 1.2; margin: 10px 0 8px; letter-spacing: -0.02em; }
+  .subtitle { font-size: 16px; color: #475569; margin: 0; }
+  .meta { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 22px 0 14px; font-size: 12.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 26px; height: 0; border-top: 2px solid #64748b; }
+  .swatch.dashed { border-top-style: dashed; }
+  .swatch.red { border-color: var(--danger); }
+  .swatch.blue { border-color: var(--mobile); }
+  .diagram-card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px 8px; box-shadow: 0 18px 40px rgba(15,23,42,.06); overflow-x: auto; }
+  svg { display: block; min-width: 1180px; width: 100%; height: auto; }
+  .svg-title { font-family: inherit; font-size: 16px; font-weight: 700; }
+  .svg-body { font-family: inherit; font-size: 13px; fill: #475569; }
+  .svg-small { font-family: inherit; font-size: 11.5px; fill: #64748b; }
+  .svg-label { font-family: inherit; font-size: 12px; fill: #64748b; }
+  .svg-col { font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+  .svg-badge-red { font-family: inherit; font-size: 10.5px; font-weight: 700; fill: #b91c1c; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-top: 22px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+  .card .num { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--danger); }
+  .card h3 { font-size:15px; margin:6px 0 6px; }
+  .card p { font-size:13.5px; line-height:1.65; color:#475569; margin:0; }
+  .card.danger { border-left: 4px solid var(--danger); }
+  .card.cloud { border-left: 4px solid var(--cloud); }
+  .conclusion { margin-top: 16px; background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 14px; padding: 16px 20px; font-size: 13.5px; line-height: 1.7; color: #4c1d95; }
+  .footer { margin-top: 18px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+  @media (max-width: 900px) {
+    .page { padding: 24px 16px 40px; }
+    h1 { font-size: 26px; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="eyebrow">KOCARD · Subscription System</div>
+  <h1>订阅体系现状</h1>
+  <p class="subtitle">一套账号 · 两套平台会员 · 三种付费入口 · 一个独立积分钱包</p>
+  <p class="meta">基于 kocard-app（B/dev）与 kocard-pro-desktop（main）代码静态梳理 · 2026-10-20</p>
+
+  <div class="legend">
+    <span><i class="swatch"></i>已实现链路</span>
+    <span><i class="swatch dashed"></i>异步回调 / 遗留链路</span>
+    <span><i class="swatch blue"></i>移动端专属</span>
+    <span><i class="swatch red"></i>断点 / 不互通</span>
+  </div>
+
+  <div class="diagram-card">
+    <svg viewBox="0 0 1400 900" role="img" aria-label="KOCARD 订阅体系现状图">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+        </marker>
+        <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+        </marker>
+        <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+        </marker>
+      </defs>
+
+      <!-- column labels -->
+      <text x="280" y="48" text-anchor="middle" class="svg-col" fill="#2563eb">移动端轨道</text>
+      <text x="700" y="48" text-anchor="middle" class="svg-col" fill="#7c3aed">共享云服务</text>
+      <text x="1110" y="48" text-anchor="middle" class="svg-col" fill="#0f766e">桌面端轨道</text>
+      <line x1="60" y1="60" x2="500" y2="60" stroke="#bfdbfe" stroke-width="2"/>
+      <line x1="560" y1="60" x2="840" y2="60" stroke="#ddd6fe" stroke-width="2"/>
+      <line x1="880" y1="60" x2="1340" y2="60" stroke="#99f6e4" stroke-width="2"/>
+
+      <!-- payment layer -->
+      <rect x="60" y="90" width="440" height="90" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+      <text x="80" y="118" class="svg-title" fill="#b45309">App Store IAP</text>
+      <text x="80" y="142" class="svg-body">StoreKit 2 · appAccountToken = 订单 uuid</text>
+      <text x="80" y="162" class="svg-body">JWS → /api/v1/app/notify</text>
+
+      <rect x="560" y="90" width="280" height="90" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="580" y="118" class="svg-title" fill="#6d28d9">订单 / 兑换</text>
+      <text x="580" y="142" class="svg-body">/order · /exchange</text>
+      <text x="580" y="162" class="svg-body">/app/notify</text>
+
+      <rect x="880" y="90" width="460" height="90" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+      <text x="900" y="118" class="svg-title" fill="#b45309">微信扫码 / 兑换码</text>
+      <text x="900" y="142" class="svg-body">创建 NAS 会员订单 · 轮询支付状态</text>
+      <text x="900" y="162" class="svg-body">/api/v1/exchange · 设置页兑换入口</text>
+
+      <!-- client layer -->
+      <rect x="60" y="230" width="440" height="150" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="80" y="258" class="svg-title" fill="#1d4ed8">移动端 iOS / iPadOS</text>
+      <text x="80" y="286" class="svg-body">拷卡 · 备份 · 校验 · 转码</text>
+      <text x="80" y="308" class="svg-body">AI 选图（VIP）· AI 修图（积分）</text>
+      <text x="80" y="330" class="svg-body">客户端执行 5 项权益校验</text>
+      <text x="80" y="352" class="svg-body">分享入口 · 本地通知</text>
+
+      <rect x="560" y="230" width="280" height="150" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="580" y="258" class="svg-title" fill="#6d28d9">账号服务</text>
+      <text x="580" y="286" class="svg-body">login_or_register</text>
+      <text x="580" y="308" class="svg-body">同一 user_id</text>
+      <text x="580" y="330" class="svg-body" fill="#b91c1c">无 device_id</text>
+      <text x="580" y="352" class="svg-body">单身份 · 无设备列表</text>
+
+      <rect x="880" y="230" width="460" height="150" rx="14" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+      <text x="900" y="258" class="svg-title" fill="#0f766e">桌面端 KOCARD Pro</text>
+      <text x="900" y="286" class="svg-body">Rust 服务 + Vue Web · UGOS Pro</text>
+      <text x="900" y="308" class="svg-body">拷贝 · 校验 · 转码 · 多目的地</text>
+      <text x="900" y="330" class="svg-body">前端 UI 校验 + 免费额度</text>
+      <text x="900" y="352" class="svg-body" fill="#b91c1c">后端不校验 · X-Platform 固定 nas</text>
+
+      <!-- membership layer -->
+      <rect x="60" y="460" width="440" height="110" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+      <text x="80" y="488" class="svg-title" fill="#1d4ed8">移动会员（平台生效）</text>
+      <text x="80" y="514" class="svg-body">100 免费 / 200 体验 / 300 高级</text>
+      <text x="80" y="536" class="svg-body">m_* 权益 · AI 积分钱包</text>
+
+      <rect x="560" y="460" width="280" height="140" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="700" y="486" text-anchor="middle" class="svg-title" fill="#6d28d9">会员 / 权益服务</text>
+      <text x="700" y="506" text-anchor="middle" class="svg-small">/user/info · /api/v1/rights</text>
+      <line x1="700" y1="516" x2="700" y2="590" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="628" y="538" text-anchor="middle" class="svg-body" fill="#1d4ed8">移动会员</text>
+      <text x="628" y="558" text-anchor="middle" class="svg-small">100 / 200 / 300</text>
+      <text x="772" y="538" text-anchor="middle" class="svg-body" fill="#0f766e">NAS 会员</text>
+      <text x="772" y="558" text-anchor="middle" class="svg-small">level &gt;= 300</text>
+      <rect x="668" y="571" width="64" height="20" rx="10" fill="#fff" stroke="#dc2626" stroke-width="1"/>
+      <text x="700" y="585" text-anchor="middle" class="svg-badge-red">不互通</text>
+
+      <rect x="880" y="460" width="460" height="110" rx="14" fill="#ccfbf1" stroke="#0f766e" stroke-width="2"/>
+      <text x="900" y="488" class="svg-title" fill="#0f766e">NAS 会员（平台生效）</text>
+      <text x="900" y="514" class="svg-body">Pro = status == 1 &amp;&amp; level &gt;= 300</text>
+      <text x="900" y="536" class="svg-body">nas_* 额度 · 无 AI 钱包</text>
+
+      <!-- local execution layer -->
+      <rect x="60" y="620" width="440" height="120" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="80" y="648" class="svg-title" fill="#334155">移动端本地执行</text>
+      <text x="80" y="674" class="svg-body">VIP 校验：校验 / 优化 / 上传 / 同步 / AI 选图</text>
+      <text x="80" y="696" class="svg-body">拷贝免费 · AI 修图扣积分</text>
+      <text x="80" y="718" class="svg-body" fill="#b91c1c">任务重启后暂停 · 大量权益定义了未执行</text>
+
+      <rect x="560" y="620" width="280" height="120" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="580" y="648" class="svg-title" fill="#6d28d9">AI 积分钱包</text>
+      <text x="580" y="674" class="svg-body">/wallet/info · products</text>
+      <text x="580" y="696" class="svg-body">AI 修图扣积分</text>
+      <text x="580" y="718" class="svg-body" fill="#1d4ed8">仅移动端使用</text>
+
+      <rect x="880" y="620" width="460" height="120" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="900" y="648" class="svg-title" fill="#334155">桌面端本地执行</text>
+      <text x="900" y="674" class="svg-body">UI 拦截：多目的地 / 多任务 / 额度</text>
+      <text x="900" y="696" class="svg-body">免费额度：verify / transcode 各 1 次/任务</text>
+      <text x="900" y="718" class="svg-body" fill="#b91c1c">后端不拦 · 失败不退额度</text>
+
+      <!-- local data -->
+      <rect x="60" y="790" width="440" height="80" rx="14" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="80" y="818" class="svg-title" fill="#334155">GRDB</text>
+      <text x="80" y="840" class="svg-body">任务与文件元数据 · 本地独立</text>
+
+      <rect x="560" y="790" width="280" height="80" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="580" y="818" class="svg-title" fill="#b91c1c">MQTT 旧链路</text>
+      <text x="580" y="840" class="svg-body">user_&lt;uid&gt; → .mac</text>
+      <text x="580" y="860" class="svg-body" fill="#b91c1c">当前桌面端未订阅</text>
+
+      <rect x="880" y="790" width="460" height="80" rx="14" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="900" y="818" class="svg-title" fill="#334155">SQLite WAL</text>
+      <text x="900" y="840" class="svg-body">任务与文件元数据 · 本地独立</text>
+
+      <!-- flows -->
+      <path d="M 280 180 L 280 230" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="292" y="212" class="svg-label">内购</text>
+
+      <path d="M 1110 180 L 1110 230" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="1122" y="212" class="svg-label">扫码 / 兑换</text>
+
+      <path d="M 500 135 L 560 135" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+      <text x="530" y="126" text-anchor="middle" class="svg-label">JWS</text>
+
+      <path d="M 880 135 L 840 135" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+      <text x="860" y="126" text-anchor="middle" class="svg-label">下单</text>
+
+      <path d="M 700 180 L 700 230" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="712" y="212" class="svg-label">支付回调</text>
+
+      <path d="M 500 305 L 560 305" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="530" y="296" text-anchor="middle" class="svg-label">登录</text>
+
+      <path d="M 880 305 L 840 305" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="860" y="296" text-anchor="middle" class="svg-label">登录</text>
+
+      <path d="M 700 380 L 700 460" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="712" y="428" class="svg-label">user_id</text>
+
+      <path d="M 560 515 L 500 515" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <path d="M 840 515 L 880 515" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <path d="M 280 570 L 280 620" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="292" y="600" class="svg-label">m_* 权益</text>
+
+      <path d="M 1110 570 L 1110 620" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <text x="1122" y="600" class="svg-label">nas_* / 额度</text>
+
+      <path d="M 280 740 L 280 790" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <path d="M 1110 740 L 1110 790" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <path d="M 500 370 L 544 370 L 544 680 L 560 680" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrowBlue)"/>
+
+      <path d="M 500 390 L 516 390 L 516 830 L 560 830" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrowRed)"/>
+    </svg>
+  </div>
+
+  <div class="cards">
+    <div class="card danger">
+      <div class="num">01 · 身份</div>
+      <h3>同一账号，不是同一份会员</h3>
+      <p>两端都走 <code>login_or_register</code>，共享同一个 <code>user_id</code>；但 <code>/user/info</code> 按平台返回“该平台生效”的会员。桌面端固定上报 <code>X-Platform=nas</code>，iOS 内购不会自动解锁桌面。</p>
+    </div>
+    <div class="card danger">
+      <div class="num">02 · 等级</div>
+      <h3>200 不等于 Pro</h3>
+      <p>移动端 200 是体验档（枚举名 <code>trial</code>），桌面端 Pro 要求 <code>status == 1 &amp;&amp; level &gt;= 300</code>。同一账号在两端看到的等级和权益不一致。</p>
+    </div>
+    <div class="card danger">
+      <div class="num">03 · 执行</div>
+      <h3>前端在拦，后端没拦</h3>
+      <p>移动端只执行 5 项权益；桌面端由 Vue UI 拦截多目的地、多任务和免费额度，任务接口只查 owner。直接调 API 或改前端即可绕过，任务失败也不退额度。</p>
+    </div>
+    <div class="card danger">
+      <div class="num">04 · 数据</div>
+      <h3>两套本地数据，一条旧链路</h3>
+      <p>移动端 GRDB、桌面端 SQLite，任务不互通；MQTT 仍发往旧 <code>.mac</code> 平台，当前桌面端没有订阅，也没有设备身份。</p>
+    </div>
+    <div class="card cloud">
+      <div class="num" style="color:#7c3aed">05 · 积分</div>
+      <h3>AI 积分是独立钱包</h3>
+      <p><code>/wallet/*</code> 不属于会员权益，目前只在移动端使用；AI 修图扣积分，AI 选图看 VIP。桌面端没有钱包，也没有 AI 入口。</p>
+    </div>
+    <div class="card cloud">
+      <div class="num" style="color:#7c3aed">06 · 商品</div>
+      <h3>SKU 在服务端，不在代码里</h3>
+      <p>两端商品都由 <code>/api/v1/rights</code> 下发；移动端只展示 <code>level &gt; 100</code> 的商品。具体 SKU、价格、时长、是否自动续费，要以服务端配置和 App Store Connect 为准。</p>
+    </div>
+  </div>
+
+  <div class="conclusion">
+    <strong>统一订阅真正要合并的不是价格表，而是三张表：</strong>权益定义（<code>m_*</code> / <code>d_*</code> / <code>nas_*</code>）、平台与设备身份、执行点（客户端还是后端）。这三层不统一，价格表怎么改都会在两端出现“同账号、不同待遇”。
+  </div>
+
+  <div class="footer">
+    来源：kocard-app B/dev、kocard-pro-desktop main。图为代码静态梳理，未连接线上服务配置；SKU 名称、价格、会员时长不在代码中。<br>
+    图中“桌面端”指 kocard-pro-desktop 的<b>当前代码形态</b>：以 <code>nas</code> 平台身份运行。新架构中桌面端是独立桌面产品，平台身份与相关代码尚未迁移，图中的 NAS 形态不代表产品定位。
+  </div>
+</div>
+</body>
+</html>

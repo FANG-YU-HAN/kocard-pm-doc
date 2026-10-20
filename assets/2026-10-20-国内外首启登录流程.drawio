@@ -1,0 +1,169 @@
+<mxfile host="Electron" agent="Qoder">
+  <diagram id="2026-10-20-国内外首启登录流程" name="KOCARD 桌面端 · 国内 / 海外首启到登录（目标态）">
+    <mxGraphModel dx="2583" dy="1327" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1365" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2933;" value="KOCARD 桌面端 · 国内 / 海外首启到登录" vertex="1">
+          <mxGeometry height="36" width="1150" x="40" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="stage0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7ECF0;strokeColor=#D3DCE3;strokeWidth=1;fontColor=#2A3540;fontSize=12;fontStyle=1;" value="① 环境识别" vertex="1">
+          <mxGeometry height="40" width="235" x="170" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="stage1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7ECF0;strokeColor=#D3DCE3;strokeWidth=1;fontColor=#2A3540;fontSize=12;fontStyle=1;" value="② 区域与语言" vertex="1">
+          <mxGeometry height="40" width="235" x="405" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="stage2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7ECF0;strokeColor=#D3DCE3;strokeWidth=1;fontColor=#2A3540;fontSize=12;fontStyle=1;" value="③ 登录入口" vertex="1">
+          <mxGeometry height="40" width="235" x="640" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="stage3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7ECF0;strokeColor=#D3DCE3;strokeWidth=1;fontColor=#2A3540;fontSize=12;fontStyle=1;" value="④ 账号判定" vertex="1">
+          <mxGeometry height="40" width="235" x="875" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="stage4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7ECF0;strokeColor=#D3DCE3;strokeWidth=1;fontColor=#2A3540;fontSize=12;fontStyle=1;" value="⑤ 完成" vertex="1">
+          <mxGeometry height="40" width="235" x="1110" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="laneh0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3E4A54;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="用户" vertex="1">
+          <mxGeometry height="220" width="130" x="40" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="lanebg0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DCE2E7;" value="" vertex="1">
+          <mxGeometry height="220" width="1175" x="170" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="laneh1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3E4A54;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="桌面客户端" vertex="1">
+          <mxGeometry height="220" width="130" x="40" y="372" as="geometry" />
+        </mxCell>
+        <mxCell id="lanebg1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;" value="" vertex="1">
+          <mxGeometry height="220" width="1175" x="170" y="372" as="geometry" />
+        </mxCell>
+        <mxCell id="laneh2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3E4A54;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="区域路由 / 配置" vertex="1">
+          <mxGeometry height="220" width="130" x="40" y="592" as="geometry" />
+        </mxCell>
+        <mxCell id="lanebg2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DCE2E7;" value="" vertex="1">
+          <mxGeometry height="220" width="1175" x="170" y="592" as="geometry" />
+        </mxCell>
+        <mxCell id="laneh3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3E4A54;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" value="账号服务" vertex="1">
+          <mxGeometry height="220" width="130" x="40" y="812" as="geometry" />
+        </mxCell>
+        <mxCell id="lanebg3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;" value="" vertex="1">
+          <mxGeometry height="220" width="1175" x="170" y="812" as="geometry" />
+        </mxCell>
+        <mxCell id="sep1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCE2E7;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="880" width="1" x="405" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="sep2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCE2E7;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="880" width="1" x="640" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="sep3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCE2E7;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="880" width="1" x="875" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="sep4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCE2E7;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="880" width="1" x="1110" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="U1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#EAF2F7;strokeColor=#7E9DB3;" value="首次启动 KOCARD Pro" vertex="1">
+          <mxGeometry height="58" width="200" x="188" y="233" as="geometry" />
+        </mxCell>
+        <mxCell id="C1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#FFFFFF;strokeColor=#93A1AC;" value="采集系统语言 / 时区&lt;br&gt;请求 bootstrap" vertex="1">
+          <mxGeometry height="68" width="200" x="188" y="448" as="geometry" />
+        </mxCell>
+        <mxCell id="R1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#F2F6F2;strokeColor=#93A797;" value="服务端 GeoIP&lt;br&gt;建议 region / lang / 置信度" vertex="1">
+          <mxGeometry height="68" width="200" x="188" y="668" as="geometry" />
+        </mxCell>
+        <mxCell id="0IGLth-OT3t6xj8xz__z-1" edge="1" parent="1" source="C2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="C4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="C2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#FFFFFF;strokeColor=#93A1AC;" value="登录/注册页&lt;br&gt;“检测到国内版 / 国际版”&lt;br&gt;可切换；手动选择后记住&lt;br&gt;语言根据设备当前，如果是中文就用中文，非中文就用英文，支持手动切换" vertex="1">
+          <mxGeometry height="116" width="200" x="423" y="424" as="geometry" />
+        </mxCell>
+        <mxCell id="U3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#EAF2F7;strokeColor=#7E9DB3;" value="登录方式：&lt;br&gt;输入手机号 / 邮箱" vertex="1">
+          <mxGeometry height="58" width="200" x="658" y="233" as="geometry" />
+        </mxCell>
+        <mxCell id="C4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#FFFFFF;strokeColor=#93A1AC;" value="登录 / 注册页&lt;br&gt;国内：手机（验证码 / 密码）/ 邮箱&lt;br&gt;国际：邮箱优先（后期考虑也统一支持手机号）&lt;br&gt;无短信时保留密码登录&lt;br&gt;海外版本可以放一个Kocard官方Reddit入口" vertex="1">
+          <mxGeometry height="126" width="200" x="658" y="422" as="geometry" />
+        </mxCell>
+        <mxCell id="D1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FCF6E5;strokeColor=#C9AC63;strokeWidth=1.2;fontColor=#4A3A18;" value="账号已存在？" vertex="1">
+          <mxGeometry height="75" width="170" x="908" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="D2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=11;fillColor=#FCF6E5;strokeColor=#C9AC63;strokeWidth=1.2;fontColor=#4A3A18;" value="账号属于&lt;br&gt;本区域？" vertex="1">
+          <mxGeometry height="75" width="170" x="908" y="925" as="geometry" />
+        </mxCell>
+        <mxCell id="S2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#F2F6F2;strokeColor=#93A797;" value="注册流程" vertex="1">
+          <mxGeometry height="70" width="200" x="1128" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="S1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#F2F6F2;strokeColor=#93A797;" value="登录流程" vertex="1">
+          <mxGeometry height="58" width="200" x="1128" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="U4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#E8F2E9;strokeColor=#6F9074;fontStyle=1;fontColor=#23402A;" value="打开Kocard Pro" vertex="1">
+          <mxGeometry height="58" width="200" x="1128" y="233" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#FBF4E9;strokeColor=#C2A170;" value="异区提示：&lt;br&gt;“该账号属于x区，&lt;br&gt;是否切换服务器？”" vertex="1">
+          <mxGeometry height="88" width="200" x="1128" y="438" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.2;fontColor=#1F2933;fillColor=#FBF4E9;strokeColor=#C2A170;" value="切换服务器 → 重新登录&lt;br&gt;不跨区认证" vertex="1">
+          <mxGeometry height="68" width="200" x="1128" y="668" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="U1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5B6770;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="C1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="C1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5B6770;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="R1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="R1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5B6770;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="C2" value="建议 region / lang">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="C4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5B6770;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="U3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="U3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5B6770;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="D1" value="提交账号">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="D1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5C8462;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="S2" value="否：注册">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-24" y="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="D1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5B6770;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="D2" value="是">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="D2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5C8462;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="S1" value="是：登录">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-24" y="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="D2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#B07A4F;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="E1" value="否：异区">
+          <mxGeometry relative="1" x="-0.1046" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="E1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#B07A4F;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="E2" value="用户确认切换">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="E2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#B07A4F;dashed=1;exitX=0;exitY=0.5;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="C4" value="切 base URL 后重载">
+          <mxGeometry relative="1" x="-0.084" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="702" />
+              <mxPoint x="1000" y="600" />
+              <mxPoint x="758" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="S2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5C8462;exitX=1;exitY=0.3;entryX=1;entryY=0.7;" target="U4" value="注册成功">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-30" as="offset" />
+            <Array as="points">
+              <mxPoint x="1337" y="851" />
+              <mxPoint x="1337" y="273.6" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="S1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.4;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#3A4550;strokeColor=#5C8462;exitX=1;exitY=0.7;entryX=1;entryY=0.3;" target="U4" value="登录成功">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-30" as="offset" />
+            <Array as="points">
+              <mxPoint x="1337" y="970.6" />
+              <mxPoint x="1337" y="250.4" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
