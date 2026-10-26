@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- prd-template:v5 -->
+<!-- prd-template:v7 -->
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -303,7 +303,6 @@ h3 {
 .table-wrap {
   overflow-x: auto;
   border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line);
 }
 table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
 caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -437,13 +436,11 @@ td strong { color: var(--ink); font-weight: 600; }
       <a href="#summary" class="active"><span class="num">00</span>三分钟版</a>
       <a href="#problem"><span class="num">01</span>问题</a>
       <a href="#goals"><span class="num">02</span>目标与非目标</a>
-      <a href="#users"><span class="num">03</span>用户与场景</a>
-      <a href="#solution"><span class="num">04</span>方案概览</a>
-      <a href="#requirements"><span class="num">05</span>功能需求</a>
-      <a href="#states"><span class="num">06</span>状态与异常</a>
-      <a href="#acceptance"><span class="num">07</span>验收清单</a>
-      <a href="#questions"><span class="num">08</span>待确认问题</a>
-      <a href="#changelog"><span class="num">09</span>变更记录</a>
+      <a href="#solution"><span class="num">03</span>页面设计原型</a>
+      <a href="#requirements"><span class="num">04</span>功能需求</a>
+      <a href="#states"><span class="num">05</span>状态与异常</a>
+      <a href="#acceptance"><span class="num">06</span>验收清单</a>
+      <a href="#changelog"><span class="num">07</span>变更记录</a>
     </nav>
 
     <div class="sidebar-footer">
@@ -459,8 +456,8 @@ td strong { color: var(--ink); font-weight: 600; }
     <article class="doc">
       <header class="doc-header" id="summary">
         <div class="eyebrow">PRD</div>
-        <h1>Kocard新版<span style="white-space:nowrap">桌面端</span><span style="white-space:nowrap">注册登录</span>与<span style="white-space:nowrap">移动端打通</span></h1>
-        <p class="lede">让中国大陆和国际用户在桌面端尽可能在对应地区注册登录。</p>
+        <h1>Kocard 新版<span style="white-space:nowrap">桌面端</span><span style="white-space:nowrap">注册登录</span>与<span style="white-space:nowrap">移动端打通</span></h1>
+        <p class="lede">让国内和海外用户都能在桌面端登录自己的账号，移动端已有的账号直接沿用。</p>
 
         <div class="meta-grid">
           <div class="meta-item">
@@ -480,7 +477,7 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="tldr">
           <div class="tldr-card">
             <div class="tldr-label">做什么</div>
-            <p>登录前识别国内/海外，可手动切换；国内手机号或邮箱、海外邮箱；默认验证码，6 位自动提交；第三方按地区与移动端一致；首次登录自动注册；中英双语作用于全应用。</p>
+            <p>登录前识别国内/海外，可手动切换；国内手机号或邮箱、海外邮箱；默认验证码，6 位自动提交；第三方按地区与移动端一致；首次登录自动注册；中英双语先覆盖登录页和登录流程。</p>
           </div>
           <div class="tldr-card">
             <div class="tldr-label">不做什么</div>
@@ -499,22 +496,7 @@ td strong { color: var(--ink); font-weight: 600; }
         <h2>这次要解决什么</h2>
 
         <div class="callout">
-          <p>国内和海外是两套账号。登录前看不出账号属于哪边，登错区就报“账号不存在”，会员和订单也带不过来。</p>
-        </div>
-
-        <div class="grid-3">
-          <div class="mini-card">
-            <div class="mini-label">现状 · 地区是隐式的</div>
-            <p>登录页不显示当前地区，也没有登录前切换入口。</p>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">约束 · 两套账号不互通</div>
-            <p>国内和海外分属两套服务器，会员和订单不跨区；登录后只能退出再换。</p>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">变化 · 移动端已有完整登录链路</div>
-            <p>iOS 先输入账号：默认验证码，6 位自动提交；密码登录是次级入口；第三方按地区展示；首次登录自动注册。</p>
-          </div>
+          <p>桌面端用移动端已有的账号体系完成登录与注册。老用户直接登录，新用户首次登录即注册</p>
         </div>
       </section>
 
@@ -529,7 +511,7 @@ td strong { color: var(--ink); font-weight: 600; }
             <ul class="check-list">
               <li>
                 <span class="mark">✓</span>
-                <span><strong>用户不用先懂地区就能登录</strong><span class="desc">打开就知道当前地区，识别错了能改。</span></span>
+                <span><strong>登录不要求先判断地区</strong><span class="desc">登录页显示当前地区，识别错了能改。</span></span>
               </li>
               <li>
                 <span class="mark">✓</span>
@@ -537,7 +519,7 @@ td strong { color: var(--ink); font-weight: 600; }
               </li>
               <li>
                 <span class="mark">✓</span>
-                <span><strong>和移动端用同一套登录方式</strong><span class="desc">验证码默认、密码可选；第三方渠道按地区一致；首次登录自动注册；移动端账号在桌面直接登录。</span></span>
+                <span><strong>移动端账号在桌面直接可用</strong><span class="desc">验证码默认、密码可选；第三方渠道按地区一致；首次登录自动注册。</span></span>
               </li>
               <li>
                 <span class="mark">✓</span>
@@ -545,7 +527,7 @@ td strong { color: var(--ink); font-weight: 600; }
               </li>
               <li>
                 <span class="mark">✓</span>
-                <span><strong>语言跟着用户走</strong><span class="desc">登录页中英切换，登录后全应用保持同一语言。</span></span>
+                <span><strong>登录页中英双语</strong><span class="desc">登录页和登录流程可切中英；应用内多语言后续补。</span></span>
               </li>
             </ul>
           </div>
@@ -569,147 +551,396 @@ td strong { color: var(--ink); font-weight: 600; }
                 <span class="mark">×</span>
                 <span><strong>不做海外手机号</strong><span class="desc">海外账号输入只支持邮箱，不显示手机号入口。</span></span>
               </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>本期不做应用内多语言</strong><span class="desc">应用内英文后续补，本期只覆盖登录页和登录流程。</span></span>
+              </li>
             </ul>
           </div>
         </div>
-        <p class="table-note">衡量方式：上线后按周看登录成功率、跨区自助完成率、地区相关工单量；基线待补。</p>
       </section>
 
-      <!-- 03 用户 -->
-      <section id="users">
-        <div class="section-kicker">03 · 用户</div>
-        <h2>用户与场景</h2>
-
-        <div class="table-wrap" style="margin-top:16px">
-          <table>
-            <caption>用户与场景</caption>
-            <thead>
-              <tr>
-                <th scope="col">用户</th>
-                <th scope="col">情况</th>
-                <th scope="col">本期支持</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>国内用户</strong></td>
-                <td>所在地区为中国大陆。</td>
-                <td>手机号或邮箱 + 验证码或密码；登录前可切区。</td>
-              </tr>
-              <tr>
-                <td><strong>海外用户</strong></td>
-                <td>所在地区为国际。</td>
-                <td>邮箱 + 验证码或密码；不显示手机号。</td>
-              </tr>
-              <tr>
-                <td><strong>移动端第三方登录用户</strong></td>
-                <td>已在 iOS 用 Apple、Google 或 Facebook 登录。</td>
-                <td>桌面按地区展示同一渠道，授权后进入同一账号。</td>
-              </tr>
-              <tr>
-                <td><strong>首次使用的新用户</strong></td>
-                <td>没有账号，直接输入手机号/邮箱或用第三方登录。</td>
-                <td>验证码或第三方首次登录自动创建账号，不出现注册表单。</td>
-              </tr>
-              <tr>
-                <td><strong>跨区老用户</strong></td>
-                <td>账号属于另一地区。</td>
-                <td>提示所属地区；切换后登录。</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 04 方案 -->
+      <!-- 03 方案 -->
       <section id="solution">
-        <div class="section-kicker">04 · 方案</div>
-        <h2>方案概览</h2>
-
-        <div class="flow" style="margin-top:16px">
-          <div class="flow-step">
-            <h3>识别地区</h3>
-            <p>按 IP + 系统语言推荐地区；页面常显当前地区。</p>
-          </div>
-          <div class="flow-step">
-            <h3>输入账号</h3>
-            <p>国内手机号或邮箱；海外邮箱。默认验证码，密码登录是次级入口。</p>
-          </div>
-          <div class="flow-step">
-            <h3>验证身份</h3>
-            <p>6 位验证码输满自动提交；也可切密码登录或第三方登录；勾选协议后才能发起；跨区账号先提示切换。</p>
-          </div>
-          <div class="flow-step">
-            <h3>登录完成</h3>
-            <p>首次登录自动注册；地区锁定，语言作用于全应用；换区先退出。</p>
-          </div>
-        </div>
+        <div class="section-kicker">03 · 方案</div>
+        <h2>页面设计原型</h2>
 
         <figure style="margin:24px 0 26px">
-          <svg viewBox="0 0 760 560" role="img" aria-label="国内登录窗口线框图：窗口顶部带红黄绿三个按钮，右上角为语言切换，表单含地区、手机号或邮箱、登录注册按钮、密码登录、仅 Apple 第三方入口和协议勾选框" style="width:100%;max-width:720px;margin:0 auto">
-            <rect x="20" y="20" width="720" height="520" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+          <svg viewBox="0 0 760 490" role="img" aria-label="国内登录窗口线框图：窗口顶部带红黄绿三个按钮，左上角为地区下拉，右上角为语言下拉，表单含手机号或邮箱、登录注册按钮，Or 下方为密码登录与 Apple 两个同款按钮和协议勾选框" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
             <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
             <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
             <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
 
-            <text x="716" y="96" text-anchor="end" font-size="11" fill="#746c5f">中文 / <tspan fill="#b85c3e" text-decoration="underline">English</tspan></text>
+            <text x="44" y="96" font-size="14" fill="#24211b">中国大陆</text>
+            <path d="M104 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
 
-            <text x="210" y="116" font-size="15" fill="#24211b">中国大陆</text>
-            <path d="M282 111 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
-            <text x="550" y="116" text-anchor="end" font-size="12" fill="#b85c3e" text-decoration="underline">切换</text>
-            <line x1="210" y1="136" x2="550" y2="136" stroke="#ded7c8" stroke-width="1"/>
+            <text x="700" y="96" text-anchor="end" font-size="12" fill="#514b41">中文</text>
+            <path d="M706 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
 
             <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
             <text x="228" y="177" font-size="13" fill="#746c5f">输入手机号/邮箱</text>
 
             <rect x="210" y="212" width="340" height="44" rx="6" fill="#24211b"/>
             <text x="380" y="239" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录 / 注册</text>
-            <text x="380" y="272" text-anchor="middle" font-size="10.5" fill="#746c5f">获取验证码后首次使用自动创建账号</text>
+            <line x1="210" y1="316" x2="330" y2="316" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="320" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
+            <line x1="430" y1="316" x2="550" y2="316" stroke="#ded7c8" stroke-width="1"/>
 
-            <text x="380" y="302" text-anchor="middle" font-size="12" fill="#746c5f" text-decoration="underline">密码登录</text>
-
-            <line x1="210" y1="332" x2="330" y2="332" stroke="#ded7c8" stroke-width="1"/>
-            <text x="380" y="336" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
-            <line x1="430" y1="332" x2="550" y2="332" stroke="#ded7c8" stroke-width="1"/>
-
-            <rect x="336" y="350" width="88" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="380" y="373" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+            <rect x="298" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="336" y="357" text-anchor="middle" font-size="12" fill="#24211b">密码登录</text>
+            <rect x="386" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="424" y="357" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
 
             <rect x="258" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
             <text x="280" y="418" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
-            <text x="380" y="442" text-anchor="middle" font-size="10" fill="#746c5f">未勾选不能登录或注册</text>
 
           </svg>
           <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 1 · 国内登录窗口（Mac 桌面端）。</figcaption>
         </figure>
 
         <figure style="margin:0 0 26px">
-          <svg viewBox="0 0 760 236" role="img" aria-label="海外版与国内版的差异线框图：账号只支持邮箱，第三方为 Google、Apple，Facebook 仅在服务端开关开启时显示" style="width:100%;max-width:720px;margin:0 auto">
-            <rect x="20" y="20" width="720" height="196" rx="10" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
-            <text x="44" y="52" font-size="12" fill="#746c5f">海外版 · 与国内版不同的两处</text>
-            <line x1="44" y1="66" x2="716" y2="66" stroke="#ded7c8" stroke-width="1"/>
+          <svg viewBox="0 0 760 490" role="img" aria-label="国际区登录窗口（English）线框图：左上角地区为 International，右上角语言为 English，账号只支持邮箱，Or 下方依次为 Password、Google、Facebook、Apple 四个同款按钮，Facebook 虚线表示服务端开关开启后显示，底部为协议勾选框" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
 
-            <text x="44" y="105" font-size="11" fill="#746c5f">账号</text>
-            <rect x="100" y="78" width="300" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="118" y="105" font-size="13" fill="#746c5f">name@example.com</text>
-            <text x="424" y="105" font-size="11" fill="#514b41">只支持邮箱，不显示手机号</text>
+            <text x="44" y="96" font-size="14" fill="#24211b">International</text>
+            <path d="M130 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
 
-            <text x="44" y="163" font-size="11" fill="#746c5f">第三方</text>
-            <rect x="100" y="140" width="88" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="144" y="163" text-anchor="middle" font-size="12" fill="#24211b">Google</text>
-            <rect x="200" y="140" width="88" height="38" rx="10" fill="none" stroke="#c7beac" stroke-width="1" stroke-dasharray="4 3"/>
-            <text x="244" y="163" text-anchor="middle" font-size="12" fill="#746c5f">Facebook</text>
-            <rect x="300" y="140" width="88" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="344" y="163" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
-            <text x="100" y="202" font-size="11" fill="#746c5f">虚线表示服务端开关开启后才出现，关闭时不占位</text>
+            <text x="700" y="96" text-anchor="end" font-size="12" fill="#514b41">English</text>
+            <path d="M706 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="177" font-size="13" fill="#746c5f">Please enter email address</text>
+
+            <rect x="210" y="212" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="239" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">Sign in / Register</text>
+            <line x1="210" y1="316" x2="330" y2="316" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="320" text-anchor="middle" font-size="11" fill="#746c5f">Or, login with...</text>
+            <line x1="430" y1="316" x2="550" y2="316" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="210" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="248" y="357" text-anchor="middle" font-size="12" fill="#24211b">Password</text>
+            <rect x="298" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="336" y="357" text-anchor="middle" font-size="12" fill="#24211b">Google</text>
+            <rect x="386" y="334" width="76" height="38" rx="10" fill="none" stroke="#c7beac" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="424" y="357" text-anchor="middle" font-size="12" fill="#746c5f">Facebook</text>
+            <rect x="474" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="512" y="357" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+
+            <rect x="207" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="229" y="418" font-size="10.5" fill="#514b41">I have read and agree to the <tspan fill="#b85c3e" text-decoration="underline">User Agreement</tspan> and <tspan fill="#b85c3e" text-decoration="underline">Privacy Policy</tspan></text>
+
           </svg>
-          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 2 · 海外版与国内版的差异；没有标出的部分与国内版一致。</figcaption>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 2 · 国际区登录窗口，语言为 English；虚线 Facebook 在服务端开关开启后出现。默认验证码页见图 7。</figcaption>
+        </figure>
+
+        <figure style="margin:0 0 26px">
+          <svg viewBox="0 0 760 490" role="img" aria-label="国内登录窗口线框图：地区下拉展开，列出中国大陆（当前）和国际，语言为中文，表单与图 1 一致" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <text x="44" y="96" font-size="14" fill="#24211b">中国大陆</text>
+            <path d="M104 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <rect x="36" y="108" width="164" height="92" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="56" y="140" font-size="13" fill="#24211b">中国大陆</text>
+            <path d="M178 136 l4 4 l8 -8" fill="none" stroke="#b85c3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="48" y1="154" x2="188" y2="154" stroke="#ded7c8" stroke-width="1"/>
+            <text x="56" y="186" font-size="13" fill="#24211b">国际</text>
+
+            <text x="700" y="96" text-anchor="end" font-size="12" fill="#514b41">中文</text>
+            <path d="M706 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="177" font-size="13" fill="#746c5f">输入手机号/邮箱</text>
+
+            <rect x="210" y="212" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="239" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录 / 注册</text>
+            <line x1="210" y1="316" x2="330" y2="316" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="320" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
+            <line x1="430" y1="316" x2="550" y2="316" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="298" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="336" y="357" text-anchor="middle" font-size="12" fill="#24211b">密码登录</text>
+            <rect x="386" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="424" y="357" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+
+            <rect x="258" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="280" y="418" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 3 · 地区下拉展开：列出中国大陆和国际，选中即切换，不弹确认。</figcaption>
+        </figure>
+
+        <figure style="margin:0 0 26px">
+          <svg viewBox="0 0 760 490" role="img" aria-label="国内登录窗口线框图：语言下拉展开，列出中文（当前）和 English，地区为中文（中国大陆），表单与图 1 一致" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <text x="44" y="96" font-size="14" fill="#24211b">中国大陆</text>
+            <path d="M104 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <text x="700" y="96" text-anchor="end" font-size="12" fill="#514b41">中文</text>
+            <path d="M706 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <rect x="552" y="108" width="164" height="92" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="572" y="140" font-size="13" fill="#24211b">中文</text>
+            <path d="M694 136 l4 4 l8 -8" fill="none" stroke="#b85c3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="564" y1="154" x2="704" y2="154" stroke="#ded7c8" stroke-width="1"/>
+            <text x="572" y="186" font-size="13" fill="#24211b">English</text>
+
+            <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="177" font-size="13" fill="#746c5f">输入手机号/邮箱</text>
+
+            <rect x="210" y="212" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="239" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录 / 注册</text>
+            <line x1="210" y1="316" x2="330" y2="316" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="320" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
+            <line x1="430" y1="316" x2="550" y2="316" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="298" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="336" y="357" text-anchor="middle" font-size="12" fill="#24211b">密码登录</text>
+            <rect x="386" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="424" y="357" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+
+            <rect x="258" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="280" y="418" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 4 · 语言下拉展开：列出中文和 English，选中即切换，重启后仍保留。</figcaption>
+        </figure>
+
+        <figure style="margin:0 0 26px">
+          <svg viewBox="0 0 760 490" role="img" aria-label="密码登录二级页线框图：不显示地区和语言，左上角返回箭头与密码登录标题，账号输入框已填账号，密码输入框带显示密码按钮，登录按钮、忘记密码链接和协议勾选框" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <path d="M50 113 l-7 7 l7 7" fill="none" stroke="#24211b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="380" y="124" text-anchor="middle" font-size="14" fill="#24211b">密码登录</text>
+
+            <rect x="210" y="168" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="195" font-size="13" fill="#24211b">138****8000</text>
+
+            <rect x="210" y="224" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="251" font-size="13" fill="#746c5f">输入密码</text>
+            <path d="M512 246 c5 -7 17 -7 22 0 c-5 7 -17 7 -22 0 z" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <circle cx="523" cy="246" r="2.2" fill="#746c5f"/>
+
+            <rect x="210" y="280" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="307" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录</text>
+
+            <text x="210" y="346" font-size="12" fill="#746c5f" text-decoration="underline">忘记密码</text>
+
+            <rect x="258" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="280" y="418" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
+
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 5 · 密码登录二级页：不显示地区和语言，账号保留、密码清空。</figcaption>
+        </figure>
+
+        <figure style="margin:0 0 26px">
+          <svg viewBox="0 0 760 990" role="img" aria-label="两个完整登录窗口线框图：A 重置密码，账号从密码页带入，验证码框右侧为发送验证码；B 两次密码不一致，确认框下方提示密码不一致" style="width:100%;max-width:720px;margin:0 auto">
+            <text x="380" y="16" text-anchor="middle" font-size="12" fill="#746c5f">A · 重置密码</text>
+            <rect x="20" y="28" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="50" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="50" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="50" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <path d="M50 113 l-7 7 l7 7" fill="none" stroke="#24211b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="380" y="124" text-anchor="middle" font-size="14" fill="#24211b">重置密码</text>
+
+            <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="177" font-size="13" fill="#24211b">138****8000</text>
+
+            <rect x="210" y="212" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="239" font-size="13" fill="#746c5f">输入验证码</text>
+            <text x="538" y="239" text-anchor="end" font-size="12" fill="#b85c3e">发送验证码</text>
+
+            <rect x="210" y="274" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="301" font-size="13" fill="#746c5f">输入新密码（6-18位数字和字母组合）</text>
+            <path d="M512 296 c5 -7 17 -7 22 0 c-5 7 -17 7 -22 0 z" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <circle cx="523" cy="296" r="2.2" fill="#746c5f"/>
+
+            <rect x="210" y="336" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="363" font-size="13" fill="#746c5f">再次输入新密码</text>
+            <path d="M512 358 c5 -7 17 -7 22 0 c-5 7 -17 7 -22 0 z" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <circle cx="523" cy="358" r="2.2" fill="#746c5f"/>
+
+            <rect x="210" y="408" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="435" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">确认重置</text>
+
+            <text x="380" y="508" text-anchor="middle" font-size="12" fill="#746c5f">B · 密码不一致</text>
+            <rect x="20" y="520" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="542" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="542" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="542" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <path d="M50 605 l-7 7 l7 7" fill="none" stroke="#24211b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="380" y="616" text-anchor="middle" font-size="14" fill="#24211b">重置密码</text>
+
+            <rect x="210" y="642" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="669" font-size="13" fill="#24211b">138****8000</text>
+
+            <rect x="210" y="704" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="731" font-size="13" fill="#24211b">000000</text>
+            <text x="538" y="731" text-anchor="end" font-size="12" fill="#746c5f">48s</text>
+
+            <rect x="210" y="766" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="793" font-size="13" fill="#24211b">••••••</text>
+            <path d="M512 788 c5 -7 17 -7 22 0 c-5 7 -17 7 -22 0 z" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <circle cx="523" cy="788" r="2.2" fill="#746c5f"/>
+
+            <rect x="210" y="828" width="340" height="44" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="228" y="855" font-size="13" fill="#24211b">••••••</text>
+            <path d="M512 850 c5 -7 17 -7 22 0 c-5 7 -17 7 -22 0 z" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <circle cx="523" cy="850" r="2.2" fill="#746c5f"/>
+            <text x="210" y="886" font-size="10.5" fill="#963f31">密码不一致</text>
+
+            <rect x="210" y="900" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="927" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">确认重置</text>
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 6 · 重置密码二级页：账号从密码页带入；验证码发送后倒计时；两次密码不一致时就地提示。</figcaption>
+        </figure>
+
+        <figure style="margin:0 0 8px">
+          <svg viewBox="0 0 760 1480" role="img" aria-label="三个完整登录窗口线框图：A 验证码输入、B 验证码错误、C 跨区账号弹窗确认" style="width:100%;max-width:720px;margin:0 auto">
+            <text x="380" y="16" text-anchor="middle" font-size="12" fill="#746c5f">A · 验证码输入</text>
+            <rect x="20" y="28" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="50" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="50" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="50" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <path d="M50 113 l-7 7 l7 7" fill="none" stroke="#24211b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="380" y="124" text-anchor="middle" font-size="14" fill="#24211b">请输入收到的验证码</text>
+            <text x="380" y="195" text-anchor="middle" font-size="12" fill="#746c5f">138****8000</text>
+
+            <rect x="228" y="215" width="44" height="48" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="250" y="246" text-anchor="middle" font-size="18" fill="#24211b">1</text>
+            <rect x="280" y="215" width="44" height="48" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="302" y="246" text-anchor="middle" font-size="18" fill="#24211b">2</text>
+            <rect x="332" y="215" width="44" height="48" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="354" y="246" text-anchor="middle" font-size="18" fill="#24211b">3</text>
+            <rect x="384" y="215" width="44" height="48" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="406" y="246" text-anchor="middle" font-size="18" fill="#24211b">4</text>
+            <rect x="436" y="215" width="44" height="48" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="458" y="246" text-anchor="middle" font-size="18" fill="#24211b">5</text>
+            <rect x="488" y="215" width="44" height="48" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="510" y="246" text-anchor="middle" font-size="18" fill="#24211b">6</text>
+
+            <text x="380" y="330" text-anchor="middle" font-size="11" fill="#b85c3e">验证中…</text>
+            <text x="380" y="362" text-anchor="middle" font-size="12" fill="#746c5f">重新发送 48s</text>
+
+            <text x="380" y="508" text-anchor="middle" font-size="12" fill="#746c5f">B · 验证码错误</text>
+            <rect x="20" y="520" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="542" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="542" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="542" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <path d="M50 605 l-7 7 l7 7" fill="none" stroke="#24211b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="380" y="616" text-anchor="middle" font-size="14" fill="#24211b">请输入收到的验证码</text>
+            <text x="380" y="687" text-anchor="middle" font-size="12" fill="#746c5f">138****8000</text>
+
+            <rect x="228" y="707" width="44" height="48" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="250" y="738" text-anchor="middle" font-size="18" fill="#24211b">0</text>
+            <rect x="280" y="707" width="44" height="48" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="302" y="738" text-anchor="middle" font-size="18" fill="#24211b">0</text>
+            <rect x="332" y="707" width="44" height="48" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="354" y="738" text-anchor="middle" font-size="18" fill="#24211b">0</text>
+            <rect x="384" y="707" width="44" height="48" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="406" y="738" text-anchor="middle" font-size="18" fill="#24211b">0</text>
+            <rect x="436" y="707" width="44" height="48" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="458" y="738" text-anchor="middle" font-size="18" fill="#24211b">0</text>
+            <rect x="488" y="707" width="44" height="48" rx="6" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="510" y="738" text-anchor="middle" font-size="18" fill="#24211b">0</text>
+
+            <text x="380" y="822" text-anchor="middle" font-size="10.5" fill="#963f31">验证码不正确，请重新输入</text>
+            <text x="380" y="854" text-anchor="middle" font-size="12" fill="#746c5f">重新发送 48s</text>
+
+            <text x="380" y="1000" text-anchor="middle" font-size="12" fill="#746c5f">C · 跨区账号</text>
+            <rect x="20" y="1012" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="1034" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="1034" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="1034" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <text x="44" y="1088" font-size="14" fill="#24211b">中国大陆</text>
+            <path d="M104 1083 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <text x="700" y="1088" text-anchor="end" font-size="12" fill="#514b41">中文</text>
+            <path d="M706 1083 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <rect x="210" y="1142" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="1169" font-size="13" fill="#24211b">name@example.com</text>
+
+            <rect x="210" y="1204" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="1231" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录 / 注册</text>
+            <line x1="210" y1="1308" x2="330" y2="1308" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="1312" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
+            <line x1="430" y1="1308" x2="550" y2="1308" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="298" y="1326" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="336" y="1349" text-anchor="middle" font-size="12" fill="#24211b">密码登录</text>
+            <rect x="386" y="1326" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="424" y="1349" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+
+            <rect x="258" y="1398" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="280" y="1410" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
+
+            <rect x="20" y="1012" width="720" height="450" rx="10" fill="#24211b" opacity=".12"/>
+
+            <rect x="190" y="1172" width="380" height="130" rx="8" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <text x="380" y="1208" text-anchor="middle" font-size="14" fill="#24211b">该账号注册于国际区</text>
+            <rect x="224" y="1236" width="150" height="38" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="299" y="1260" text-anchor="middle" font-size="11.5" fill="#746c5f">取消</text>
+            <rect x="386" y="1236" width="150" height="38" rx="6" fill="#24211b"/>
+            <text x="461" y="1260" text-anchor="middle" font-size="11.5" fill="#fbf9f4">切换到国际区</text>
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 7 · 验证码页（输满 6 位自动提交）、验证码错误与跨区账号弹窗。</figcaption>
+        </figure>
+
+        <figure style="margin:20px 0 26px">
+          <svg viewBox="0 0 760 490" role="img" aria-label="国内登录窗口线框图：已填账号、未勾选协议时点登录，Or 下方为密码登录与 Apple 两个同款按钮，勾选框下方出现「请先阅读并勾选协议」，按钮不变灰、不发请求" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="450" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <text x="44" y="96" font-size="14" fill="#24211b">中国大陆</text>
+            <path d="M104 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <text x="700" y="96" text-anchor="end" font-size="12" fill="#514b41">中文</text>
+            <path d="M706 91 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+
+            <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="177" font-size="13" fill="#24211b">138****8000</text>
+
+            <rect x="210" y="212" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="239" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录 / 注册</text>
+            <line x1="210" y1="316" x2="330" y2="316" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="320" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
+            <line x1="430" y1="316" x2="550" y2="316" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="298" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="336" y="357" text-anchor="middle" font-size="12" fill="#24211b">密码登录</text>
+            <rect x="386" y="334" width="76" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="424" y="357" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+
+            <rect x="258" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="280" y="418" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
+            <text x="258" y="440" font-size="10.5" fill="#963f31">请先阅读并勾选协议</text>
+
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 8 · 未勾选协议时点登录：勾选框下方就地提示，不发请求。</figcaption>
         </figure>
       </section>
 
-      <!-- 05 功能需求 -->
+      <!-- 04 功能需求 -->
       <section id="requirements">
-        <div class="section-kicker">05 · 需求</div>
+        <div class="section-kicker">04 · 需求</div>
         <h2>功能需求</h2>
 
         <div class="table-wrap" style="margin-top:16px">
@@ -718,7 +949,6 @@ td strong { color: var(--ink); font-weight: 600; }
             <thead>
               <tr>
                 <th scope="col">编号</th>
-                <th scope="col">优先级</th>
                 <th scope="col">需求</th>
                 <th scope="col">验收标准</th>
               </tr>
@@ -726,80 +956,67 @@ td strong { color: var(--ink); font-weight: 600; }
             <tbody>
               <tr>
                 <td class="nowrap"><strong>R-01</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>地区识别与展示</strong><br>启动或退出登录后，按 IP + 系统语言推荐地区，页面常显当前地区。移动端按 App Store 地区判定；桌面没有统一商店地区，按 IP + 系统语言推荐。识别中表单不可提交；IP 失败按系统语言兜底，仍无法判断让用户选，不默认国内。</td>
-                <td>国内 IP + 中文显示国内；海外 IP + 英文显示海外；识别失败不阻塞，也不先闪错误地区。</td>
+                <td><strong>地区识别与展示</strong><br>启动或退出登录后，按 IP 判定地区，IP 失败按系统语言兜底；语言不反推地区。页面常显当前地区。识别中表单不可提交。</td>
+                <td>国内 IP + 中文显示国内；海外 IP + 英文显示海外；IP 失败按语言兜底，不阻塞，也不先闪错误地区。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-02</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>登录前切换地区</strong><br>登录页有切换入口。确认弹窗说明：连另一套服务器，账号/会员/订单不跨区，登录后要退出才能换。确认后更新地区、账号规则和第三方渠道；语言不变；保留账号，清空验证码和密码；取消不改。手机号切到海外时保留原文，提交时提示改用邮箱，不静默清空。手动选择记在当前设备，下次启动优先。</td>
-                <td>切到海外后手机号入口消失；账号保留（手机号保留原文，邮箱可直接沿用）；验证码/密码清空；切换不发登录请求；取消不变。</td>
+                <td><strong>登录前切换地区</strong><br>登录页顶部有地区下拉，显示当前地区，选项为中国大陆、国际；选择后直接切换，不弹确认，不发登录请求。切换后更新地区、账号规则和第三方渠道；语言不变；保留账号，清空验证码和密码。手机号切到海外时保留原文，提交时提示改用邮箱，不静默清空。手动选择记在当前设备，下次启动优先。</td>
+                <td>切到海外后手机号入口消失；账号保留（手机号保留原文，邮箱可直接沿用）；验证码/密码清空；切换不发登录请求。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-03</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>账号规则</strong><br>国内支持手机号或邮箱；海外只支持邮箱。默认验证码登录，密码登录是次级入口。账号为空不发请求；格式由服务端校验，桌面不另写一套手机号/邮箱规则。</td>
                 <td>国内手机号和邮箱都能获取验证码；海外没有手机号入口；账号为空时按钮不发请求；格式错误显示服务端返回的原因。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-04</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>验证码登录（默认）</strong><br>输入账号后点「登录 / 注册」获取 6 位验证码，进入验证码页；输满 6 位自动提交，不需要再点按钮；重发间隔 60 秒。首次使用自动创建账号，已有账号直接登录。</td>
-                <td>验证码 6 位；输满自动提交；60 秒内重发不可点；首次手机号/邮箱登录后直接进入应用，不出现注册表单；再次登录进入同一账号。</td>
+                <td><strong>验证码登录（默认）</strong><br>输入账号后点「登录 / 注册」获取 6 位验证码，进入验证码页；验证码页不显示地区和语言，只保留返回、标题、账号、6 位输入和重新发送倒计时，返回账号页才能切换；输满 6 位自动提交，不需要再点按钮；重发间隔 60 秒。首次使用自动创建账号，已有账号直接登录。</td>
+                <td>验证码页没有地区和语言；输满 6 位自动提交；60 秒内重发不可点；首次登录直接进入应用、不出现注册表单；再次登录进入同一账号。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-05</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>密码登录</strong><br>「密码登录」进入账号 + 密码表单；「忘记密码」进入重置；「验证码登录」返回默认卡。账号或密码为空不发请求；失败保留账号和密码登录入口。</td>
-                <td>默认卡可切密码登录并返回；密码为空不发请求；失败统一提示“账号或密码不正确”，保留账号；忘记密码可进入重置页。</td>
+                <td><strong>密码登录</strong><br>账号页 Or 下方第一个入口为「密码登录」（英文 Password），与第三方入口同款、同一行、同尺寸，只进密码页、不校验协议。密码页是独立二级页：有返回和标题，不显示地区和语言，不放第三方入口；账号从账号页带入、密码清空，账号非空时焦点到密码框；密码框可切换明文，Enter 提交，Esc 或返回账号页；「忘记密码」进入重置页。账号或密码为空不发请求；失败在密码框下方提示「账号或密码不正确」，输入即清除，账号和密码保留。</td>
+                <td>入口样式与第三方一致、在 Or 下方最左；进入二级页后账号保留、密码为空、无地区和语言；密码错误就地提示，修改后消失；Esc 返回账号页；「忘记密码」进入重置。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-06</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>第三方登录</strong><br>渠道与移动端一致：国内仅 Apple；海外 Google、Apple；服务端 Facebook 登录开关开启时海外增加 Facebook。授权成功后调统一第三方登录接口；已有账号进入同一账号，首次登录自动注册。</td>
-                <td>国内只显示 Apple；海外显示 Google、Apple；开关开启时海外显示 Facebook，关闭时消失；首次第三方登录自动创建账号；再次授权进入同一账号；取消授权留在登录页。</td>
+                <td><strong>第三方登录</strong><br>第三方入口与「密码登录」同一行、同款按钮，排在它右侧，顺序为 Google、Facebook、Apple（Facebook 关闭时不占位）。渠道与移动端一致：国内仅 Apple；海外 Google、Apple；服务端 Facebook 登录开关开启时海外增加 Facebook。授权成功后调统一第三方登录接口；已有账号进入同一账号，首次登录自动注册。</td>
+                <td>国内仅 Apple；海外 Google、Apple；开关开启时海外多 Facebook、关闭时消失；入口在「密码登录」右侧；首次自动注册；再次授权同一账号；取消留在登录页。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-07</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>协议勾选</strong><br>登录窗口底部常显勾选框和「我已阅读并同意《用户协议》和《隐私政策》」，两个链接可点；验证码卡和密码卡共用，切换登录方式保留勾选状态。默认不勾选；未勾选时点任一登录方式（验证码、密码、第三方）提示先勾选，不发请求；勾选后才能发起。每次重新进入登录页恢复未勾选。移动端不设勾选框，桌面端必须手动勾选。协议链接复用服务端配置；非中文使用国际版链接。</td>
-                <td>默认未勾选；不勾选点任一登录方式，有提示且不发请求；勾选后可正常发起；切换验证码/密码卡勾选状态保留；重新进入登录页恢复未勾选；两个链接可打开；中英文链接指向对应版本。</td>
+                <td><strong>协议勾选</strong><br>登录窗口底部常显勾选框和「我已阅读并同意《用户协议》和《隐私政策》」，两个链接可点，文案复用服务端配置，非中文用国际版。默认不勾选，账号页和密码页共用勾选状态；未勾选时点「登录 / 注册」、密码页「登录」或第三方入口，在当前页勾选框下方提示「请先阅读并勾选协议」，不发请求；「密码登录」入口只进密码页，不校验；勾选后提示消失，再点一次才发起；重新进入登录页恢复未勾选。</td>
+                <td>默认未勾选；未勾选点登录 / 第三方 / 密码页登录，就地提示且不发请求；密码登录入口只导航；勾选状态跨页保留，重新进入恢复未勾选；中英文链接指向对应版本。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-08</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>跨区账号处理</strong><br>后端返回“账号属于另一地区”的独立错误码和地区字段；页面提示所属地区并可切换。切换后保留账号，重新获取验证码；不在错误地区自动注册、不合并、不报“密码错误”。</td>
-                <td>国内页输入海外账号，出现跨区提示；确认后切到海外页、账号保留、验证码清空；取消留在原页；后端未返回该错误码时此条不通过。</td>
+                <td><strong>跨区账号处理</strong><br>一个账号只属于一个区，同一个邮箱或手机号不能在一个区注册后再到另一个区建第二个。输入另一地区的账号时，页面提示账号所属地区并可切换，不报“密码错误”。切换后停在账号页、保留账号，可改账号后重新获取验证码；换成该区没注册过的邮箱，首次登录即在该区注册。同一个人可以在两个区各有一个账号，但邮箱或手机号不能重复；两个账号独立，权益不合并、不迁移。</td>
+                <td>国内页输入海外账号，出现跨区提示；切换后到海外页、账号保留、验证码清空，不自动登录；取消留在原页；同一邮箱不能在海外区再注册第二个；切换后换成海外区没注册过的邮箱，重新获取验证码，首次登录自动注册。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-09</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>登录后锁区</strong><br>登录后不提供切区，换区必须退出。退出后回登录页，保留上次地区，切换入口恢复。</td>
-                <td>登录后的应用内找不到换区入口；退出登录后出现切换入口；切换不会在已登录状态静默发生。</td>
+                <td><strong>登录后锁区</strong><br>登录后不提供切区，换区必须退出。退出后回登录页，保留上次地区，地区下拉恢复。</td>
+                <td>登录后的应用内找不到换区入口；退出登录后地区下拉恢复；切换不会在已登录状态静默发生。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-10</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>语言作用于全应用</strong><br>登录页可切中文/English；选择持久化；登录后沿用；登录页文案全覆盖，不混排。</td>
-                <td>切到 English 后登录页全部英文且无布局溢出；登录后应用主界面为英文；重启仍为英文；切回中文后一致。</td>
+                <td><strong>语言切换（登录页）</strong><br>登录页顶部有语言下拉，显示当前语言，选项为中文、English；选择后立即生效并持久化；登录后保留该设置；本期覆盖登录页和登录流程，应用内多语言后续补；登录页文案全覆盖，不混排。</td>
+                <td>切到 English 后登录页全部英文且无布局溢出；重启仍为英文；切回中文后一致。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-11</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
-                <td><strong>密码重置</strong><br>从「密码登录」进入「忘记密码」；账号 + 验证码 + 新密码 + 确认新密码；验证码按重置密码场景发送，60 秒重发；新密码 6–18 位字母和数字组合；两次一致。成功后回登录页，账号保留。</td>
-                <td>验证码错误、两次不一致、密码不合规分别提示；成功后回登录页且账号仍在；新密码可登录，旧密码不能登录。</td>
+                <td><strong>密码重置</strong><br>密码页点「忘记密码」进入重置二级页：有返回和标题「重置密码」，不显示地区和语言，不放第三方入口和协议。账号从密码页带入、可改，格式随当前地区（国内手机号或邮箱，海外邮箱）。验证码框右侧「发送验证码」按重置场景发送，成功后显示剩余秒数，60 秒后可重发；新密码 6–18 位数字和字母，两个密码框都可切换明文。账号、验证码、新密码、确认密码为空或两次不一致时，在对应字段下方提示「账号不能为空」「验证码不能为空」「密码不能为空」「密码不一致」，不发请求；服务端原因显示在「确认重置」上方。Enter 提交，Esc 或返回密码页；提交中不可重复点。成功后回密码页，账号保留、密码清空、焦点到密码框，协议上方提示「密码已重置，请用新密码登录」；不自动登录。</td>
+                <td>账号从密码页带入且可改；发送后显示倒计时、60 秒内不可重发；空字段或两次不一致就地提示且不发请求；服务端原因显示在按钮上方；成功后回密码页、提示已重置、不自动登录；旧密码失效，新密码可登录。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-12</strong></td>
-                <td><span class="pill pill-p1">P1</span></td>
-                <td><strong>服务不可用与诊断</strong><br>区分本地服务未启动和远端不可达；给说明、重试和诊断入口；诊断含版本、地区、错误码，可复制；不无限转圈。</td>
+                <td><strong>服务不可用与诊断</strong><br>区分本地服务未启动和远端不可达；给说明、重试和诊断入口；诊断含版本、地区、错误码，可复制；不无限转圈。不做的话，本地服务未启动和远端不可达只能共用一条提示，无法定位。</td>
                 <td>本地服务未启动显示启动指引；远端超时显示重试；重试成功后回到登录；诊断信息包含版本、地区、错误码。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-13</strong></td>
-                <td><span class="pill pill-p1">P1</span></td>
-                <td><strong>未激活账号的授权码步骤</strong><br>服务端返回账号未激活，且授权码开关开启时，登录后进入授权码页；输入授权码确认后继续进入应用；可返回登录页。桌面是否开启由服务端开关决定，未配置或关闭时不出现。</td>
+                <td><strong>未激活账号的授权码步骤</strong><br>服务端返回账号未激活，且授权码开关开启时，登录后进入授权码页；输入授权码确认后继续进入应用；可返回登录页。桌面是否开启由服务端开关决定，未配置或关闭时不出现。不做的话，未激活账号没有自助激活入口。</td>
                 <td>开关关闭时不出现授权码页；开关开启且账号未激活时出现；授权码正确后进入应用；错误时留在授权码页并提示。</td>
               </tr>
             </tbody>
@@ -807,9 +1024,9 @@ td strong { color: var(--ink); font-weight: 600; }
         </div>
       </section>
 
-      <!-- 06 状态 -->
+      <!-- 05 状态 -->
       <section id="states">
-        <div class="section-kicker">06 · 状态</div>
+        <div class="section-kicker">05 · 状态</div>
         <h2>状态与异常</h2>
 
         <div class="table-wrap" style="margin-top:16px">
@@ -828,31 +1045,13 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td><strong>地区识别中</strong></td>
                 <td>启动或退出登录后，IP 查询还未返回。</td>
                 <td>登录卡显示识别中，表单暂不可提交。</td>
-                <td>设超时；超时按系统语言兜底，别让用户干等。</td>
-              </tr>
-              <tr>
-                <td><strong>识别失败</strong></td>
-                <td>IP 服务失败，系统语言也无法判断。</td>
-                <td>地区选择，说明“无法自动识别，请选择”。</td>
-                <td>不静默默认国内；未选地区不能登录。</td>
-              </tr>
-              <tr>
-                <td><strong>地区与语言不一致</strong></td>
-                <td>海外 IP + 中文系统，或国内 IP + 英文系统。</td>
-                <td>地区按 IP，语言按用户选择；两者独立显示。</td>
-                <td>不要用语言反推地区；切换语言不改变地区。</td>
-              </tr>
-              <tr>
-                <td><strong>切换地区确认</strong></td>
-                <td>用户点切换入口。</td>
-                <td>弹窗列三条影响，可取消或确认。</td>
-                <td>确认后清空验证码/密码，保留账号，不发请求。</td>
+                <td>设超时；超时按系统语言兜底。</td>
               </tr>
               <tr>
                 <td><strong>协议未勾选</strong></td>
-                <td>勾选框未勾选时点任一登录方式。</td>
-                <td>提示先阅读并勾选协议，留在当前页。</td>
-                <td>不发请求；勾选后可继续；每次进入登录页默认未勾选。</td>
+                <td>勾选框未勾选时点「登录 / 注册」、密码页的「登录」或第三方入口。</td>
+                <td>勾选框下方出现「请先阅读并勾选协议」，留在当前页。</td>
+                <td>不发请求；点「密码登录」只进入密码页，不提示；勾选后提示消失，再点一次才发起；每次进入登录页默认未勾选。</td>
               </tr>
               <tr>
                 <td><strong>验证码已发送 / 倒计时</strong></td>
@@ -876,25 +1075,43 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td><strong>验证码错误 / 过期</strong></td>
                 <td>服务端判定验证码不正确或已过期。</td>
                 <td>提示服务端原因；账号保留，重新输入验证码后提交。</td>
-                <td>不清空账号；不把错误码当成功；过期引导重发。</td>
+                <td>不清空账号；过期引导重发。</td>
               </tr>
               <tr>
                 <td><strong>密码错误 / 账号不存在</strong></td>
-                <td>密码登录失败。</td>
-                <td>统一提示“账号或密码不正确”。</td>
-                <td>不暴露账号是否存在；跨区账号除外，走跨区提示。</td>
+                <td>密码页提交后失败。</td>
+                <td>密码框下方就地提示「账号或密码不正确」，留在密码页。</td>
+                <td>不清空账号和密码；修改密码后提示消失；不暴露账号是否存在；跨区账号除外，走跨区提示。</td>
+              </tr>
+              <tr>
+                <td><strong>重置验证码已发送 / 倒计时</strong></td>
+                <td>重置页点「发送验证码」成功。</td>
+                <td>按钮变成剩余秒数并置灰；账号、验证码和密码框内容保留。</td>
+                <td>60 秒后恢复「发送验证码」；倒计时期间不可重发；重发不清空已填密码。</td>
+              </tr>
+              <tr>
+                <td><strong>重置表单错误</strong></td>
+                <td>点「发送验证码」或「确认重置」时必填项为空，或两次密码不一致。</td>
+                <td>对应字段标红，下方就地提示「账号不能为空」「验证码不能为空」「密码不能为空」或「密码不一致」。</td>
+                <td>不发请求；修改后提示消失；保留其他已填内容。</td>
+              </tr>
+              <tr>
+                <td><strong>重置提交失败</strong></td>
+                <td>提交后服务端返回验证码错误、验证码过期、密码不合规或账号问题。</td>
+                <td>「确认重置」上方显示服务端返回的原因，留在重置页。</td>
+                <td>保留已填内容；验证码过期可重新发送；可直接改后重试。</td>
+              </tr>
+              <tr>
+                <td><strong>重置成功</strong></td>
+                <td>服务端返回重置成功。</td>
+                <td>回密码页，账号保留、密码为空；协议上方提示「密码已重置，请用新密码登录」。</td>
+                <td>不自动登录；输入密码后提示消失；旧密码失效，新密码可登录。</td>
               </tr>
               <tr>
                 <td><strong>跨区账号</strong></td>
                 <td>登录时账号属于另一地区。</td>
-                <td>弹窗说明账号属于 X，可切换；切换后重新获取验证码。</td>
-                <td>必须用独立错误码；不在错误地区自动注册、不合并账号。</td>
-              </tr>
-              <tr>
-                <td><strong>新用户自动注册</strong></td>
-                <td>首次验证码或第三方登录，服务端判定为新用户。</td>
-                <td>直接进入应用，不出现注册表单。</td>
-                <td>记录注册事件；不要求补填账号资料。</td>
+                <td>弹窗说明账号属于 X，可切换；切换后停在账号页，重新获取验证码。</td>
+                <td>不报“密码错误”；同一邮箱不能跨区再注册；不在错误地区自动注册、不合并账号。</td>
               </tr>
               <tr>
                 <td><strong>第三方授权取消 / 失败</strong></td>
@@ -920,84 +1137,15 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td>“无法连接” + 重试 + 诊断入口。</td>
                 <td>保留已填账号；不误报登录成功。</td>
               </tr>
-              <tr>
-                <td><strong>登录中重复点击</strong></td>
-                <td>用户连续点登录或第三方登录。</td>
-                <td>按钮进入加载态，不可重复点。</td>
-                <td>只发一次请求；失败后恢复可点。</td>
-              </tr>
-              <tr>
-                <td><strong>登录成功</strong></td>
-                <td>验证码、密码或第三方授权通过。</td>
-                <td>进入应用；新用户已完成注册；地区锁定；语言沿用。</td>
-                <td>不再显示登录页；不提供切区。</td>
-              </tr>
             </tbody>
           </table>
         </div>
 
-        <figure style="margin:24px 0 8px">
-          <svg viewBox="0 0 900 260" role="img" aria-label="三个登录状态线框图：验证码输入、验证码错误、跨区账号" style="width:100%;max-width:860px;margin:0 auto">
-            <rect x="20" y="20" width="272" height="220" rx="8" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
-            <text x="36" y="46" font-size="12" fill="#746c5f">A · 验证码输入</text>
-            <line x1="36" y1="58" x2="276" y2="58" stroke="#ded7c8" stroke-width="1"/>
-            <text x="36" y="82" font-size="11" fill="#24211b">138****8000</text>
-            <rect x="36" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="53" y="117" text-anchor="middle" font-size="14" fill="#24211b">1</text>
-            <rect x="76" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="93" y="117" text-anchor="middle" font-size="14" fill="#24211b">2</text>
-            <rect x="116" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="133" y="117" text-anchor="middle" font-size="14" fill="#24211b">3</text>
-            <rect x="156" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="173" y="117" text-anchor="middle" font-size="14" fill="#24211b">4</text>
-            <rect x="196" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="213" y="117" text-anchor="middle" font-size="14" fill="#24211b">5</text>
-            <rect x="236" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="253" y="117" text-anchor="middle" font-size="14" fill="#24211b">6</text>
-            <text x="36" y="158" font-size="11" fill="#b85c3e">验证中…</text>
-            <text x="36" y="182" font-size="10.5" fill="#746c5f">已发送 48s</text>
-            <text x="36" y="208" font-size="10.5" fill="#746c5f">输满第 6 位自动提交</text>
-
-            <rect x="312" y="20" width="272" height="220" rx="8" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
-            <text x="328" y="46" font-size="12" fill="#746c5f">B · 验证码错误</text>
-            <line x1="328" y1="58" x2="568" y2="58" stroke="#ded7c8" stroke-width="1"/>
-            <text x="328" y="82" font-size="11" fill="#24211b">138****8000</text>
-            <rect x="328" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
-            <text x="345" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
-            <rect x="368" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
-            <text x="385" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
-            <rect x="408" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
-            <text x="425" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
-            <rect x="448" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
-            <text x="465" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
-            <rect x="488" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
-            <text x="505" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
-            <rect x="528" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
-            <text x="545" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
-            <text x="328" y="158" font-size="10.5" fill="#963f31">验证码不正确，请重新输入</text>
-            <text x="328" y="182" font-size="10.5" fill="#746c5f">已发送 48s</text>
-            <text x="328" y="208" font-size="10.5" fill="#746c5f">账号保留，重新输入后自动提交</text>
-
-            <rect x="604" y="20" width="272" height="220" rx="8" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
-            <text x="620" y="46" font-size="12" fill="#746c5f">C · 跨区账号</text>
-            <line x1="620" y1="58" x2="860" y2="58" stroke="#ded7c8" stroke-width="1"/>
-            <text x="620" y="78" font-size="10" fill="#746c5f">地区</text>
-            <text x="620" y="96" font-size="12" fill="#24211b">中国大陆</text>
-            <text x="860" y="96" text-anchor="end" font-size="10.5" fill="#b85c3e" text-decoration="underline">切换</text>
-            <rect x="620" y="112" width="240" height="32" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
-            <text x="632" y="132" font-size="11" fill="#746c5f">name@example.com</text>
-            <line x1="620" y1="164" x2="620" y2="204" stroke="#963f31" stroke-width="1"/>
-            <text x="632" y="180" font-size="11" fill="#963f31">该账号注册于国际区</text>
-            <text x="632" y="196" font-size="10.5" fill="#746c5f">请切换到国际区后登录</text>
-            <text x="620" y="226" font-size="11" fill="#b85c3e" text-decoration="underline">切换到国际区</text>
-          </svg>
-          <figcaption class="table-note" style="max-width:860px;margin:8px auto 0">图 3 · 验证码输入、验证码错误与跨区账号。</figcaption>
-        </figure>
       </section>
 
-      <!-- 07 验收 -->
+      <!-- 06 验收 -->
       <section id="acceptance">
-        <div class="section-kicker">07 · 验收</div>
+        <div class="section-kicker">06 · 验收</div>
         <h2>验收清单</h2>
 
         <div class="table-wrap" style="margin-top:16px">
@@ -1016,13 +1164,13 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td class="nowrap"><strong>AC-01</strong></td>
                 <td>国内 IP、中文系统，打开桌面端登录页。</td>
                 <td>页面加载完成。</td>
-                <td>显示国内；账号输入支持手机号或邮箱；第三方只有 Apple；协议勾选框默认未勾选且链接可点；地区可切换。</td>
+                <td>显示国内；账号输入支持手机号或邮箱；Or 下方为「密码登录」和 Apple，两个入口样式一致、密码登录在左；协议勾选框默认未勾选且链接可点；地区下拉可切换。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-02</strong></td>
                 <td>海外 IP、英文系统，打开桌面端登录页。</td>
                 <td>页面加载完成。</td>
-                <td>显示海外；账号只支持邮箱，不显示手机号；第三方显示 Google、Apple；协议勾选框默认未勾选。</td>
+                <td>显示海外；账号只支持邮箱，不显示手机号；Or 下方依次为 Password、Google、Apple，密码登录入口样式与第三方一致；协议勾选框默认未勾选。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-03</strong></td>
@@ -1033,7 +1181,7 @@ td strong { color: var(--ink); font-weight: 600; }
               <tr>
                 <td class="nowrap"><strong>AC-04</strong></td>
                 <td>国内页已输入账号和验证码。</td>
-                <td>切到海外并确认。</td>
+                <td>在地区下拉切到海外。</td>
                 <td>账号保留；验证码、密码清空；手机号入口消失；未发登录请求。手机号切到海外时，提交提示改用邮箱。</td>
               </tr>
               <tr>
@@ -1056,9 +1204,9 @@ td strong { color: var(--ink); font-weight: 600; }
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-08</strong></td>
-                <td>已注册且有密码的账号。</td>
-                <td>点「密码登录」。</td>
-                <td>出现账号 + 密码表单；可点「忘记密码」进入重置；可点「验证码登录」返回默认卡；密码为空不发请求。</td>
+                <td>已注册且有密码的账号，账号已填。</td>
+                <td>点 Or 下方的「密码登录」；不输密码点登录；点眼睛；输错密码按 Enter；按 Esc；再进入点「忘记密码」；返回后输入正确密码登录。</td>
+                <td>进入独立二级页，账号保留、密码为空、无地区和语言、焦点在密码框、没有第三方入口；密码为空不发请求；眼睛切换明文/密文；错误在密码框下方提示「账号或密码不正确」，修改后消失；Esc 或左上角返回账号页且账号保留；「忘记密码」进入重置；正确密码进入应用。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-09</strong></td>
@@ -1076,55 +1224,55 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td class="nowrap"><strong>AC-11</strong></td>
                 <td>国内/海外切换，或服务端 Facebook 登录开关变化。</td>
                 <td>打开登录页。</td>
-                <td>国内只有 Apple；海外有 Google、Apple；开关开启时海外增加 Facebook，关闭时消失。</td>
+                <td>第三方入口国内只有 Apple；海外有 Google、Apple；开关开启时海外增加 Facebook，关闭时消失；密码登录入口始终在最左。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-12</strong></td>
                 <td>已进入第三方授权页。</td>
                 <td>取消授权。</td>
-                <td>回登录页，提示未完成登录；不进入应用；取消不发起后端请求。</td>
+                <td>回登录页，提示未完成登录；不进入应用。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-13</strong></td>
                 <td>国内页输入海外账号。</td>
-                <td>提交登录。</td>
-                <td>提示账号属于海外并可切换；确认后海外页保留账号、清空验证码；不在错误地区自动注册。</td>
+                <td>提交登录；取消；切换后换成海外区未注册的邮箱，再获取验证码。</td>
+                <td>提示账号属于海外并可切换；取消留在原页；切换后海外页保留账号、清空验证码；同一邮箱不能在海外区再注册；新邮箱首次登录自动注册；不在错误地区自动注册。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-14</strong></td>
                 <td>用户已登录。</td>
                 <td>在应用内查找换区入口。</td>
-                <td>没有入口；退出登录后回到登录页，保留上次地区并可切换。</td>
+                <td>没有入口；退出登录后回到登录页，保留上次地区，下拉可切换。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-15</strong></td>
-                <td>登录页切到 English 并登录。</td>
-                <td>进入应用。</td>
-                <td>应用为英文；重启后仍为英文；切回中文后一致。</td>
+                <td>登录页切到 English。</td>
+                <td>重启桌面端。</td>
+                <td>登录页仍为英文；切回中文后一致。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-16</strong></td>
-                <td>用户忘记密码。</td>
-                <td>用账号 + 验证码 + 新密码 + 确认完成重置。</td>
-                <td>验证码错误、两次不一致、密码不合规分别提示；成功后回登录页，账号保留；新密码可登录，旧密码不能登录。</td>
+                <td>已注册账号，从密码页点「忘记密码」。</td>
+                <td>确认账号已带入；清空账号点发送；填回账号点发送；两次密码不一致点确认重置；改成一致、输错验证码提交；60 秒后重发，输入正确验证码和合规新密码；分别用新旧密码登录。</td>
+                <td>账号带入且可改；账号为空点发送提示「账号不能为空」且不发请求；发送后显示倒计时；不一致在确认框下方提示「密码不一致」且不发请求；验证码错误显示服务端原因；成功回密码页、账号保留、密码为空、出现「密码已重置，请用新密码登录」；不自动登录；旧密码不能登录，新密码能登录。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-17</strong></td>
-                <td>本地服务未启动或远端超时。</td>
+                <td>本地服务未启动，或远端超时（分别验证）。</td>
                 <td>点登录。</td>
-                <td>显示对应说明、重试和诊断；不无限转圈，不误报成功。</td>
+                <td>两种情况分别显示对应说明、重试和诊断；不无限转圈，不误报成功。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-18</strong></td>
-                <td>IP 查询失败，系统语言也无法判断。</td>
-                <td>打开登录页。</td>
-                <td>让用户选地区；未选不能登录；不静默选国内。</td>
+                <td>IP 查询失败，系统语言为中文。</td>
+                <td>打开桌面端登录页。</td>
+                <td>按语言兜底显示中国大陆；不阻塞登录；可手动切换。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-19</strong></td>
-                <td>账号未激活，授权码开关开启。</td>
+                <td>账号未激活；授权码开关分别设为开、关。</td>
                 <td>登录成功。</td>
-                <td>进入授权码页；输入正确后进入应用；开关关闭时不出现。</td>
+                <td>开关开启时进入授权码页，输入正确后进入应用，输入错误留在授权码页并提示；开关关闭时不出现授权码页。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-20</strong></td>
@@ -1135,63 +1283,17 @@ td strong { color: var(--ink); font-weight: 600; }
               <tr>
                 <td class="nowrap"><strong>AC-21</strong></td>
                 <td>登录页协议默认未勾选。</td>
-                <td>不勾选点任一登录方式（验证码、密码、第三方）。</td>
-                <td>提示先勾选，不发请求；勾选后可正常发起；重新进入登录页恢复未勾选。</td>
+                <td>不勾选点「登录 / 注册」；点第三方入口；点「密码登录」后在密码页点「登录」。</td>
+                <td>账号页和密码页勾选框下方分别提示「请先阅读并勾选协议」，不发请求；点「密码登录」只进密码页、不提示；勾选后提示消失，再点一次才发起；重新进入恢复未勾选。</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- 08 待确认 -->
-      <section id="questions">
-        <div class="section-kicker">08 · 待确认</div>
-        <h2>待确认问题</h2>
-
-        <div class="table-wrap" style="margin-top:16px">
-          <table>
-            <caption>待确认问题</caption>
-            <thead>
-              <tr>
-                <th scope="col">问题</th>
-                <th scope="col">谁回答</th>
-                <th scope="col">是否阻塞</th>
-                <th scope="col">结论 / 日期</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>桌面端第三方渠道的平台实现：macOS 和 Windows 上 Apple、Google、Facebook 的授权 SDK、资质和审核要求是否齐备？渠道矩阵已按移动端固定。</td>
-                <td>工程 / 产品</td>
-                <td><span class="pill pill-block">阻塞</span></td>
-                <td class="muted">待定。决定 R-06 在两个平台的实现范围。</td>
-              </tr>
-              <tr>
-                <td>后端能否返回“账号属于另一地区”的独立错误码和账号地区字段？</td>
-                <td>后端</td>
-                <td><span class="pill pill-block">阻塞</span></td>
-                <td class="muted">待定。没有它，R-08 只能退化为一句话提示。</td>
-              </tr>
-              <tr>
-                <td>全应用 i18n 的上线门槛：登录页先上、应用内分批，还是全量？Rust 侧 Accept-Language 目前写死 zh-Hans。</td>
-                <td>工程 / 产品</td>
-                <td><span class="pill pill-block">阻塞</span></td>
-                <td class="muted">待定。决定 R-10 的验收范围。</td>
-              </tr>
-              <tr>
-                <td>IP 归属地服务选型和超时兜底：IP 失败按系统语言，二者都失败让用户选地区，是否接受？</td>
-                <td>后端 / 产品</td>
-                <td><span class="pill pill-block">阻塞</span></td>
-                <td class="muted">待定。没有 IP 服务只能按语言判断，海外识别会不准。</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 09 变更 -->
+      <!-- 07 变更 -->
       <section id="changelog">
-        <div class="section-kicker">09 · 变更</div>
+        <div class="section-kicker">07 · 变更</div>
         <h2>变更记录</h2>
 
         <div class="table-wrap" style="margin-top:16px">
@@ -1207,28 +1309,33 @@ td strong { color: var(--ink); font-weight: 600; }
             <tbody>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.5</td>
-                <td>协议改为默认不勾选、手动勾选后才能登录；原型图去掉登录标题、Kocard 字、分割线和字段标签，语言切换移到窗口右上角。</td>
+                <td class="nowrap">v0.29–v0.30</td>
+                <td>线框图去掉说明性文字，验证码页把「已发送 48s」改为真实控件「重新发送 48s」；写明一个账号只属于一个区，同一邮箱或手机号不能跨区再注册，两个区账号独立、权益不合并不迁移；AC-18 改为可测的「IP 失败、系统语言中文」按语言兜底。</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.4</td>
-                <td>按 iOS 实际登录实现校正：国内手机号或邮箱、海外邮箱；验证码默认且 6 位自动提交；第三方渠道按地区和服务端开关；首次登录自动注册；协议改为文字链接；补授权码步骤。</td>
+                <td class="nowrap">v0.25–v0.28</td>
+                <td>待确认逐条清空：第三方渠道平台实现、跨区错误码、IP 归属地服务都不进 PRD；语言范围定为只覆盖登录页和登录流程；删掉到不了的「识别失败」状态和 R-01「让用户选」，待确认整节删除，变更记录顺延为 07。</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.3</td>
-                <td>范围加入第三方登录，与移动端对齐；用户场景改为已知事实；补第三方登录的状态和验收。</td>
+                <td class="nowrap">v0.21–v0.24</td>
+                <td>地区切换改为下拉选中即生效，去掉确认弹窗；补地区、语言下拉展开图，图号顺延；删除 R-01 复述移动端现状的句子。</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.2</td>
-                <td>加登录窗口和异常态线框图；压缩文案，收敛待确认问题。</td>
+                <td class="nowrap">v0.18–v0.20</td>
+                <td>重写「问题」，只保留一句「桌面端沿用移动端账号体系完成登录与注册」；删去推测性痛点、用户卡、衡量方式；R-12 理由改为本地与远端故障无法区分。</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.1</td>
-                <td>初稿。</td>
+                <td class="nowrap">v0.10–v0.17</td>
+                <td>密码登录从账号页原地输入改为独立二级页（v0.10–v0.12），入口改为与第三方同款按钮（v0.13）；补「忘记密码」重置密码二级页（v0.14）；删「用户与场景」、压缩重复表述（v0.15）；跨区弹窗精简到标题加取消 / 切换两个按钮（v0.16–v0.17）。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.1–v0.9</td>
+                <td>初稿与多轮校正：范围加入第三方登录；按 iOS 实际实现校正账号规则、验证码自动提交和第三方渠道；协议改为手动勾选；地区、语言改为顶部下拉；验证码页去掉地区和语言；补登录窗口和异常态线框图。</td>
               </tr>
             </tbody>
           </table>
@@ -1236,7 +1343,7 @@ td strong { color: var(--ink); font-weight: 600; }
       </section>
 
       <footer class="doc-footer">
-        <span><strong>Kocard新版桌面端注册登录与移动端打通</strong></span>
+        <span><strong>Kocard 新版桌面端注册登录与移动端打通</strong></span>
         <span>草稿</span>
       </footer>
     </article>
