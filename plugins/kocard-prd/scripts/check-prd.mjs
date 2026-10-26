@@ -111,13 +111,16 @@ for (const input of files) {
     errors.push('脚本块与模板不一致；请重新从模板复制，不要改脚本。');
   }
 
+  const sameTemplateVersion = Boolean(docMarker && docMarker[0] === templateMarker[0]);
   for (const id of ['requirements', 'states', 'acceptance', 'changelog', 'questions']) {
-    const expectedHeaders = tableHeaders(template, id);
     const actualHeaders = tableHeaders(doc, id);
-    if (!expectedHeaders || !actualHeaders) continue;
-    if (expectedHeaders.join('|') !== actualHeaders.join('|')) {
-      errors.push(`#${id} 表头与模板不一致；应为：${expectedHeaders.join(' / ')}。`);
-      continue;
+    if (!actualHeaders) continue;
+    if (sameTemplateVersion) {
+      const expectedHeaders = tableHeaders(template, id);
+      if (expectedHeaders && expectedHeaders.join('|') !== actualHeaders.join('|')) {
+        errors.push(`#${id} 表头与模板不一致；应为：${expectedHeaders.join(' / ')}。`);
+        continue;
+      }
     }
     const wrongRows = tableRowWidths(doc, id).filter((width) => width !== actualHeaders.length);
     if (wrongRows.length) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- prd-template:v5 -->
+<!-- prd-template:v7 -->
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -303,7 +303,6 @@ h3 {
 .table-wrap {
   overflow-x: auto;
   border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line);
 }
 table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
 caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -641,7 +640,7 @@ td strong { color: var(--ink); font-weight: 600; }
       <section id="requirements">
         <div class="section-kicker">05 · 需求</div>
         <h2>功能需求</h2>
-        <p class="section-intro">每条需求都要带验收标准。P0 是没有它就不能上线；P1 是上线后尽快补；P2 是本期不做但设计要留口子。</p>
+        <p class="section-intro">每条需求都要带验收标准。</p>
 
         <div class="table-wrap">
           <table>
@@ -649,7 +648,6 @@ td strong { color: var(--ink); font-weight: 600; }
             <thead>
               <tr>
                 <th scope="col">编号</th>
-                <th scope="col">优先级</th>
                 <th scope="col">需求</th>
                 <th scope="col">验收标准</th>
               </tr>
@@ -657,43 +655,36 @@ td strong { color: var(--ink); font-weight: 600; }
             <tbody>
               <tr>
                 <td class="nowrap"><strong>R-01</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>订阅入口</strong><br>会员页和用量限制提示中提供订阅入口；未登录时先登录，再回到原入口。</td>
                 <td>从两个入口都能进入订阅页；登录后不丢失入口。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-02</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>套餐展示</strong><br>展示月付 / 年付、价格、权益和自动续费说明；价格以服务端配置为准。</td>
                 <td>与移动端同套餐价格一致；切换周期即时更新；不出现 0 元价格。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-03</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>支付</strong><br>调起桌面端支付渠道；处理成功、失败、取消和 pending 四种结果。</td>
                 <td>四种结果都有明确反馈；pending 有后续查单；不重复扣款。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-04</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>权益解锁</strong><br>支付成功后刷新权益；三端状态一致；重启应用后仍然有效。</td>
                 <td>5 秒内解锁；三端显示同一到期时间。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-05</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>恢复购买</strong><br>已订阅用户可恢复权益；换机、重装后可用。</td>
                 <td>恢复成功后显示到期时间；无订阅时给出明确提示。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-06</strong></td>
-                <td><span class="pill pill-p1">P1</span></td>
                 <td><strong>续费提醒</strong><br>到期前 7 天站内提醒；不重复打扰。</td>
                 <td>只提醒一次；用户关闭后不再出现。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-07</strong></td>
-                <td><span class="pill pill-p2">P2</span></td>
                 <td><strong>促销入口</strong><br>预留优惠码入口，本期不实现。</td>
                 <td>本期不展示；后续接入时不改现有支付流程。</td>
               </tr>
