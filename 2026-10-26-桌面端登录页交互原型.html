@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KOCARD 桌面端登录 · 交互原型</title>
+<style>
+/* ============ tokens ============ */
+:root {
+  color-scheme: light;
+  --canvas: #EDE7DD;
+  --win: #FBF7F0;
+  --card: #FFFDFA;
+  --ink: #1F1D1A;
+  --ink-soft: #3E3933;
+  --muted: #6F6961;
+  --dim: #9C948A;
+  --line: rgba(42, 36, 29, .09);
+  --line-strong: rgba(42, 36, 29, .18);
+  --field: #F6F1E8;
+  --field-focus: #FFFDFA;
+  --accent: #6B5BD2;
+  --accent-soft: #EEE9FF;
+  --danger: #BE4F3D;
+  --danger-soft: #FBEAE5;
+  --ok: #2F7D5B;
+  --btn: #201E1B;
+  --btn-ink: #FFFDF8;
+  --shadow-win: 0 36px 90px -30px rgba(56, 44, 32, .5), 0 1px 0 rgba(255, 255, 255, .65) inset;
+  --shadow-card: 0 26px 60px -34px rgba(70, 54, 38, .38), 0 1px 0 rgba(255, 255, 255, .85) inset;
+  --font: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --win: #1C1916;
+  --card: #2A2520;
+  --ink: #F4EFE6;
+  --ink-soft: #DCD4C8;
+  --muted: #B7AEA2;
+  --dim: #948A7E;
+  --line: rgba(255, 248, 238, .10);
+  --line-strong: rgba(255, 248, 238, .20);
+  --field: #342E28;
+  --field-focus: #3B342D;
+  --accent: #C3B4FF;
+  --accent-soft: #352D4A;
+  --danger: #F08A78;
+  --danger-soft: #3A2622;
+  --ok: #7FD0A8;
+  --btn: #F4EFE6;
+  --btn-ink: #201E1B;
+  --shadow-win: 0 44px 110px -34px rgba(0, 0, 0, .85), 0 1px 0 rgba(255, 255, 255, .06) inset;
+  --shadow-card: 0 32px 74px -42px rgba(0, 0, 0, .8), 0 1px 0 rgba(255, 255, 255, .05) inset;
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: #2A2621;
+  background:
+    radial-gradient(900px 520px at 12% -8%, #FCF5EA 0%, rgba(252, 245, 234, 0) 60%),
+    radial-gradient(760px 520px at 100% 0%, #F1E7F6 0%, rgba(241, 231, 246, 0) 55%),
+    var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+:where(button, a, summary, [tabindex]):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ink) 42%, transparent);
+  outline-offset: 3px;
+}
+.page-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  opacity: .11;
+  mix-blend-mode: multiply;
+}
+button { font-family: inherit; }
+a { color: inherit; }
+svg { display: block; }
+
+/* ============ review frame ============ */
+.review {
+  position: relative;
+  z-index: 1;
+  width: min(1200px, calc(100vw - 48px));
+  margin: 0 auto;
+  padding: 30px 0 52px;
+}
+.review-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 6px 18px;
+}
+.eyebrow {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #8A8176;
+}
+.review-head h1 {
+  margin: 7px 0 5px;
+  font-size: 29px;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  font-weight: 650;
+  color: #292520;
+}
+.review-head p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #7C7469;
+}
+.review-badge {
+  flex: 0 0 auto;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(255, 253, 248, .68);
+  border: 1px solid rgba(60, 48, 36, .1);
+  font-size: 10.5px;
+  letter-spacing: .04em;
+  color: #7C7469;
+  backdrop-filter: blur(8px);
+}
+
+/* ============ harness ============ */
+.harness {
+  margin-bottom: 18px;
+  padding: 13px 16px 11px;
+  border-radius: 18px;
+  border: 1px solid rgba(70, 54, 38, .1);
+  background: rgba(255, 252, 246, .72);
+  box-shadow: 0 14px 36px -28px rgba(70, 54, 38, .55);
+  backdrop-filter: blur(16px);
+}
+.harness-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.h-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.h-field > span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  color: #8A8176;
+}
+.h-field select {
+  height: 34px;
+  min-width: 168px;
+  padding: 0 32px 0 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(70, 54, 38, .13);
+  background-color: #FFFDF8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238A8176' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  appearance: none;
+  font: inherit;
+  font-size: 12px;
+  color: #2F2A24;
+  cursor: pointer;
+}
+.h-field.scenario select { min-width: 246px; }
+.h-field select:focus-visible,
+.seg:focus-within {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(107, 91, 210, .14);
+  border-color: rgba(107, 91, 210, .4);
+}
+.seg {
+  display: flex;
+  gap: 2px;
+  height: 34px;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid rgba(70, 54, 38, .13);
+  background: #FFFDF8;
+}
+.seg button {
+  height: 26px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 11.5px;
+  color: #7C7469;
+  cursor: pointer;
+  transition: background .16s, color .16s;
+}
+.seg button:hover { background: rgba(42, 36, 29, .05); }
+.seg button[aria-pressed="true"] {
+  background: #201E1B;
+  color: #FFFDF8;
+}
+.h-reset {
+  height: 34px;
+  padding: 0 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(70, 54, 38, .14);
+  background: transparent;
+  font-size: 11.5px;
+  color: #5E564C;
+  cursor: pointer;
+  transition: background .16s;
+}
+.h-reset:hover { background: rgba(42, 36, 29, .05); }
+.harness-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  padding-left: 1px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #8A8176;
+}
+.harness-meta::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #C9B8FF;
+  flex: 0 0 auto;
+}
+
+/* ============ app window ============ */
+.stage { display: flex; justify-content: center; }
+.app-window {
+  position: relative;
+  width: min(1120px, calc(100vw - 48px));
+  height: clamp(620px, calc(100vh - 208px), 720px);
+  border-radius: 20px;
+  border: 1px solid rgba(60, 48, 36, .13);
+  background: var(--win);
+  box-shadow: var(--shadow-win);
+  overflow: hidden;
+  container-type: size;
+  isolation: isolate;
+}
+.app-window::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
+}
+.win-bar {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 50px;
+  padding: 0 17px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--win) 84%, transparent);
+  backdrop-filter: blur(12px);
+}
+.traffic { display: flex; gap: 7px; }
+.traffic i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #F1B0A2;
+  box-shadow: inset 0 0 0 .5px rgba(90, 30, 20, .12);
+}
+.traffic i:nth-child(2) { background: #F3CD8B; }
+.traffic i:nth-child(3) { background: #AFD9A4; }
+.win-title {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .17em;
+  color: var(--dim);
+}
+.win-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.lang-pill {
+  display: flex;
+  gap: 1px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--field);
+}
+.lang-pill button {
+  height: 21px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 10px;
+  letter-spacing: .02em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .16s, color .16s;
+}
+.lang-pill button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--win);
+}
+.win-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 468px;
+  height: calc(100% - 50px);
+}
+
+/* ============ brand panel ============ */
+.brand {
+  position: relative;
+  overflow: hidden;
+  padding: 42px 50px 28px;
+  background: linear-gradient(155deg, #FCF8F1 0%, #F7F0E6 48%, #F4EBEE 100%);
+}
+.brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--grain);
+  opacity: .13;
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .brand {
+  background: linear-gradient(155deg, #221E1A 0%, #1B1815 52%, #221C21 100%);
+}
+[data-theme="dark"] .brand::after { mix-blend-mode: screen; opacity: .06; }
+.blob {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(46px);
+  pointer-events: none;
+}
+.blob.a { width: 380px; height: 380px; top: -100px; right: -90px; background: rgba(255, 178, 137, .5); }
+.blob.b { width: 320px; height: 320px; left: -120px; bottom: 40px; background: rgba(201, 184, 255, .42); }
+.blob.c { width: 280px; height: 280px; right: 40px; bottom: -110px; background: rgba(169, 214, 255, .38); }
+[data-theme="dark"] .blob.a { background: rgba(255, 150, 100, .14); }
+[data-theme="dark"] .blob.b { background: rgba(160, 130, 255, .14); }
+[data-theme="dark"] .blob.c { background: rgba(90, 160, 220, .12); }
+.ring {
+  position: absolute;
+  z-index: 0;
+  right: -150px;
+  bottom: -190px;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  border: 1px solid rgba(90, 70, 50, .08);
+  pointer-events: none;
+}
+[data-theme="dark"] .ring { border-color: rgba(255, 255, 255, .05); }
+.brand-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.brand-lockup { display: flex; align-items: center; gap: 11px; }
+.brand-lockup img {
+  width: 34px;
+  height: 34px;
+  filter: drop-shadow(0 7px 12px rgba(40, 26, 14, .22));
+}
+.brand-lockup .word {
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: .28em;
+  color: var(--ink);
+}
+.hero { margin-top: 52px; max-width: 500px; }
+.hero h1 {
+  margin: 0 0 14px;
+  font-size: clamp(30px, 3.1vw, 37px);
+  line-height: 1.24;
+  font-weight: 650;
+  letter-spacing: -.025em;
+  color: var(--ink);
+  white-space: pre-line;
+}
+.hero p {
+  margin: 0;
+  max-width: 410px;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 18px;
+  margin-top: 32px;
+  max-width: 520px;
+}
+.feature { display: flex; align-items: flex-start; gap: 10px; }
+.f-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--tint) 44%, transparent);
+  color: var(--tint-ink);
+}
+.f-icon svg {
+  width: 15.5px;
+  height: 15.5px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-theme="dark"] .f-icon { color: var(--ink); background: color-mix(in srgb, var(--tint) 18%, transparent); }
+.f-copy { min-width: 0; }
+.f-title {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  font-weight: 620;
+  letter-spacing: .01em;
+  color: var(--ink-soft);
+}
+.f-desc {
+  display: block;
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+.brand-foot { margin-top: auto; padding-top: 22px; }
+.community-label {
+  margin-bottom: 9px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.qr-row { display: flex; gap: 9px; }
+.qr-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 13px 6px 6px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card) 62%, transparent);
+  backdrop-filter: blur(5px);
+}
+.qr-img {
+  display: block;
+  width: 50px;
+  height: 50px;
+  padding: 4px;
+  border-radius: 9px;
+  background: #fff;
+}
+.qr-text b {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 620;
+  color: var(--ink-soft);
+}
+.qr-text span {
+  display: block;
+  margin-top: 2px;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.help-row { display: flex; gap: 9px; }
+.help-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 220px;
+  padding: 9px 13px 9px 9px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card) 62%, transparent);
+  text-decoration: none;
+  backdrop-filter: blur(5px);
+}
+a.help-card { transition: border-color .16s, transform .16s; }
+a.help-card:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+.help-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.help-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.help-text b {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 620;
+  color: var(--ink-soft);
+}
+.help-text > span {
+  display: block;
+  margin-top: 2px;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.pending-tag {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--field);
+  color: var(--dim);
+  font-size: 8px;
+  letter-spacing: .03em;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+.version {
+  margin-top: 12px;
+  font-size: 9.5px;
+  letter-spacing: .03em;
+  color: var(--dim);
+}
+
+/* ============ auth column ============ */
+.auth-col {
+  position: relative;
+  display: flex;
+  padding: 22px 36px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  border-left: 1px solid rgba(60, 48, 36, .06);
+  background: linear-gradient(180deg, #F6F0E7 0%, #F1EADF 100%);
+}
+.auth-col::-webkit-scrollbar { display: none; }
+[data-theme="dark"] .auth-col {
+  border-left-color: rgba(255, 255, 255, .05);
+  background: #14110E;
+}
+.auth-card {
+  width: 100%;
+  max-width: 390px;
+  margin: auto;
+  padding: 22px 26px 21px;
+  border-radius: 26px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+/* ============ login card ============ */
+.region-strip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 9px 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: var(--field);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .16s, background .16s;
+}
+.region-strip:hover { border-color: var(--line-strong); }
+.region-strip:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.region-globe {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--accent);
+}
+.region-globe svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.region-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.region-copy b {
+  font-size: 12px;
+  font-weight: 620;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.region-copy em {
+  font-style: normal;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.region-switch {
+  flex: 0 0 auto;
+  padding: 4px 2px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.login-head h2 {
+  margin: 18px 0 4px;
+  font-size: 23px;
+  line-height: 1.25;
+  letter-spacing: -.025em;
+  font-weight: 650;
+  color: var(--ink);
+}
+.card-sub {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  margin: 19px 0 18px;
+  border-radius: 12px;
+  background: var(--field);
+}
+.tab {
+  position: relative;
+  z-index: 1;
+  height: 33px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color .18s;
+}
+.tab[aria-selected="true"] { color: var(--ink); font-weight: 620; }
+.tab-glider {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: 33px;
+  border-radius: 9px;
+  background: var(--card);
+  box-shadow: 0 2px 7px rgba(70, 54, 38, .1), 0 1px 0 rgba(255, 255, 255, .6) inset;
+  transition: transform .27s cubic-bezier(.22, .9, .3, 1);
+}
+[data-theme="dark"] .tab-glider {
+  background: #38322B;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .3), 0 1px 0 rgba(255, 255, 255, .05) inset;
+}
+.tabs[data-tab="password"] .tab-glider { transform: translateX(100%); }
+
+.field { margin-bottom: 13px; }
+.field:last-of-type { margin-bottom: 0; }
+.field > label,
+.label-row label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: var(--muted);
+}
+.label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.label-row label { margin-bottom: 6px; }
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 10.5px;
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--muted) 35%, transparent);
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.link-btn:hover { color: var(--ink); }
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  letter-spacing: .005em;
+  transition: background .16s, border-color .16s, box-shadow .16s;
+}
+.input::placeholder { color: var(--dim); }
+.input:hover { background: color-mix(in srgb, var(--field) 72%, var(--card)); }
+.input:focus {
+  outline: none;
+  background: var(--field-focus);
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 11%, transparent);
+}
+.field.invalid .input {
+  border-color: color-mix(in srgb, var(--danger) 52%, transparent);
+}
+.field.invalid .input:focus {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 10%, transparent);
+}
+.code-row { display: flex; gap: 8px; }
+.code-row .input { flex: 1; min-width: 0; }
+.send-btn {
+  flex: 0 0 116px;
+  height: 46px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 620;
+  cursor: pointer;
+  transition: filter .16s, opacity .16s, background .16s;
+}
+.send-btn:hover { filter: brightness(.975); }
+.send-btn:disabled {
+  background: var(--field);
+  color: var(--dim);
+  cursor: default;
+  filter: none;
+}
+.pw-row { position: relative; }
+.pw-row .input { padding-right: 46px; }
+.eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--dim);
+  cursor: pointer;
+}
+.eye-btn:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--ink-soft); }
+.eye-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.field-msg {
+  display: none;
+  margin-top: 6px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--danger);
+}
+.field-msg.show { display: block; }
+.field-msg .inline-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.caps-hint {
+  display: none;
+  margin-top: 5px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.caps-hint.show { display: block; }
+.cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  margin-top: 5px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--btn);
+  color: var(--btn-ink);
+  font-size: 12.5px;
+  font-weight: 620;
+  letter-spacing: .01em;
+  cursor: pointer;
+  transition: transform .16s, opacity .16s;
+}
+.cta:hover { transform: translateY(-1px); }
+.cta:active { transform: translateY(0) scale(.996); }
+.cta.loading { pointer-events: none; }
+.cta.loading .cta-label { opacity: .65; }
+.cta-spinner {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid color-mix(in srgb, var(--btn-ink) 30%, transparent);
+  border-top-color: var(--btn-ink);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.cta.loading .cta-spinner { display: block; }
+.agree-wrap { margin-top: 15px; }
+.agree { display: flex; align-items: flex-start; gap: 8px; }
+.check {
+  position: relative;
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  cursor: pointer;
+}
+.check input {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.check .box {
+  position: relative;
+  display: block;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 5px;
+  background: var(--card);
+  transition: background .16s, border-color .16s, box-shadow .16s;
+}
+.check input:checked + .box { background: var(--ink); border-color: var(--ink); }
+.check input:checked + .box::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2.5px;
+  width: 4px;
+  height: 7.5px;
+  border: solid var(--card);
+  border-width: 0 1.8px 1.8px 0;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+.check input:focus-visible + .box {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.agree.invalid .box { border-color: var(--danger); }
+.agree-text {
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  cursor: default;
+  user-select: none;
+}
+.agree-text a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--ink) 28%, transparent);
+  text-underline-offset: 2px;
+}
+.agree-text a:hover { color: var(--accent); }
+
+/* ============ reset view ============ */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 10.5px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.back-btn:hover { color: var(--ink); }
+.reset-view h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  letter-spacing: -.022em;
+  font-weight: 650;
+  color: var(--ink);
+}
+.reset-view .card-sub { margin-bottom: 16px; }
+.field.compact { margin-bottom: 11px; }
+.field.compact .input { height: 42px; border-radius: 12px; }
+.field.compact > label { margin-bottom: 5px; }
+.field.compact .send-btn { height: 42px; border-radius: 12px; }
+.rule-hint {
+  margin-top: 5px;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+.reset-view .cta { margin-top: 7px; height: 46px; }
+.reset-msg { margin-top: 9px; }
+
+/* ============ service states ============ */
+.service-view { padding: 14px 2px 4px; text-align: center; }
+.service-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: 4px auto 15px;
+  border-radius: 18px;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.service-icon svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.service-view h2 {
+  margin: 0 0 7px;
+  font-size: 20px;
+  letter-spacing: -.02em;
+  font-weight: 650;
+  color: var(--ink);
+}
+.service-view p {
+  max-width: 285px;
+  margin: 0 auto 18px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.service-actions { display: flex; flex-direction: column; gap: 8px; }
+.service-actions .cta { height: 43px; margin-top: 0; font-size: 12px; }
+.service-actions .cta:disabled { opacity: .7; cursor: default; transform: none; }
+.ghost-btn {
+  width: 100%;
+  height: 43px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .16s;
+}
+.ghost-btn:hover { background: var(--field); }
+.service-region {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 13px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.service-region button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* ============ overlays & dialogs ============ */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(34, 27, 20, .34);
+  backdrop-filter: blur(7px);
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.overlay[hidden] { display: none; }
+.overlay.show { opacity: 1; }
+.dialog {
+  width: min(452px, 100%);
+  max-height: calc(100% - 20px);
+  padding: 24px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--card);
+  box-shadow: 0 34px 90px -24px rgba(24, 16, 8, .55);
+  transform: translateY(9px) scale(.985);
+  transition: transform .26s cubic-bezier(.2, .9, .3, 1);
+}
+.overlay.show .dialog { transform: none; }
+.dialog:focus, .dialog:focus-visible { outline: none; }
+.dialog.wide { width: 552px; }
+.dialog-head { display: flex; align-items: flex-start; gap: 12px; }
+.dialog-head-text { flex: 1; min-width: 0; }
+.dialog-eyebrow {
+  margin-bottom: 6px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.dialog-title {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+  font-weight: 650;
+  color: var(--ink);
+}
+.dialog-sub {
+  margin: 7px 0 0;
+  font-size: 11px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.dialog-close {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--field);
+  color: var(--muted);
+  cursor: pointer;
+}
+.dialog-close:hover { background: var(--line); color: var(--ink); }
+.dialog-close svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.dialog-body { margin-top: 16px; }
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+.btn-primary {
+  height: 42px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--btn);
+  color: var(--btn-ink);
+  font-size: 11.5px;
+  font-weight: 620;
+  cursor: pointer;
+  transition: transform .16s, opacity .16s;
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-primary[disabled] { opacity: .35; cursor: default; transform: none; }
+.btn-ghost {
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .16s;
+}
+.btn-ghost:hover { background: var(--field); }
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bullets li {
+  position: relative;
+  padding-left: 21px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.bullets li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 4.5px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+}
+.bullets li::after {
+  content: '';
+  position: absolute;
+  left: 5.5px;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.dialog-note {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 9.5px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+.region-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 17px 0 13px;
+}
+.region-option {
+  position: relative;
+  padding: 15px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  background: var(--field);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .16s, background .16s, transform .16s, box-shadow .16s;
+}
+.region-option:hover { border-color: var(--line-strong); }
+.region-option[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--card);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.region-option .mono {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  margin-bottom: 10px;
+  border-radius: 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .05em;
+}
+.mono.cn { background: linear-gradient(135deg, #FFD9C4, #FFC7D9); color: #7A3B2E; }
+.mono.gl { background: linear-gradient(135deg, #D8CCFF, #BFE4FF); color: #3C3A78; }
+.region-option b {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12.5px;
+  font-weight: 620;
+  color: var(--ink);
+}
+.region-option p {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.rec-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--card);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.firstrun-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 4px;
+}
+.firstrun-note {
+  flex: 1;
+  margin: 0;
+  font-size: 9.5px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+.diag-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.diag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 13px;
+  background: var(--field);
+  font-size: 10.5px;
+}
+.diag-row + .diag-row { border-top: 1px solid var(--line); }
+.diag-row dt { color: var(--muted); }
+.diag-row dd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.diag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+.diag-dot.bad { background: var(--danger); }
+.diag-dot.skip { background: var(--dim); }
+.diag-version {
+  margin: 13px 0 0;
+  font-size: 9.5px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+/* ============ success / toast ============ */
+.success-overlay { z-index: 45; background: rgba(244, 237, 226, .72); }
+[data-theme="dark"] .success-overlay { background: rgba(20, 17, 14, .72); }
+.success-card {
+  width: 330px;
+  padding: 30px 26px 23px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  transform: translateY(8px) scale(.98);
+  transition: transform .3s cubic-bezier(.2, .9, .3, 1);
+}
+.success-overlay.show .success-card { transform: none; }
+.success-badge {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #BFEBD5, #A9D6FF);
+  color: #1F4A38;
+  box-shadow: 0 10px 24px -12px rgba(47, 125, 91, .55);
+  animation: pop .45s cubic-bezier(.2, .9, .3, 1) both;
+}
+.success-badge svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.success-card h2 {
+  margin: 0 0 5px;
+  font-size: 21px;
+  letter-spacing: -.02em;
+  font-weight: 650;
+  color: var(--ink);
+}
+.success-card p {
+  margin: 0 0 18px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.success-card .btn-ghost { width: 100%; }
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 60;
+  max-width: 80%;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--win);
+  font-size: 10.5px;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .45);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  transition: opacity .2s, transform .2s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ============ design notes ============ */
+.notes {
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(70, 54, 38, .1);
+  border-radius: 18px;
+  background: rgba(255, 252, 246, .62);
+  backdrop-filter: blur(12px);
+}
+.notes summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 18px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #5E564C;
+  list-style: none;
+  cursor: pointer;
+}
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary::before {
+  content: '+';
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(42, 36, 29, .06);
+  font-size: 11px;
+}
+.notes[open] summary::before { content: '–'; }
+.notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 30px;
+  padding: 2px 20px 20px;
+}
+.notes h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 620;
+  color: #3E3933;
+}
+.notes p, .notes li {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.75;
+  color: #6F6961;
+}
+.notes ol, .notes ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding-left: 16px;
+}
+.notes code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(42, 36, 29, .06);
+  font-size: 9.5px;
+}
+
+/* ============ container adaptation ============ */
+@container (max-width: 1020px) {
+  .win-body { grid-template-columns: minmax(0, 1fr) 420px; }
+  .brand { padding-left: 36px; padding-right: 28px; }
+  .hero h1 { font-size: 30px; }
+  .feature-grid { max-width: 440px; }
+  .auth-col { padding-left: 24px; padding-right: 24px; }
+}
+@container (max-height: 665px) {
+  .brand { padding-top: 30px; padding-bottom: 20px; }
+  .hero { margin-top: 28px; }
+  .hero h1 { margin-bottom: 9px; font-size: 29px; }
+  .feature-grid { margin-top: 20px; gap: 10px 16px; }
+  .f-desc { display: none; }
+  .brand-foot { padding-top: 13px; }
+  .qr-img { width: 44px; height: 44px; }
+  .auth-card { padding-top: 18px; padding-bottom: 17px; }
+  .login-head h2 { margin-top: 13px; font-size: 21px; }
+  .tabs { margin-top: 14px; margin-bottom: 14px; }
+  .field { margin-bottom: 10px; }
+  .region-strip { padding-top: 7px; padding-bottom: 7px; }
+  .agree-wrap { margin-top: 12px; }
+}
+
+/* ============ motion ============ */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop {
+  0% { transform: scale(.72); opacity: 0; }
+  60% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-3px); }
+  40%, 60% { transform: translateX(3px); }
+}
+.shake { animation: shake .5s both; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="page-grain" aria-hidden="true"></div>
+
+<div class="review">
+  <header class="review-head">
+    <div>
+      <span class="eyebrow">KOCARD · Desktop</span>
+      <h1>登录页交互原型</h1>
+      <p>国内 / 国际双区域 · 自动识别 · 中英双语 · 浅色与深色</p>
+    </div>
+    <span class="review-badge">2026-10-26 · 草稿 v0.1</span>
+  </header>
+
+  <section class="harness" aria-label="原型控制台">
+    <div class="harness-row">
+      <label class="h-field scenario">
+        <span>场景</span>
+        <select id="scenarioSelect">
+          <optgroup label="主流程">
+            <option value="cn">国内 · 验证码登录</option>
+            <option value="global">国际 · English 邮箱</option>
+            <option value="cnEn">国内 · English</option>
+            <option value="globalZh">国际 · 中文</option>
+          </optgroup>
+          <optgroup label="首次启动">
+            <option value="firstCn">推荐中国大陆</option>
+            <option value="firstGlobal">推荐国际</option>
+            <option value="firstUnknown">无法识别地区</option>
+          </optgroup>
+          <optgroup label="边界与异常">
+            <option value="switchRegion">切换地区 · 二次确认</option>
+            <option value="crossRegion">账号属于其他地区</option>
+            <option value="noPassword">密码登录 · 未设密码</option>
+            <option value="agreement">协议未勾选</option>
+            <option value="reset">忘记密码 · 重置流程</option>
+            <option value="localDown">本地服务未启动</option>
+            <option value="remoteDown">服务器不可达</option>
+          </optgroup>
+          <optgroup label="预览">
+            <option value="dark">深色预览</option>
+          </optgroup>
+        </select>
+      </label>
+      <label class="h-field">
+        <span>地区识别模拟</span>
+        <select id="recognitionSelect">
+          <option value="auto">自动（语言 / 时区）</option>
+          <option value="cn">判定为中国大陆</option>
+          <option value="global">判定为国际</option>
+          <option value="unknown">识别失败</option>
+        </select>
+      </label>
+      <div class="h-field">
+        <span>主题</span>
+        <div class="seg" id="themeSeg" role="group" aria-label="主题">
+          <button type="button" data-value="light" aria-pressed="true">浅色</button>
+          <button type="button" data-value="dark" aria-pressed="false">深色</button>
+        </div>
+      </div>
+      <div class="h-field">
+        <span>界面语言</span>
+        <div class="seg" id="langSeg" role="group" aria-label="界面语言">
+          <button type="button" data-value="zh" aria-pressed="true">中文</button>
+          <button type="button" data-value="en" aria-pressed="false">English</button>
+        </div>
+      </div>
+      <button type="button" class="h-reset" id="resetBtn">重置</button>
+    </div>
+    <div class="harness-meta" id="recognitionHint"></div>
+  </section>
+
+  <div class="stage">
+    <div class="app-window" id="appWindow" data-theme="light" data-region="cn">
+      <div class="win-bar">
+        <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="win-title">KOCARD</div>
+        <div class="win-right">
+          <div class="lang-pill" role="group" aria-label="语言 / Language">
+            <button type="button" id="langZh" aria-pressed="true">中文</button>
+            <button type="button" id="langEn" aria-pressed="false">EN</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="win-body">
+        <section class="brand" aria-label="KOCARD 介绍">
+          <span class="blob a" aria-hidden="true"></span>
+          <span class="blob b" aria-hidden="true"></span>
+          <span class="blob c" aria-hidden="true"></span>
+          <span class="ring" aria-hidden="true"></span>
+          <div class="brand-inner">
+            <div class="brand-lockup">
+              <img src="assets/2026-10-26-desktop-login/kocard-icon-256.png" alt="" />
+              <span class="word">KOCARD</span>
+            </div>
+
+            <div class="hero">
+              <h1 id="brandHeadline"></h1>
+              <p id="brandSub"></p>
+            </div>
+
+            <div class="feature-grid">
+              <div class="feature">
+                <span class="f-icon" style="--tint:#C9B8FF;--tint-ink:#54449B">
+                  <svg viewBox="0 0 20 20"><rect x="7" y="2.5" width="10" height="12" rx="2.5"/><rect x="3" y="5.5" width="10" height="12" rx="2.5"/></svg>
+                </span>
+                <span class="f-copy"><b class="f-title" id="f1t"></b><span class="f-desc" id="f1d"></span></span>
+              </div>
+              <div class="feature">
+                <span class="f-icon" style="--tint:#FFC5A5;--tint-ink:#8A4A2C">
+                  <svg viewBox="0 0 20 20"><path d="M10 2.6 16 4.7v4.7c0 3.4-2.4 6.1-6 7.6-3.6-1.5-6-4.2-6-7.6V4.7l6-2.1Z"/><path d="m7.3 9.9 1.9 1.9 3.6-3.7"/></svg>
+                </span>
+                <span class="f-copy"><b class="f-title" id="f2t"></b><span class="f-desc" id="f2d"></span></span>
+              </div>
+              <div class="feature">
+                <span class="f-icon" style="--tint:#B5DDFF;--tint-ink:#2E5F85">
+                  <svg viewBox="0 0 20 20"><path d="M5.2 2.8h6l3.6 3.6v9.3a1.4 1.4 0 0 1-1.4 1.4H5.2a1.4 1.4 0 0 1-1.4-1.4V4.2a1.4 1.4 0 0 1 1.4-1.4Z"/><path d="M11 2.8v3.8h3.8M6.6 10.6h6.4M6.6 13.6h4.4"/></svg>
+                </span>
+                <span class="f-copy"><b class="f-title" id="f3t"></b><span class="f-desc" id="f3d"></span></span>
+              </div>
+              <div class="feature">
+                <span class="f-icon" style="--tint:#BFE9D2;--tint-ink:#2F6B50">
+                  <svg viewBox="0 0 20 20"><path d="M10 2.7a4.6 4.6 0 0 1 4.6 4.6c0 3.8 1.2 5 1.8 5.6H3.6c.6-.6 1.8-1.8 1.8-5.6A4.6 4.6 0 0 1 10 2.7Z"/><path d="M8.2 16.1a2 2 0 0 0 3.6 0"/></svg>
+                </span>
+                <span class="f-copy"><b class="f-title" id="f4t"></b><span class="f-desc" id="f4d"></span></span>
+              </div>
+            </div>
+
+            <div class="brand-foot">
+              <div class="community-label" id="communityLabel"></div>
+              <div id="communityBody"></div>
+              <div class="version" id="versionLine"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="auth-col" aria-label="登录">
+          <div class="auth-card" id="authCard">
+            <div id="loginView">
+              <button type="button" class="region-strip" id="regionStrip" aria-label="切换登录地区">
+                <span class="region-globe">
+                  <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M3.2 10h13.6M10 3c1.9 2 2.8 4.3 2.8 7S11.9 15 10 17M10 3C8.1 5 7.2 7.3 7.2 10S8.1 15 10 17"/></svg>
+                </span>
+                <span class="region-copy"><b id="regionName"></b><em id="regionHint"></em></span>
+                <span class="region-switch" id="regionSwitch"></span>
+              </button>
+
+              <div class="login-head">
+                <h2 id="welcome"></h2>
+                <p class="card-sub" id="cardSub"></p>
+              </div>
+
+              <div class="tabs" id="tabs" data-tab="code" role="tablist" aria-label="登录方式">
+                <span class="tab-glider" aria-hidden="true"></span>
+                <button type="button" class="tab" id="tabCode" role="tab" aria-selected="true" data-tab="code"></button>
+                <button type="button" class="tab" id="tabPassword" role="tab" aria-selected="false" data-tab="password"></button>
+              </div>
+
+              <form id="loginForm" novalidate>
+                <div class="field" id="accountField">
+                  <label for="account" id="accountLabel"></label>
+                  <input class="input" id="account" name="account" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" />
+                  <div class="field-msg" id="accountMsg" aria-live="polite"></div>
+                </div>
+
+                <div class="field" id="codeField">
+                  <label for="code" id="codeLabel"></label>
+                  <div class="code-row">
+                    <input class="input" id="code" name="code" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+                    <button type="button" class="send-btn" id="sendBtn"></button>
+                  </div>
+                  <div class="field-msg" id="codeMsg" aria-live="polite"></div>
+                </div>
+
+                <div class="field" id="passwordField" hidden>
+                  <div class="label-row">
+                    <label for="password" id="passwordLabel"></label>
+                    <button type="button" class="link-btn" id="forgotBtn"></button>
+                  </div>
+                  <div class="pw-row">
+                    <input class="input" id="password" name="password" type="password" autocomplete="current-password" />
+                    <button type="button" class="eye-btn" id="eyeBtn" aria-label="显示密码">
+                      <svg viewBox="0 0 20 20" id="eyeIcon"><path d="M2.3 10S5.2 4.9 10 4.9 17.7 10 17.7 10 14.8 15.1 10 15.1 2.3 10 2.3 10Z"/><circle cx="10" cy="10" r="2.6"/></svg>
+                    </button>
+                  </div>
+                  <div class="caps-hint" id="capsHint"></div>
+                  <div class="field-msg" id="passwordMsg" aria-live="polite"></div>
+                </div>
+
+                <button type="submit" class="cta" id="submitBtn">
+                  <span class="cta-label" id="submitLabel"></span>
+                  <span class="cta-spinner" aria-hidden="true"></span>
+                </button>
+
+                <div class="agree-wrap">
+                  <div class="agree" id="agreeRow">
+                    <label class="check">
+                      <input type="checkbox" id="agreeInput" />
+                      <span class="box" aria-hidden="true"></span>
+                    </label>
+                    <div class="agree-text" id="agreeText"></div>
+                  </div>
+                  <div class="field-msg" id="agreeMsg" aria-live="polite"></div>
+                </div>
+              </form>
+            </div>
+
+            <div class="reset-view" id="resetView" hidden>
+              <button type="button" class="back-btn" id="resetBack">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 2.5 4 6l3.5 3.5"/></svg>
+                <span id="resetBackLabel"></span>
+              </button>
+              <h2 id="resetTitle"></h2>
+              <p class="card-sub" id="resetSub"></p>
+              <form id="resetForm" novalidate>
+                <div class="field compact">
+                  <label for="resetAccount" id="resetAccountLabel"></label>
+                  <input class="input" id="resetAccount" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" />
+                </div>
+                <div class="field compact">
+                  <label for="resetCode" id="resetCodeLabel"></label>
+                  <div class="code-row">
+                    <input class="input" id="resetCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+                    <button type="button" class="send-btn" id="resetSend"></button>
+                  </div>
+                </div>
+                <div class="field compact">
+                  <label for="resetPwd" id="resetPwdLabel"></label>
+                  <input class="input" id="resetPwd" type="password" autocomplete="new-password" />
+                  <div class="rule-hint" id="resetRule"></div>
+                </div>
+                <div class="field compact">
+                  <label for="resetPwd2" id="resetPwd2Label"></label>
+                  <input class="input" id="resetPwd2" type="password" autocomplete="new-password" />
+                </div>
+                <div class="field-msg reset-msg" id="resetMsg" aria-live="polite"></div>
+                <button type="submit" class="cta" id="resetSubmit">
+                  <span class="cta-label" id="resetSubmitLabel"></span>
+                  <span class="cta-spinner" aria-hidden="true"></span>
+                </button>
+              </form>
+            </div>
+
+            <div class="service-view" id="serviceView" hidden>
+              <div class="service-icon" id="serviceIcon"></div>
+              <div class="service-region" id="serviceRegionRow" hidden>
+                <span id="serviceRegionText"></span>
+                <button type="button" id="serviceSwitchBtn"></button>
+              </div>
+              <h2 id="serviceTitle"></h2>
+              <p id="serviceBody"></p>
+              <div class="service-actions">
+                <button type="button" class="cta" id="serviceRetry"><span id="serviceRetryLabel"></span></button>
+                <button type="button" class="ghost-btn" id="serviceDiagBtn"></button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="overlay" id="modalLayer" hidden></div>
+      <div class="overlay" id="firstRunLayer" hidden></div>
+      <div class="overlay success-overlay" id="successLayer" hidden></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <details class="notes">
+    <summary>设计说明 · 6 条决策、覆盖状态与依赖</summary>
+    <div class="notes-grid">
+      <div>
+        <h3>已按确认的 6 条落地</h3>
+        <ol>
+          <li>地区默认自动识别；原型用系统语言和时区模拟，首次启动只做一次推荐确认，之后记住选择。</li>
+          <li>海外只有邮箱，不显示手机号入口。</li>
+          <li>不做第三方登录。</li>
+          <li>协议是勾选框，默认不勾；未勾时按钮仍可点，点击后行内提示。</li>
+          <li>登录后不能切区，必须退出登录才能换区。</li>
+          <li>语言作用于全应用；本原型只覆盖登录页，正式产品由全局 i18n 承接。</li>
+        </ol>
+      </div>
+      <div>
+        <h3>原型覆盖的状态</h3>
+        <p>国内 / 国际、中英双语、首启识别（成功 / 失败）、手动切换、账号跨区、验证码 / 密码、未设密码、协议未勾、60 秒重发、重置密码、服务未启动 / 不可达、诊断弹窗、浅色 / 深色。</p>
+      </div>
+      <div>
+        <h3>需要工程配合的外部依赖</h3>
+        <ul>
+          <li>后端要返回“账号属于另一地区”的独立错误码，否则跨区一键切换做不了。</li>
+          <li>IP 归属地服务 + 全应用 i18n（当前 Rust 侧 Accept-Language 写死 zh-Hans）。</li>
+          <li>国内 / 国际两套协议链接，以及海外的帮助中心与社群内容。</li>
+        </ul>
+      </div>
+      <div>
+        <h3>演示提示</h3>
+        <p>跨区演示账号 <code>demo-global@kocard.net</code>（在国内版输入）；未设密码演示 <code>nopwd@kocard.net</code>；验证码任意 6 位数字。首启确认是原型里额外加的一层保险，防止 IP 误判直接选错区；如果要完全无感，可以去掉，只保留切换入口。</p>
+      </div>
+    </div>
+  </details>
+</div>
+<script>
+(function () {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const appWindow = $('appWindow');
+
+  const QR_CONTACT = 'assets/2026-10-26-desktop-login/login_contactUs.png';
+  const QR_GROUP = 'assets/2026-10-26-desktop-login/login_addGroup.png';
+
+  const X_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+  const ICON_POWER = '<svg viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.4 6.4a8 8 0 1 0 11.2 0"/></svg>';
+  const ICON_CLOUD_OFF = '<svg viewBox="0 0 24 24"><path d="M6.5 17.5h10a4 4 0 0 0 .9-7.9A6 6 0 0 0 7.2 7.8"/><path d="M5.6 5.6 18.4 18.4"/><path d="M6.5 17.5a4 4 0 0 1-1.3-7.8"/></svg>';
+  const ICON_CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
+  const state = {
+    lang: 'zh',
+    theme: 'light',
+    region: 'cn',
+    regionSource: 'auto',
+    recognition: 'auto',
+    tab: 'code',
+    account: '',
+    code: '',
+    password: '',
+    agreed: false,
+    view: 'login',
+    service: 'ok',
+    retrying: false,
+    fields: {},
+    resetMsg: '',
+    countdown: 0,
+    caps: false,
+    submitting: false,
+    modal: null,
+    switchTarget: null,
+    crossRegion: null,
+    onboarding: false,
+    pick: null,
+    success: false,
+    toastTimer: null,
+    cdTimer: null,
+    demoTimer: null,
+    modalTimer: null,
+    firstTimer: null
+  };
+
+  /* ================= copy ================= */
+  const ZH = {
+    brandHeadline: '把卡里的每一份素材，\n安全落到硬盘',
+    brandSub: 'KOCARD 为影像工作者做拷卡、校验、报告和通知。',
+    f1t: '多重备份', f1d: '同一张卡同时写入多个磁盘',
+    f2t: '文件校验', f2d: '哈希校验，确认每次拷贝完整',
+    f3t: '导出报告', f3d: '多任务筛选后一键导出',
+    f4t: '通知推送', f4d: '完成结果推送到手机和邮箱',
+    communityLabel: '需要帮助？',
+    wechat: '微信公众号', wechatSub: '扫码获取使用帮助',
+    group: '加入社群', groupSub: '和同行一起交流',
+    helpCenter: '帮助中心', helpCenterSub: '常见问题与使用指南',
+    globalCommunity: '社群与支持', globalCommunitySub: '即将开放',
+    pending: '待配置',
+    version: 'KOCARD Desktop',
+    regionStripAria: '切换登录地区：{region}',
+    welcome: '欢迎登录 KOCARD',
+    autoDetected: '自动识别',
+    manualSet: '手动选择',
+    switchRegion: '切换',
+    forgot: '忘记密码？',
+    passwordLabel: '密码',
+    send: '获取验证码',
+    resend: (n) => n + ' 秒后重发',
+    codeSent: '验证码已发送',
+    errAccountRequired: '请先输入账号',
+    errEmailRequired: '请输入邮箱地址',
+    errEmail: '请输入有效的邮箱地址',
+    errAccount: '请输入手机号或邮箱',
+    errCode: '请输入 6 位验证码',
+    errPassword: '请输入密码',
+    errNoPassword: '这个账号还没有设置密码。',
+    useCode: '改用验证码登录',
+    errAgree: '请先阅读并同意协议',
+    capsOn: '大写锁定已开启',
+    localDownTitle: '本地服务没有启动',
+    localDownBody: 'KOCARD 需要本机的备份服务配合才能登录。请先打开 KOCARD 主程序，然后再试一次。',
+    remoteDownTitle: '连不上服务器',
+    remoteDownBody: '本地服务已就绪，但暂时连不上 KOCARD 服务器。检查网络，或稍后再试。',
+    retry: '重试',
+    retrying: '正在重试…',
+    connectionRestored: '连接已恢复',
+    diagnostics: '查看诊断',
+    switchToOther: '切换地区',
+    serviceRegion: '连接地区：',
+    diagEyebrow: '问题排查',
+    diagTitle: '连接诊断',
+    diagSub: '下面这些信息可以帮助我们定位问题。',
+    diagLocal: '本地服务', diagRemote: 'KOCARD 服务器',
+    diagRegion: '登录地区', diagLang: '界面语言', diagVersion: '客户端版本',
+    diagOk: '正常', diagLocalFail: '未启动', diagRemoteFail: '连接超时', diagSkip: '已跳过',
+    diagCopy: '复制诊断信息', diagCopied: '诊断信息已复制',
+    copyDenied: '浏览器不允许读取剪贴板',
+    close: '关闭',
+    successTitle: '登录成功',
+    successBody: '正在准备你的工作台…',
+    successBack: '返回登录页',
+    cancel: '取消',
+    switchConfirm: '确认切换',
+    switchNote: '已填写的账号会保留，验证码、密码和协议勾选会清空。',
+    crossConfirm: '切换地区',
+    firstEyebrow: '首次启动',
+    firstTitle: '先确认你在哪个地区',
+    firstSub: '地区决定你连接哪台服务器、使用哪个账号体系。登录前可以切换，登录后需要先退出登录。',
+    firstCn: '中国大陆', firstCnDesc: '手机号或邮箱登录，连接中国大陆服务器。',
+    firstGlobal: '国际版', firstGlobalDesc: '邮箱登录，连接国际服务器。',
+    recommended: '推荐',
+    firstUnknown: '识别不到你的位置，请手动选择一个地区。',
+    firstNote: '根据网络位置和设备语言给出建议，不会自动锁定。',
+    firstConfirm: '确认并继续',
+    regionChosen: '已选择{region}',
+    regionSwitched: '已切换到{region}',
+    switchEyebrow: '切换地区',
+    switchB1: '会连接到另一套服务器。',
+    switchB2: '账号、会员和订单不跨地区。',
+    switchB3: '登录后不能换区，需要先退出登录。',
+    crossEyebrow: '地区不一致',
+    crossTitle: '这个账号属于{region}',
+    crossBody: '你当前在{current}。账号会保留；切换到{region}后，重新获取验证码就能登录，不需要重新注册。',
+    resetEyebrow: '找回密码',
+    resetTitle: '重置密码',
+    resetSub: '验证码会发送到账号绑定的手机号或邮箱。',
+    resetAccount: '账号', resetCode: '验证码',
+    resetPwd: '新密码', resetPwd2: '确认新密码',
+    resetBack: '返回登录',
+    resetRule: '6–18 位，需同时包含数字和字母',
+    resetErrAccount: '请先输入账号',
+    resetErrCode: '请输入 6 位验证码',
+    resetErrPwd: '密码需为 6–18 位，且同时包含数字和字母',
+    resetErrMatch: '两次输入的密码不一致',
+    resetDone: '密码已重置，请用新密码登录',
+    showPwd: '显示密码',
+    hidePwd: '隐藏密码'
+  };
+
+  const EN = {
+    brandHeadline: 'Every frame,\nsafely on disk',
+    brandSub: 'KOCARD handles copy, verification, reports and alerts for image makers.',
+    f1t: 'Multi-destination', f1d: 'One card, several disks at once',
+    f2t: 'Hash verification', f2d: 'Prove every copy is complete',
+    f3t: 'Report export', f3d: 'Filter jobs, export in one click',
+    f4t: 'Instant alerts', f4d: 'Results to your phone and inbox',
+    communityLabel: 'Need a hand?',
+    wechat: 'WeChat account', wechatSub: 'Scan for help',
+    group: 'Community', groupSub: 'Talk with other shooters',
+    helpCenter: 'Help center', helpCenterSub: 'Guides and common questions',
+    globalCommunity: 'Community & support', globalCommunitySub: 'Coming soon',
+    pending: 'To be set up',
+    version: 'KOCARD Desktop',
+    regionStripAria: 'Switch region: {region}',
+    welcome: 'Welcome to KOCARD',
+    autoDetected: 'Auto-detected',
+    manualSet: 'Manually set',
+    switchRegion: 'Switch',
+    forgot: 'Forgot password?',
+    passwordLabel: 'Password',
+    send: 'Send code',
+    resend: (n) => 'Resend in ' + n + 's',
+    codeSent: 'Code sent',
+    errAccountRequired: 'Enter your account first',
+    errEmailRequired: 'Enter your email address',
+    errEmail: 'Enter a valid email address',
+    errAccount: 'Enter a phone number or email',
+    errCode: 'Enter the 6-digit code',
+    errPassword: 'Enter your password',
+    errNoPassword: 'This account has no password yet.',
+    useCode: 'Use a code instead',
+    errAgree: 'Please read and accept the terms first',
+    capsOn: 'Caps Lock is on',
+    localDownTitle: 'Local service isn’t running',
+    localDownBody: 'KOCARD needs its local backup service to sign in. Open the KOCARD app, then try again.',
+    remoteDownTitle: 'Can’t reach the server',
+    remoteDownBody: 'The local service is ready, but the KOCARD server can’t be reached. Check your network or try again later.',
+    retry: 'Try again',
+    retrying: 'Trying…',
+    connectionRestored: 'Connection restored',
+    diagnostics: 'Run diagnostics',
+    switchToOther: 'Switch region',
+    serviceRegion: 'Region: ',
+    diagEyebrow: 'Troubleshooting',
+    diagTitle: 'Connection check',
+    diagSub: 'These details help us find the problem.',
+    diagLocal: 'Local service', diagRemote: 'KOCARD server',
+    diagRegion: 'Region', diagLang: 'Language', diagVersion: 'Client version',
+    diagOk: 'OK', diagLocalFail: 'Not running', diagRemoteFail: 'Timed out', diagSkip: 'Skipped',
+    diagCopy: 'Copy details', diagCopied: 'Diagnostics copied',
+    copyDenied: 'Clipboard access was blocked',
+    close: 'Close',
+    successTitle: 'You’re in',
+    successBody: 'Setting up your workspace…',
+    successBack: 'Back to sign in',
+    cancel: 'Cancel',
+    switchConfirm: 'Switch region',
+    switchNote: 'Your account input is kept. The code, password and consent are cleared.',
+    crossConfirm: 'Switch region',
+    firstEyebrow: 'First launch',
+    firstTitle: 'Where are you signing in from?',
+    firstSub: 'Your region sets which server and account system you use. You can switch before signing in; after that, sign out first.',
+    firstCn: 'Mainland China', firstCnDesc: 'Phone or email, on the Mainland China service.',
+    firstGlobal: 'Global', firstGlobalDesc: 'Email only, on the international service.',
+    recommended: 'Suggested',
+    firstUnknown: 'We couldn’t tell your location. Pick a region to continue.',
+    firstNote: 'Suggested from your network location and device language. Nothing is locked in.',
+    firstConfirm: 'Continue',
+    regionChosen: '{region} selected',
+    regionSwitched: 'Switched to {region}',
+    switchEyebrow: 'Switch region',
+    switchB1: 'You’ll connect to a different server.',
+    switchB2: 'Accounts, memberships and orders don’t carry over.',
+    switchB3: 'After signing in, you must sign out before switching.',
+    crossEyebrow: 'Region mismatch',
+    crossTitle: 'This account belongs to {region}',
+    crossBody: 'You’re currently on {current}. The account is kept — switch to {region}, request a new code and sign in. No need to register again.',
+    resetEyebrow: 'Account recovery',
+    resetTitle: 'Reset password',
+    resetSub: 'We’ll send a code to the phone or email on the account.',
+    resetAccount: 'Account', resetCode: 'Verification code',
+    resetPwd: 'New password', resetPwd2: 'Confirm new password',
+    resetBack: 'Back to sign in',
+    resetRule: '6–18 characters, with both letters and numbers',
+    resetErrAccount: 'Enter your account first',
+    resetErrCode: 'Enter the 6-digit code',
+    resetErrPwd: 'Use 6–18 characters with both letters and numbers',
+    resetErrMatch: 'The two passwords don’t match',
+    resetDone: 'Password reset. Sign in with your new password.',
+    showPwd: 'Show password',
+    hidePwd: 'Hide password'
+  };
+
+  const REGION_COPY = {
+    cn: {
+      zh: {
+        regionName: '中国大陆', cardSub: '登录或注册后，即可开始备份。',
+        tabCode: '验证码登录', tabPassword: '密码登录',
+        accountLabel: '账号', accountPh: '手机号或邮箱',
+        codeLabel: '验证码', codePh: '请输入验证码',
+        cta: '登录 / 注册',
+        resetSub: '验证码会发送到账号绑定的手机号或邮箱。',
+        agreedA: '《用户协议》', agreedB: '《隐私政策》',
+        linkA: 'https://www.kocard.net/KocardUserAgreement_cn.html',
+        linkB: 'https://www.kocard.net/KocardPrivacyPolicy_cn.html'
+      },
+      en: {
+        regionName: 'Mainland China', cardSub: 'Sign in or create an account to start backing up.',
+        tabCode: 'Verification code', tabPassword: 'Password',
+        accountLabel: 'Account', accountPh: 'Phone or email',
+        codeLabel: 'Verification code', codePh: 'Enter the 6-digit code',
+        cta: 'Sign in / Sign up',
+        resetSub: 'We’ll send a code to the phone or email on the account.',
+        agreedA: 'Terms of Service', agreedB: 'Privacy Policy',
+        linkA: 'https://www.kocard.net/KocardUserAgreement_cn.html',
+        linkB: 'https://www.kocard.net/KocardPrivacyPolicy_cn.html'
+      }
+    },
+    global: {
+      zh: {
+        regionName: '国际版', cardSub: '首次登录会自动创建账号。',
+        tabCode: '邮箱验证码', tabPassword: '密码登录',
+        accountLabel: '邮箱', accountPh: '请输入邮箱',
+        codeLabel: '验证码', codePh: '请输入邮箱验证码',
+        cta: '登录',
+        resetSub: '验证码会发送到你的邮箱。',
+        agreedA: '《服务条款》', agreedB: '《隐私政策》',
+        linkA: 'https://www.kocard.net/KocardUserAgreement.html',
+        linkB: 'https://www.kocard.net/KocardPrivacyPolicy.html'
+      },
+      en: {
+        regionName: 'Global', cardSub: 'A new account is created on first sign-in.',
+        tabCode: 'Email code', tabPassword: 'Password',
+        accountLabel: 'Email', accountPh: 'you@example.com',
+        codeLabel: 'Verification code', codePh: 'Enter the 6-digit code',
+        cta: 'Sign in',
+        resetSub: 'We’ll send a code to your email.',
+        agreedA: 'Terms of Service', agreedB: 'Privacy Policy',
+        linkA: 'https://www.kocard.net/KocardUserAgreement.html',
+        linkB: 'https://www.kocard.net/KocardPrivacyPolicy.html'
+      }
+    }
+  };
+
+  function agreeHtml(reg, zh) {
+    const pre = zh ? '我已阅读并同意' : 'I have read and agree to the ';
+    const mid = zh ? '和' : ' and ';
+    const post = zh ? '' : '.';
+    const a = '<a href="' + reg.linkA + '" target="_blank" rel="noopener">' + reg.agreedA + '</a>';
+    const b = '<a href="' + reg.linkB + '" target="_blank" rel="noopener">' + reg.agreedB + '</a>';
+    return pre + a + mid + b + post;
+  }
+
+  function getCopy() {
+    const zh = state.lang === 'zh';
+    const base = zh ? ZH : EN;
+    const reg = REGION_COPY[state.region][state.lang];
+    return Object.assign({}, base, reg, { agreeHtml: agreeHtml(reg, zh) });
+  }
+
+  function regionName(region, lang) {
+    return REGION_COPY[region][lang || state.lang].regionName;
+  }
+
+  /* ================= detection ================= */
+  function detect() {
+    if (state.recognition === 'cn') return { region: 'cn', reason: 'sim' };
+    if (state.recognition === 'global') return { region: 'global', reason: 'sim' };
+    if (state.recognition === 'unknown') return { region: null, reason: 'none' };
+    const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+    const lang = (navigator.language || '').toLowerCase();
+    if (tz === 'Asia/Shanghai' || tz === 'Asia/Chongqing' || tz === 'Asia/Urumqi' || lang.indexOf('zh-cn') === 0) {
+      return { region: 'cn', reason: 'signal' };
+    }
+    if (tz || lang) return { region: 'global', reason: 'signal' };
+    return { region: null, reason: 'none' };
+  }
+
+  function renderRecognitionHint() {
+    const zh = state.lang === 'zh';
+    const d = detect();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '—';
+    const lang = navigator.language || '—';
+    let text;
+    if (!d.region) {
+      text = zh
+        ? '识别失败：首启页会要求手动选择地区（正式产品用 IP + 系统语言判断）。'
+        : 'No match: the first-run screen asks the user to pick a region (IP + system language in production).';
+    } else {
+      const name = regionName(d.region);
+      const by = d.reason === 'sim'
+        ? (zh ? '手动模拟' : 'manual simulation')
+        : (zh ? '时区 ' + tz + ' · 语言 ' + lang : 'timezone ' + tz + ' · language ' + lang);
+      text = zh
+        ? '推荐：' + name + '（依据：' + by + '）。只影响首启推荐，不改变当前地区。'
+        : 'Suggested: ' + name + ' (' + by + '). Affects first-run only; current region stays as is.';
+    }
+    $('recognitionHint').textContent = text;
+  }
+
+  /* ================= render ================= */
+  function renderAll() {
+    appWindow.dataset.theme = state.theme;
+    appWindow.dataset.region = state.region;
+    appWindow.dataset.lang = state.lang;
+    renderCopy();
+    renderChrome();
+    renderCommunity();
+    renderTabs();
+    renderFields();
+    renderView();
+    renderServiceView();
+    renderModal();
+    renderFirstRun();
+    renderSuccess();
+    renderHarness();
+    renderRecognitionHint();
+    renderCountdown();
+    syncInputs();
+  }
+
+  function renderCopy() {
+    const c = getCopy();
+    $('brandHeadline').textContent = c.brandHeadline;
+    $('brandSub').textContent = c.brandSub;
+    $('f1t').textContent = c.f1t; $('f1d').textContent = c.f1d;
+    $('f2t').textContent = c.f2t; $('f2d').textContent = c.f2d;
+    $('f3t').textContent = c.f3t; $('f3d').textContent = c.f3d;
+    $('f4t').textContent = c.f4t; $('f4d').textContent = c.f4d;
+    $('welcome').textContent = c.welcome;
+    $('cardSub').textContent = c.cardSub;
+    $('accountLabel').textContent = c.accountLabel;
+    $('account').placeholder = c.accountPh;
+    $('codeLabel').textContent = c.codeLabel;
+    $('code').placeholder = c.codePh;
+    $('passwordLabel').textContent = c.passwordLabel;
+    $('password').placeholder = c.passwordLabel;
+    $('forgotBtn').textContent = c.forgot;
+    $('submitLabel').textContent = c.cta;
+    $('agreeText').innerHTML = c.agreeHtml;
+    $('capsHint').textContent = c.capsOn;
+    $('eyeBtn').setAttribute('aria-label', $('password').type === 'password' ? c.showPwd : c.hidePwd);
+    $('tabCode').textContent = c.tabCode;
+    $('tabPassword').textContent = c.tabPassword;
+    $('regionSwitch').textContent = c.switchRegion;
+    $('versionLine').textContent = c.version;
+    $('resetBackLabel').textContent = c.resetBack;
+    $('resetTitle').textContent = c.resetTitle;
+    $('resetSub').textContent = c.resetSub;
+    $('resetAccountLabel').textContent = c.resetAccount;
+    $('resetCodeLabel').textContent = c.resetCode;
+    $('resetPwdLabel').textContent = c.resetPwd;
+    $('resetPwd2Label').textContent = c.resetPwd2;
+    $('resetRule').textContent = c.resetRule;
+    $('resetSubmitLabel').textContent = c.resetTitle;
+    $('serviceDiagBtn').textContent = c.diagnostics;
+    $('serviceRetryLabel').textContent = state.retrying ? c.retrying : c.retry;
+    $('account').setAttribute('inputmode', state.region === 'global' ? 'email' : 'text');
+    $('resetAccount').setAttribute('inputmode', state.region === 'global' ? 'email' : 'text');
+  }
+
+  function renderChrome() {
+    const c = getCopy();
+    $('regionName').textContent = c.regionName;
+    $('regionHint').textContent = state.regionSource === 'auto' ? c.autoDetected : c.manualSet;
+    $('regionStrip').setAttribute('aria-label', c.regionStripAria.replace('{region}', c.regionName));
+    $('regionSwitch').textContent = c.switchRegion;
+    $('langZh').setAttribute('aria-pressed', String(state.lang === 'zh'));
+    $('langEn').setAttribute('aria-pressed', String(state.lang === 'en'));
+    $('langZh').setAttribute('aria-label', '简体中文');
+    $('langEn').setAttribute('aria-label', 'English');
+  }
+
+  function renderCommunity() {
+    const c = getCopy();
+    $('communityLabel').textContent = c.communityLabel;
+    $('versionLine').textContent = c.version;
+    const host = $('communityBody');
+    if (state.region === 'cn') {
+      host.innerHTML = '<div class="qr-row">' +
+        '<div class="qr-card"><img class="qr-img" src="' + QR_CONTACT + '" alt="" /><div class="qr-text"><b>' + c.wechat + '</b><span>' + c.wechatSub + '</span></div></div>' +
+        '<div class="qr-card"><img class="qr-img" src="' + QR_GROUP + '" alt="" /><div class="qr-text"><b>' + c.group + '</b><span>' + c.groupSub + '</span></div></div>' +
+        '</div>';
+    } else {
+      host.innerHTML = '<div class="help-row">' +
+        '<div class="help-card"><span class="help-icon"><svg viewBox="0 0 20 20"><path d="M4 4.5h9.3A2.7 2.7 0 0 1 16 7.2v8.3H6.7A2.7 2.7 0 0 1 4 12.8V4.5Z"/><path d="M6.8 8h6M6.8 11h4.2"/></svg></span><span class="help-text"><b>' + c.helpCenter + '<span class="pending-tag">' + c.pending + '</span></b><span>' + c.helpCenterSub + '</span></span></div>' +
+        '<div class="help-card"><span class="help-icon"><svg viewBox="0 0 20 20"><path d="M3.5 5.2h13v7.6H8.4L4.6 16v-3.2h-1.1V5.2Z"/></svg></span><span class="help-text"><b>' + c.globalCommunity + '<span class="pending-tag">' + c.pending + '</span></b><span>' + c.globalCommunitySub + '</span></span></div>' +
+        '</div>';
+    }
+  }
+
+  function renderTabs() {
+    $('tabs').dataset.tab = state.tab;
+    $('tabCode').setAttribute('aria-selected', String(state.tab === 'code'));
+    $('tabPassword').setAttribute('aria-selected', String(state.tab === 'password'));
+    $('codeField').hidden = state.tab !== 'code';
+    $('passwordField').hidden = state.tab !== 'password';
+  }
+
+  function setMsg(id, text) {
+    const el = $(id);
+    if (!el) return;
+    el.textContent = text || '';
+    el.classList.toggle('show', !!text);
+  }
+
+  function renderFields() {
+    const c = getCopy();
+    const f = state.fields || {};
+    $('accountField').classList.toggle('invalid', !!f.account);
+    setMsg('accountMsg', f.account);
+    $('codeField').classList.toggle('invalid', !!f.code);
+    setMsg('codeMsg', f.code);
+    $('passwordField').classList.toggle('invalid', !!f.password);
+    if (f.password === 'noPassword') {
+      $('passwordMsg').innerHTML = '<span>' + c.errNoPassword + '</span> <button type="button" class="inline-link" data-act="use-code">' + c.useCode + '</button>';
+      $('passwordMsg').classList.add('show');
+    } else {
+      setMsg('passwordMsg', f.password);
+    }
+    $('agreeRow').classList.toggle('invalid', !!f.agreement);
+    setMsg('agreeMsg', f.agreement);
+    $('capsHint').classList.toggle('show', !!state.caps && state.tab === 'password');
+    $('submitBtn').classList.toggle('loading', !!state.submitting);
+    $('submitBtn').disabled = !!state.submitting;
+    $('resetSubmit').disabled = !!state.submitting;
+  }
+
+  function renderView() {
+    const serviceOk = state.service === 'ok';
+    $('loginView').hidden = !serviceOk || state.view !== 'login';
+    $('resetView').hidden = !serviceOk || state.view !== 'reset';
+    $('serviceView').hidden = serviceOk;
+  }
+
+  function renderServiceView() {
+    if (state.service === 'ok') {
+      $('serviceView').hidden = true;
+      return;
+    }
+    const c = getCopy();
+    const local = state.service === 'localDown';
+    $('serviceIcon').innerHTML = local ? ICON_POWER : ICON_CLOUD_OFF;
+    $('serviceTitle').textContent = local ? c.localDownTitle : c.remoteDownTitle;
+    $('serviceBody').textContent = local ? c.localDownBody : c.remoteDownBody;
+    $('serviceRegionRow').hidden = local;
+    if (!local) {
+      $('serviceRegionText').textContent = c.serviceRegion + c.regionName;
+      $('serviceSwitchBtn').textContent = c.switchToOther;
+    }
+    $('serviceRetryLabel').textContent = state.retrying ? c.retrying : c.retry;
+    $('serviceRetry').disabled = !!state.retrying;
+    $('serviceDiagBtn').textContent = c.diagnostics;
+  }
+
+  function renderCountdown() {
+    const c = getCopy();
+    const label = state.countdown > 0 ? c.resend(state.countdown) : c.send;
+    $('sendBtn').textContent = label;
+    $('sendBtn').disabled = state.countdown > 0;
+    $('resetSend').textContent = state.countdown > 0 ? c.resend(state.countdown) : c.send;
+    $('resetSend').disabled = state.countdown > 0;
+  }
+
+  function renderHarness() {
+    document.querySelectorAll('#themeSeg button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.value === state.theme));
+    });
+    document.querySelectorAll('#langSeg button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.value === state.lang));
+    });
+    $('recognitionSelect').value = state.recognition;
+  }
+
+  function syncInputs() {
+    const set = function (id, value) {
+      const el = $(id);
+      if (el.value !== value) el.value = value;
+    };
+    set('account', state.account);
+    set('code', state.code);
+    set('password', state.password);
+    $('agreeInput').checked = !!state.agreed;
+  }
+
+  /* ================= overlays ================= */
+  let lastModal = null;
+  let lastFirst = null;
+  let successHideTimer = null;
+
+  function renderModal() {
+    const layer = $('modalLayer');
+    if (!state.modal) {
+      lastModal = null;
+      layer.classList.remove('show');
+      if (!layer.hidden) {
+        clearTimeout(state.modalTimer);
+        state.modalTimer = setTimeout(function () {
+          if (!state.modal) {
+            layer.hidden = true;
+            layer.innerHTML = '';
+          }
+        }, 200);
+      }
+      return;
+    }
+    clearTimeout(state.modalTimer);
+    layer.hidden = false;
+    const c = getCopy();
+    let html = '';
+
+    if (state.modal === 'switch') {
+      const target = state.switchTarget || (state.region === 'cn' ? 'global' : 'cn');
+      const targetName = regionName(target);
+      const title = state.lang === 'zh'
+        ? '切换到' + targetName + '？'
+        : 'Switch to ' + targetName + '?';
+      html = '<div class="dialog" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="dlgTitle">' +
+        '<div class="dialog-head"><div class="dialog-head-text">' +
+        '<div class="dialog-eyebrow">' + c.switchEyebrow + '</div>' +
+        '<h2 class="dialog-title" id="dlgTitle">' + title + '</h2>' +
+        '</div><button type="button" class="dialog-close" data-act="close" aria-label="' + c.close + '">' + X_SVG + '</button></div>' +
+        '<div class="dialog-body"><ul class="bullets">' +
+        '<li>' + c.switchB1 + '</li><li>' + c.switchB2 + '</li><li>' + c.switchB3 + '</li>' +
+        '</ul><p class="dialog-note">' + c.switchNote + '</p></div>' +
+        '<div class="dialog-actions">' +
+        '<button type="button" class="btn-ghost" data-act="close">' + c.cancel + '</button>' +
+        '<button type="button" class="btn-primary" data-act="switch-confirm">' + c.switchConfirm + '</button>' +
+        '</div></div>';
+    }
+
+    if (state.modal === 'cross') {
+      const target = state.crossRegion || 'global';
+      const targetName = regionName(target);
+      const currentName = regionName(state.region);
+      const title = c.crossTitle.replace('{region}', targetName);
+      const body = c.crossBody.replace('{region}', targetName).replace('{current}', currentName);
+      html = '<div class="dialog" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="dlgTitle">' +
+        '<div class="dialog-head"><div class="dialog-head-text">' +
+        '<div class="dialog-eyebrow">' + c.crossEyebrow + '</div>' +
+        '<h2 class="dialog-title" id="dlgTitle">' + title + '</h2>' +
+        '<p class="dialog-sub">' + body + '</p>' +
+        '</div><button type="button" class="dialog-close" data-act="close" aria-label="' + c.close + '">' + X_SVG + '</button></div>' +
+        '<div class="dialog-actions">' +
+        '<button type="button" class="btn-ghost" data-act="close">' + c.cancel + '</button>' +
+        '<button type="button" class="btn-primary" data-act="cross-confirm">' + c.crossConfirm + '</button>' +
+        '</div></div>';
+    }
+
+    if (state.modal === 'diag') {
+      const rows = diagRows();
+      const items = rows.map(function (r) {
+        return '<div class="diag-row"><dt>' + r.label + '</dt><dd><span class="diag-dot ' + r.cls + '"></span>' + r.value + '</dd></div>';
+      }).join('');
+      html = '<div class="dialog" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="dlgTitle">' +
+        '<div class="dialog-head"><div class="dialog-head-text">' +
+        '<div class="dialog-eyebrow">' + c.diagEyebrow + '</div>' +
+        '<h2 class="dialog-title" id="dlgTitle">' + c.diagTitle + '</h2>' +
+        '<p class="dialog-sub">' + c.diagSub + '</p>' +
+        '</div><button type="button" class="dialog-close" data-act="close" aria-label="' + c.close + '">' + X_SVG + '</button></div>' +
+        '<div class="dialog-body"><dl class="diag-list">' + items + '</dl></div>' +
+        '<div class="dialog-actions">' +
+        '<button type="button" class="btn-ghost" data-act="diag-copy">' + c.diagCopy + '</button>' +
+        '<button type="button" class="btn-primary" data-act="close">' + c.close + '</button>' +
+        '</div></div>';
+    }
+
+    layer.innerHTML = html;
+    requestAnimationFrame(function () { layer.classList.add('show'); });
+    if (lastModal !== state.modal) {
+      lastModal = state.modal;
+      requestAnimationFrame(function () {
+        const focusEl = layer.querySelector('.dialog');
+        if (focusEl) focusEl.focus();
+      });
+    }
+  }
+
+  function diagRows() {
+    const c = getCopy();
+    const localOk = state.service !== 'localDown';
+    const remoteOk = state.service === 'ok';
+    return [
+      { label: c.diagLocal, value: localOk ? c.diagOk : c.diagLocalFail, cls: localOk ? '' : 'bad' },
+      { label: c.diagRemote, value: !localOk ? c.diagSkip : (remoteOk ? c.diagOk : c.diagRemoteFail), cls: !localOk ? 'skip' : (remoteOk ? '' : 'bad') },
+      { label: c.diagRegion, value: c.regionName, cls: '' },
+      { label: c.diagLang, value: state.lang === 'zh' ? '简体中文' : 'English', cls: '' },
+      { label: c.diagVersion, value: 'KOCARD Desktop', cls: '' }
+    ];
+  }
+
+  function renderFirstRun() {
+    const layer = $('firstRunLayer');
+    if (!state.onboarding) {
+      lastFirst = null;
+      layer.classList.remove('show');
+      if (!layer.hidden) {
+        clearTimeout(state.firstTimer);
+        state.firstTimer = setTimeout(function () {
+          if (!state.onboarding) {
+            layer.hidden = true;
+            layer.innerHTML = '';
+          }
+        }, 200);
+      }
+      return;
+    }
+    clearTimeout(state.firstTimer);
+    layer.hidden = false;
+    const c = getCopy();
+    const d = detect();
+    const rec = d.region;
+    const opts = [
+      { key: 'cn', mono: 'CN', name: c.firstCn, desc: c.firstCnDesc },
+      { key: 'global', mono: 'GL', name: c.firstGlobal, desc: c.firstGlobalDesc }
+    ];
+    const cards = opts.map(function (o) {
+      const badge = rec === o.key ? '<span class="rec-badge">' + c.recommended + '</span>' : '';
+      const pressed = state.pick === o.key ? 'true' : 'false';
+      return '<button type="button" class="region-option" data-pick="' + o.key + '" aria-pressed="' + pressed + '">' +
+        badge +
+        '<span class="mono ' + (o.key === 'cn' ? 'cn' : 'gl') + '">' + o.mono + '</span>' +
+        '<b>' + o.name + '</b><p>' + o.desc + '</p>' +
+        '</button>';
+    }).join('');
+    layer.innerHTML = '<div class="dialog wide" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="firstTitle">' +
+      '<div class="dialog-head"><div class="dialog-head-text">' +
+      '<div class="dialog-eyebrow">' + c.firstEyebrow + '</div>' +
+      '<h2 class="dialog-title" id="firstTitle">' + c.firstTitle + '</h2>' +
+      '<p class="dialog-sub">' + (rec ? c.firstSub : c.firstUnknown) + '</p>' +
+      '</div></div>' +
+      '<div class="region-options">' + cards + '</div>' +
+      '<div class="firstrun-foot"><p class="firstrun-note">' + c.firstNote + '</p>' +
+      '<button type="button" class="btn-primary" data-first="confirm"' + (state.pick ? '' : ' disabled') + '>' + c.firstConfirm + '</button>' +
+      '</div></div>';
+    requestAnimationFrame(function () { layer.classList.add('show'); });
+    if (lastFirst !== true) {
+      lastFirst = true;
+      requestAnimationFrame(function () {
+        const dialog = layer.querySelector('.dialog');
+        if (dialog) dialog.focus();
+      });
+    }
+  }
+
+  function renderSuccess() {
+    const layer = $('successLayer');
+    if (!state.success) {
+      layer.classList.remove('show');
+      if (!layer.hidden) {
+        clearTimeout(successHideTimer);
+        successHideTimer = setTimeout(function () {
+          if (!state.success) {
+            layer.hidden = true;
+            layer.innerHTML = '';
+          }
+        }, 200);
+      }
+      return;
+    }
+    clearTimeout(successHideTimer);
+    layer.hidden = false;
+    const c = getCopy();
+    layer.innerHTML = '<div class="success-card" role="dialog" aria-modal="true" aria-labelledby="successTitle">' +
+      '<div class="success-badge">' + ICON_CHECK + '</div>' +
+      '<h2 id="successTitle">' + c.successTitle + '</h2>' +
+      '<p>' + c.successBody + '</p>' +
+      '<button type="button" class="btn-ghost" data-act="success-back">' + c.successBack + '</button>' +
+      '</div>';
+    requestAnimationFrame(function () { layer.classList.add('show'); });
+  }
+
+  /* ================= helpers ================= */
+  function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+  function isPhone(v) { return /^1[3-9]\d{9}$/.test(v); }
+
+  function accountRegion(account) {
+    const a = account.toLowerCase();
+    if (a.indexOf('demo-global') !== -1) return 'global';
+    if (a.indexOf('demo-cn') !== -1) return 'cn';
+    if (isPhone(a)) return 'cn';
+    return null;
+  }
+
+  function toast(msg) {
+    const el = $('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(state.toastTimer);
+    state.toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2400);
+  }
+
+  function clearTimers() {
+    clearInterval(state.cdTimer); state.cdTimer = null;
+    clearTimeout(state.demoTimer); state.demoTimer = null;
+    clearTimeout(state.toastTimer); state.toastTimer = null;
+    clearTimeout(state.modalTimer); state.modalTimer = null;
+    clearTimeout(state.firstTimer); state.firstTimer = null;
+    clearTimeout(successHideTimer); successHideTimer = null;
+    state.countdown = 0;
+    $('toast').classList.remove('show');
+  }
+
+  function applyRegion(region, source) {
+    state.region = region;
+    state.regionSource = source;
+    state.code = '';
+    state.password = '';
+    state.agreed = false;
+    state.fields = {};
+    state.caps = false;
+    state.countdown = 0;
+    state.service = 'ok';
+    state.retrying = false;
+    state.modal = null;
+    clearInterval(state.cdTimer);
+    state.cdTimer = null;
+    clearTimeout(state.demoTimer);
+    renderAll();
+  }
+
+  function closeModal() {
+    state.modal = null;
+    renderModal();
+  }
+
+  function startCountdown(seconds) {
+    clearInterval(state.cdTimer);
+    state.countdown = seconds;
+    renderCountdown();
+    state.cdTimer = setInterval(function () {
+      state.countdown -= 1;
+      if (state.countdown <= 0) {
+        state.countdown = 0;
+        clearInterval(state.cdTimer);
+        state.cdTimer = null;
+      }
+      renderCountdown();
+    }, 1000);
+  }
+
+  function sendCode(where) {
+    const c = getCopy();
+    const isReset = where === 'reset';
+    const acct = isReset ? $('resetAccount').value.trim() : state.account.trim();
+    let err = '';
+    if (!acct) err = state.region === 'global' ? c.errEmailRequired : c.errAccountRequired;
+    else if (state.region === 'global' && !isEmail(acct)) err = c.errEmail;
+    else if (state.region === 'cn' && !isEmail(acct) && !isPhone(acct)) err = c.errAccount;
+    if (err) {
+      if (isReset) showResetMsg(err);
+      else {
+        state.fields.account = err;
+        renderFields();
+        $('account').focus();
+      }
+      return;
+    }
+    if (isReset) showResetMsg('');
+    else {
+      delete state.fields.account;
+      renderFields();
+    }
+    startCountdown(60);
+    toast(c.codeSent);
+  }
+
+  function submitLogin() {
+    if (state.submitting) return;
+    const c = getCopy();
+    const acct = state.account.trim();
+    const f = {};
+    if (!acct) f.account = state.region === 'global' ? c.errEmailRequired : c.errAccountRequired;
+    else if (state.region === 'global' && !isEmail(acct)) f.account = c.errEmail;
+    else if (state.region === 'cn' && !isEmail(acct) && !isPhone(acct)) f.account = c.errAccount;
+
+    if (!f.account) {
+      const ar = accountRegion(acct);
+      if (ar && ar !== state.region) {
+        state.crossRegion = ar;
+        state.modal = 'cross';
+        renderModal();
+        return;
+      }
+    }
+
+    if (state.tab === 'code') {
+      if (!/^\d{6}$/.test(state.code)) f.code = c.errCode;
+    } else if (acct.toLowerCase().indexOf('nopwd') !== -1) {
+      f.password = 'noPassword';
+    } else if (!state.password) {
+      f.password = c.errPassword;
+    }
+
+    if (!state.agreed) f.agreement = c.errAgree;
+    state.fields = f;
+    renderFields();
+
+    if (Object.keys(f).length) {
+      if (f.account) {
+        $('account').focus();
+      } else if (f.code) {
+        $('code').focus();
+      } else if (f.password && f.password !== 'noPassword') {
+        $('password').focus();
+      } else if (f.agreement) {
+        const row = $('agreeRow');
+        row.classList.remove('shake');
+        void row.offsetWidth;
+        row.classList.add('shake');
+      }
+      return;
+    }
+
+    state.submitting = true;
+    renderFields();
+    state.demoTimer = setTimeout(function () {
+      state.submitting = false;
+      state.success = true;
+      renderFields();
+      renderSuccess();
+    }, 900);
+  }
+
+  function showResetMsg(msg) {
+    state.resetMsg = msg || '';
+    const el = $('resetMsg');
+    el.textContent = state.resetMsg;
+    el.classList.toggle('show', !!state.resetMsg);
+  }
+
+  function openReset() {
+    state.view = 'reset';
+    state.resetMsg = '';
+    const acct = state.account.trim();
+    $('resetAccount').value = acct;
+    $('resetCode').value = '';
+    $('resetPwd').value = '';
+    $('resetPwd2').value = '';
+    renderAll();
+    setTimeout(function () {
+      if (acct) $('resetCode').focus();
+      else $('resetAccount').focus();
+    }, 60);
+  }
+
+  function submitReset(evt) {
+    if (evt) evt.preventDefault();
+    if (state.submitting) return;
+    const c = getCopy();
+    const acct = $('resetAccount').value.trim();
+    const code = $('resetCode').value.trim();
+    const p1 = $('resetPwd').value;
+    const p2 = $('resetPwd2').value;
+    let msg = '';
+    if (!acct) msg = c.resetErrAccount;
+    else if (state.region === 'global' && !isEmail(acct)) msg = c.errEmail;
+    else if (state.region === 'cn' && !isEmail(acct) && !isPhone(acct)) msg = c.errAccount;
+    else if (!/^\d{6}$/.test(code)) msg = c.resetErrCode;
+    else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,18}$/.test(p1)) msg = c.resetErrPwd;
+    else if (p1 !== p2) msg = c.resetErrMatch;
+    if (msg) {
+      showResetMsg(msg);
+      return;
+    }
+    state.submitting = true;
+    $('resetSubmit').classList.add('loading');
+    $('resetSubmit').disabled = true;
+    state.demoTimer = setTimeout(function () {
+      state.submitting = false;
+      $('resetSubmit').classList.remove('loading');
+      state.view = 'login';
+      state.tab = 'password';
+      state.account = acct;
+      state.password = '';
+      state.code = '';
+      state.fields = {};
+      state.resetMsg = '';
+      showResetMsg('');
+      renderAll();
+      toast(c.resetDone);
+    }, 850);
+  }
+
+  function copyDiagnostics() {
+    const text = diagRows().map(function (r) { return r.label + ': ' + r.value; }).join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        toast(getCopy().diagCopied);
+      }).catch(function () {
+        toast(getCopy().copyDenied);
+      });
+    } else {
+      toast(getCopy().copyDenied);
+    }
+  }
+
+  function applyScenario(id) {
+    clearTimers();
+    Object.assign(state, {
+      lang: 'zh', theme: 'light', region: 'cn', regionSource: 'auto', recognition: 'auto',
+      tab: 'code', account: '', code: '', password: '', agreed: false,
+      view: 'login', service: 'ok', retrying: false, fields: {}, resetMsg: '',
+      countdown: 0, caps: false, submitting: false,
+      modal: null, switchTarget: null, crossRegion: null,
+      onboarding: false, pick: null, success: false
+    });
+    $('password').type = 'password';
+    $('resetAccount').value = '';
+    $('resetCode').value = '';
+    $('resetPwd').value = '';
+    $('resetPwd2').value = '';
+    showResetMsg('');
+
+    if (id === 'global') { state.lang = 'en'; state.region = 'global'; state.recognition = 'global'; state.regionSource = 'manual'; }
+    if (id === 'globalZh') { state.region = 'global'; state.recognition = 'global'; state.regionSource = 'manual'; }
+    if (id === 'cnEn') { state.lang = 'en'; }
+    if (id === 'firstCn') { state.recognition = 'cn'; state.onboarding = true; state.pick = 'cn'; }
+    if (id === 'firstGlobal') {
+      state.region = 'global'; state.lang = 'en';
+      state.recognition = 'global'; state.onboarding = true; state.pick = 'global';
+    }
+    if (id === 'firstUnknown') { state.recognition = 'unknown'; state.onboarding = true; state.pick = null; }
+    if (id === 'switchRegion') {
+      state.account = '13800138000';
+      state.code = '123456';
+      state.modal = 'switch';
+      state.switchTarget = 'global';
+    }
+    if (id === 'crossRegion') {
+      state.account = 'demo-global@kocard.net';
+      state.code = '123456';
+      state.agreed = true;
+    }
+    if (id === 'noPassword') {
+      state.region = 'global';
+      state.recognition = 'global';
+      state.regionSource = 'manual';
+      state.tab = 'password';
+      state.account = 'nopwd@kocard.net';
+      state.password = '123456';
+      state.agreed = true;
+    }
+    if (id === 'agreement') {
+      state.account = '13800138000';
+      state.code = '123456';
+      state.agreed = false;
+    }
+    if (id === 'reset') {
+      state.account = '13800138000';
+      state.view = 'reset';
+      $('resetAccount').value = state.account;
+    }
+    if (id === 'localDown') { state.service = 'localDown'; }
+    if (id === 'remoteDown') { state.service = 'remoteDown'; }
+    if (id === 'dark') { state.theme = 'dark'; }
+
+    $('scenarioSelect').value = id;
+    renderAll();
+
+    if (id === 'reset') {
+      setTimeout(function () { $('resetCode').focus(); }, 80);
+    }
+    if (id === 'crossRegion' || id === 'noPassword' || id === 'agreement') {
+      state.demoTimer = setTimeout(function () {
+        if ($('scenarioSelect').value === id) submitLogin();
+      }, 520);
+    }
+  }
+
+  /* ================= events ================= */
+  function setTheme(theme) {
+    if (state.theme === theme) return;
+    state.theme = theme;
+    renderAll();
+  }
+
+  function setLang(lang) {
+    if (state.lang === lang) return;
+    state.lang = lang;
+    state.fields = {};
+    state.resetMsg = '';
+    showResetMsg('');
+    renderAll();
+  }
+
+  function setTab(tab) {
+    if (state.tab === tab) return;
+    state.tab = tab;
+    delete state.fields.code;
+    delete state.fields.password;
+    state.caps = false;
+    renderTabs();
+    renderFields();
+    setTimeout(function () {
+      $(tab === 'code' ? 'code' : 'password').focus();
+    }, 40);
+  }
+
+  function openSwitch() {
+    state.switchTarget = state.region === 'cn' ? 'global' : 'cn';
+    state.modal = 'switch';
+    renderModal();
+  }
+
+  function updateCaps(e) {
+    if (typeof e.getModifierState !== 'function') return;
+    const on = e.getModifierState('CapsLock');
+    if (on !== state.caps) {
+      state.caps = on;
+      $('capsHint').classList.toggle('show', !!on && state.tab === 'password');
+    }
+  }
+
+  $('themeSeg').addEventListener('click', function (e) {
+    const b = e.target.closest('button[data-value]');
+    if (b) setTheme(b.dataset.value);
+  });
+
+  $('langSeg').addEventListener('click', function (e) {
+    const b = e.target.closest('button[data-value]');
+    if (b) setLang(b.dataset.value);
+  });
+
+  $('langZh').addEventListener('click', function () { setLang('zh'); });
+  $('langEn').addEventListener('click', function () { setLang('en'); });
+  $('resetBtn').addEventListener('click', function () { applyScenario('cn'); });
+  $('scenarioSelect').addEventListener('change', function (e) { applyScenario(e.target.value); });
+
+  $('recognitionSelect').addEventListener('change', function (e) {
+    state.recognition = e.target.value;
+    renderRecognitionHint();
+    if (state.onboarding) {
+      state.pick = detect().region;
+      renderFirstRun();
+    }
+  });
+
+  $('regionStrip').addEventListener('click', openSwitch);
+
+  $('tabCode').addEventListener('click', function () { setTab('code'); });
+  $('tabPassword').addEventListener('click', function () { setTab('password'); });
+
+  $('account').addEventListener('input', function (e) {
+    state.account = e.target.value;
+    if (state.fields.account) {
+      delete state.fields.account;
+      renderFields();
+    }
+  });
+
+  $('code').addEventListener('input', function (e) {
+    const v = e.target.value.replace(/\D/g, '').slice(0, 6);
+    e.target.value = v;
+    state.code = v;
+    if (state.fields.code) {
+      delete state.fields.code;
+      renderFields();
+    }
+  });
+
+  $('password').addEventListener('input', function (e) {
+    state.password = e.target.value;
+    if (state.fields.password) {
+      delete state.fields.password;
+      renderFields();
+    }
+  });
+  $('password').addEventListener('keydown', updateCaps);
+  $('password').addEventListener('keyup', updateCaps);
+
+  $('eyeBtn').addEventListener('click', function () {
+    const input = $('password');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    $('eyeBtn').setAttribute('aria-label', show ? getCopy().hidePwd : getCopy().showPwd);
+  });
+
+  $('sendBtn').addEventListener('click', function () { sendCode('login'); });
+  $('resetSend').addEventListener('click', function () { sendCode('reset'); });
+  $('forgotBtn').addEventListener('click', function () { openReset(); });
+
+  $('resetBack').addEventListener('click', function () {
+    state.view = 'login';
+    state.resetMsg = '';
+    showResetMsg('');
+    renderAll();
+  });
+
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    submitLogin();
+  });
+
+  $('resetForm').addEventListener('submit', submitReset);
+
+  $('agreeInput').addEventListener('change', function (e) {
+    state.agreed = e.target.checked;
+    if (state.agreed && state.fields.agreement) {
+      delete state.fields.agreement;
+      renderFields();
+    }
+  });
+
+  $('agreeText').addEventListener('click', function (e) {
+    if (e.target.closest('a')) return;
+    state.agreed = !state.agreed;
+    $('agreeInput').checked = state.agreed;
+    if (state.agreed) {
+      delete state.fields.agreement;
+      renderFields();
+    }
+  });
+
+  $('authCard').addEventListener('click', function (e) {
+    if (e.target.closest('[data-act="use-code"]')) {
+      state.fields = {};
+      state.caps = false;
+      setTab('code');
+      renderAll();
+      setTimeout(function () { $('code').focus(); }, 60);
+    }
+  });
+
+  $('modalLayer').addEventListener('click', function (e) {
+    if (e.target === $('modalLayer')) {
+      closeModal();
+      return;
+    }
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const act = btn.dataset.act;
+    if (act === 'close') closeModal();
+    if (act === 'switch-confirm') {
+      const target = state.switchTarget || (state.region === 'cn' ? 'global' : 'cn');
+      applyRegion(target, 'manual');
+      toast(getCopy().regionSwitched.replace('{region}', regionName(target)));
+    }
+    if (act === 'cross-confirm') {
+      const target = state.crossRegion || 'global';
+      applyRegion(target, 'manual');
+      toast(getCopy().regionSwitched.replace('{region}', regionName(target)));
+      setTimeout(function () { $('code').focus(); }, 100);
+    }
+    if (act === 'diag-copy') copyDiagnostics();
+  });
+
+  $('firstRunLayer').addEventListener('click', function (e) {
+    const opt = e.target.closest('[data-pick]');
+    if (opt) {
+      state.pick = opt.dataset.pick;
+      $('firstRunLayer').querySelectorAll('[data-pick]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.pick === state.pick));
+      });
+      const confirmBtn = $('firstRunLayer').querySelector('[data-first="confirm"]');
+      if (confirmBtn) confirmBtn.disabled = false;
+      return;
+    }
+    const confirm = e.target.closest('[data-first="confirm"]');
+    if (!confirm || !state.pick) return;
+    const picked = state.pick;
+    const d = detect();
+    const source = d.region === picked ? 'auto' : 'manual';
+    state.onboarding = false;
+    state.region = picked;
+    state.regionSource = source;
+    state.code = '';
+    state.password = '';
+    state.fields = {};
+    state.caps = false;
+    renderAll();
+    toast(getCopy().regionChosen.replace('{region}', regionName(picked)));
+    setTimeout(function () { $('account').focus(); }, 240);
+  });
+
+  $('successLayer').addEventListener('click', function (e) {
+    if (e.target.closest('[data-act="success-back"]')) {
+      state.success = false;
+      renderSuccess();
+    }
+  });
+
+  $('serviceRetry').addEventListener('click', function () {
+    if (state.retrying) return;
+    state.retrying = true;
+    renderServiceView();
+    state.demoTimer = setTimeout(function () {
+      state.retrying = false;
+      state.service = 'ok';
+      state.fields = {};
+      renderAll();
+      toast(getCopy().connectionRestored);
+    }, 900);
+  });
+
+  $('serviceDiagBtn').addEventListener('click', function () {
+    state.modal = 'diag';
+    renderModal();
+  });
+
+  $('serviceSwitchBtn').addEventListener('click', openSwitch);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && state.modal) closeModal();
+  });
+
+  applyScenario('cn');
+})();
+</script>
+</body>
+</html>
