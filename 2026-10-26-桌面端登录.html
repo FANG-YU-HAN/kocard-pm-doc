@@ -972,7 +972,7 @@ td strong { color: var(--ink); font-weight: 600; }
               <tr>
                 <td class="nowrap"><strong>R-04</strong></td>
                 <td><strong>验证码登录（默认）</strong><br>输入账号后点「登录 / 注册」获取 6 位验证码，进入验证码页；验证码页不显示地区和语言，只保留返回、标题、账号、6 位输入和重新发送倒计时，返回账号页才能切换；输满 6 位自动提交，不需要再点按钮；重发间隔 60 秒。首次使用自动创建账号，已有账号直接登录。</td>
-                <td>验证码页没有地区和语言；输满 6 位自动提交；60 秒内重发不可点；首次登录直接进入应用、不出现注册表单；再次登录进入同一账号。</td>
+                <td>验证码页没有地区和语言；输满 6 位自动提交；60 秒内重发不可点；首次登录直接进入应用；再次登录进入同一账号。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-05</strong></td>
@@ -997,7 +997,7 @@ td strong { color: var(--ink); font-weight: 600; }
               <tr>
                 <td class="nowrap"><strong>R-09</strong></td>
                 <td><strong>登录后锁区</strong><br>登录后不提供切区，换区必须退出。退出后回登录页，保留上次地区，地区下拉恢复。</td>
-                <td>登录后的应用内找不到换区入口；退出登录后地区下拉恢复；切换不会在已登录状态静默发生。</td>
+                <td>退出登录后回登录页，保留上次地区，地区下拉恢复可用。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-10</strong></td>
@@ -1188,7 +1188,7 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td class="nowrap"><strong>AC-05</strong></td>
                 <td>国内页，输入未注册手机号。</td>
                 <td>获取验证码并输入 6 位。</td>
-                <td>自动提交；自动创建账号并进入应用；不出现注册表单。</td>
+                <td>自动提交；自动创建账号并进入应用。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-06</strong></td>
@@ -1218,7 +1218,7 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td class="nowrap"><strong>AC-10</strong></td>
                 <td>从未注册的第三方身份。</td>
                 <td>桌面完成授权。</td>
-                <td>自动创建账号并进入应用；不出现注册表单；再次授权进入同一账号。</td>
+                <td>自动创建账号并进入应用；再次授权进入同一账号。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-11</strong></td>
@@ -1240,48 +1240,42 @@ td strong { color: var(--ink); font-weight: 600; }
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-14</strong></td>
-                <td>用户已登录。</td>
-                <td>在应用内查找换区入口。</td>
-                <td>没有入口；退出登录后回到登录页，保留上次地区，下拉可切换。</td>
-              </tr>
-              <tr>
-                <td class="nowrap"><strong>AC-15</strong></td>
                 <td>登录页切到 English。</td>
                 <td>重启桌面端。</td>
                 <td>登录页仍为英文；切回中文后一致。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-16</strong></td>
+                <td class="nowrap"><strong>AC-15</strong></td>
                 <td>已注册账号，从密码页点「忘记密码」。</td>
                 <td>确认账号已带入；清空账号点发送；填回账号点发送；两次密码不一致点确认重置；改成一致、输错验证码提交；60 秒后重发，输入正确验证码和合规新密码；分别用新旧密码登录。</td>
                 <td>账号带入且可改；账号为空点发送提示「账号不能为空」且不发请求；发送后显示倒计时；不一致在确认框下方提示「密码不一致」且不发请求；验证码错误显示服务端原因；成功回密码页、账号保留、密码为空、出现「密码已重置，请用新密码登录」；不自动登录；旧密码不能登录，新密码能登录。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-17</strong></td>
+                <td class="nowrap"><strong>AC-16</strong></td>
                 <td>本地服务未启动，或远端超时（分别验证）。</td>
                 <td>点登录。</td>
                 <td>两种情况分别显示对应说明、重试和诊断；不无限转圈，不误报成功。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-18</strong></td>
+                <td class="nowrap"><strong>AC-17</strong></td>
                 <td>IP 查询失败，系统语言为中文。</td>
                 <td>打开桌面端登录页。</td>
                 <td>按语言兜底显示中国大陆；不阻塞登录；可手动切换。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-19</strong></td>
+                <td class="nowrap"><strong>AC-18</strong></td>
                 <td>账号未激活；授权码开关分别设为开、关。</td>
                 <td>登录成功。</td>
                 <td>开关开启时进入授权码页，输入正确后进入应用，输入错误留在授权码页并提示；开关关闭时不出现授权码页。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-20</strong></td>
+                <td class="nowrap"><strong>AC-19</strong></td>
                 <td>表单有效。</td>
                 <td>连续点登录或第三方登录。</td>
                 <td>只发一次请求；按钮加载中不可重复点。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-21</strong></td>
+                <td class="nowrap"><strong>AC-20</strong></td>
                 <td>登录页协议默认未勾选。</td>
                 <td>不勾选点「登录 / 注册」；点第三方入口；点「密码登录」后在密码页点「登录」。</td>
                 <td>账号页和密码页勾选框下方分别提示「请先阅读并勾选协议」，不发请求；点「密码登录」只进密码页、不提示；勾选后提示消失，再点一次才发起；重新进入恢复未勾选。</td>
@@ -1309,8 +1303,8 @@ td strong { color: var(--ink); font-weight: 600; }
             <tbody>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.29–v0.30</td>
-                <td>线框图去掉说明性文字，验证码页把「已发送 48s」改为真实控件「重新发送 48s」；写明一个账号只属于一个区，同一邮箱或手机号不能跨区再注册，两个区账号独立、权益不合并不迁移；AC-18 改为可测的「IP 失败、系统语言中文」按语言兜底。</td>
+                <td class="nowrap">v0.29–v0.32</td>
+                <td>线框图去掉说明性文字，验证码页把「已发送 48s」改为真实控件「重新发送 48s」；写明一个账号只属于一个区，同一邮箱或手机号不能跨区再注册，两个区账号独立、权益不合并不迁移；删掉重复验证非目标的验收表述（查找换区入口、不出现注册表单），验收编号顺延；IP 失败兜底的验收改为可测的「IP 失败、系统语言中文」。</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
