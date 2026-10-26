@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<!-- prd-template:v5 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iOS 相册备份支持Live实况照片 · PRD</title>
+<meta name="description" content="iOS 相册备份支持实况照片的产品需求文档。">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f3ea;
+  --surface: #fbf9f4;
+  --surface-2: #ece7db;
+  --ink: #24211b;
+  --ink-2: #514b41;
+  --muted: #746c5f;
+  --line: #ded7c8;
+  --line-strong: #c7beac;
+  --accent: #b85c3e;
+  --accent-strong: #9c4830;
+  --green: #4f6b52;
+  --amber: #8a6428;
+  --red: #963f31;
+  --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: .005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--accent-strong); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+button { font: inherit; }
+img, svg { display: block; max-width: 100%; }
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--surface-2);
+  padding: .08em .3em;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.skip-link:focus { top: 16px; }
+
+.page {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ---------- 左侧目录 ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 34px 20px 24px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.nav a {
+  display: block;
+  padding: 5px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+.nav a .num { display: none; }
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--accent-strong); font-weight: 600; }
+
+.sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.status-card {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.status-row { display: flex; justify-content: space-between; gap: 12px; }
+.status-row span:first-child { color: var(--muted); }
+.status-value { color: var(--ink-2); text-align: right; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+.btn:hover { color: var(--accent-strong); }
+
+/* ---------- 正文 ---------- */
+main { min-width: 0; padding: 56px clamp(24px, 6vw, 88px) 96px; }
+.doc { max-width: 860px; margin: 0 auto; }
+
+.doc-header { padding-bottom: 8px; margin-bottom: 0; }
+.eyebrow {
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 12px 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(36px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lede {
+  max-width: 660px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 22px;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.meta-item { display: flex; gap: 5px; }
+.meta-label { color: var(--muted); }
+.meta-label::after { content: "："; }
+.meta-value { color: var(--ink-2); }
+.status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--amber);
+  vertical-align: 1px;
+}
+
+.tldr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+.tldr-card { padding-top: 10px; border-top: 1px solid var(--line); }
+.tldr-label {
+  margin-bottom: 4px;
+  color: var(--accent-strong);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
+.tldr-card p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.doc-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+section {
+  padding: 26px 0 0;
+  margin: 44px 0 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 24px;
+}
+.section-kicker {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h2 {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+h3 {
+  margin: 24px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.section-intro { max-width: 700px; margin: 0 0 20px; color: var(--ink-2); font-size: 14.5px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; line-height: 1.65; }
+.placeholder {
+  display: inline-block;
+  padding: 0 2px;
+  border-bottom: 1px dashed var(--line-strong);
+  color: var(--muted);
+  font-size: .92em;
+}
+
+.card {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.callout {
+  margin: 20px 0;
+  padding: 2px 0 2px 18px;
+  border-left: 2px solid var(--accent);
+}
+.callout p {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+
+.mini-card { padding-top: 10px; border-top: 1px solid var(--line); }
+.mini-label {
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+.mini-card p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.mini-card strong { color: var(--ink); font-weight: 600; }
+
+.check-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.check-list li { display: flex; gap: 8px; align-items: flex-start; }
+.check-list .mark {
+  flex: 0 0 12px;
+  width: 12px;
+  margin-top: 1px;
+  color: var(--accent);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.check-list.no .mark { color: var(--muted); }
+.check-list strong { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; }
+.check-list .desc { display: block; margin-top: 1px; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: step; }
+.flow-step { padding-top: 10px; border-top: 1px solid var(--line); }
+.flow-step::before {
+  counter-increment: step;
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .08em;
+}
+.flow-step h3 { margin: 0 0 3px; font-size: 13px; font-weight: 600; }
+.flow-step p { margin: 0; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+
+.table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+}
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
+caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+th {
+  padding: 9px 12px 8px;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-align: left;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  vertical-align: top;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+tr:last-child td { border-bottom: 0; }
+td strong { color: var(--ink); font-weight: 600; }
+.nowrap { white-space: nowrap; }
+.table-note { margin: 10px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.pill-p0 { color: var(--accent-strong); }
+.pill-p1 { color: var(--amber); }
+.pill-p2 { color: var(--muted); }
+.pill-ok { color: var(--green); }
+.pill-warn { color: var(--amber); }
+.pill-block { color: var(--red); }
+
+.fold {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.fold summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.fold summary::-webkit-details-marker { display: none; }
+.fold summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+}
+.fold[open] summary::after { content: "−"; }
+.fold-body { padding: 6px 0 16px; }
+.fold-body > :first-child { margin-top: 0; }
+.fold-body > :last-child { margin-bottom: 0; }
+
+.instructions { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 12.5px; line-height: 1.8; }
+.instructions li + li { margin-top: 3px; }
+
+.doc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 44px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10.5px;
+}
+.doc-footer strong { color: var(--ink-2); font-weight: 500; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+@media (max-width: 960px) {
+  .page { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  main { padding: 40px 22px 64px; }
+  section { scroll-margin-top: 20px; }
+}
+
+@media (max-width: 760px) {
+  .tldr, .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+  h1 { font-size: 34px; }
+  .lede { font-size: 16px; }
+  .callout p { font-size: 16px; }
+  section { margin-top: 36px; }
+  .table-wrap table { min-width: 660px; }
+  #acceptance .table-wrap table,
+  #requirements .table-wrap table { min-width: 780px; }
+}
+
+@media print {
+  body { background: #fff; color: #111; font-size: 10.5pt; }
+  .page { display: block; }
+  .sidebar, .skip-link, .btn, .no-print { display: none !important; }
+  main { padding: 0; }
+  .doc { max-width: none; }
+  section { break-inside: auto; page-break-inside: auto; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  tr { break-inside: avoid; page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .table-wrap { overflow: visible; }
+  table { font-size: 9pt; }
+  th, td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到正文</a>
+
+<div class="page">
+  <aside class="sidebar" aria-label="文档导航">
+    <nav class="nav" aria-label="章节">
+      <a href="#summary" class="active"><span class="num">00</span>三分钟版</a>
+      <a href="#problem"><span class="num">01</span>问题</a>
+      <a href="#goals"><span class="num">02</span>目标与非目标</a>
+      <a href="#solution"><span class="num">03</span>方案概览</a>
+      <a href="#requirements"><span class="num">04</span>功能需求</a>
+      <a href="#states"><span class="num">05</span>状态与异常</a>
+      <a href="#acceptance"><span class="num">06</span>验收清单</a>
+      <a href="#changelog"><span class="num">07</span>变更记录</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-card">
+        <div class="status-row"><span>状态</span><span class="status-value">待评审</span></div>
+        <div class="status-row"><span>更新</span><span class="status-value">2026-10-26</span></div>
+      </div>
+      <button class="btn" type="button" data-print>打印 / 存 PDF</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <article class="doc">
+      <header class="doc-header" id="summary">
+        <div class="eyebrow">PRD · iOS · 相册备份</div>
+        <h1>iOS 相册备份支持Live实况照片</h1>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">状态</div>
+            <div class="meta-value"><span class="status-dot"></span>待评审</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">更新</div>
+            <div class="meta-value">2026-10-26</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">适用端</div>
+            <div class="meta-value">iOS</div>
+          </div>
+        </div>
+
+        <div class="tldr">
+          <div class="tldr-card">
+            <div class="tldr-label">做什么</div>
+            <p>备份静帧和配对视频；两份都成功才算完成；完整的一对写入当前备份目录；旧版本只有静帧的实况自动补齐。</p>
+          </div>
+          <div class="tldr-card">
+            <div class="tldr-label">不做什么</div>
+            <p>不改备份路径；不做 App 内回导页、跨平台转换、独立实况开关。</p>
+          </div>
+          <div class="tldr-card">
+            <div class="tldr-label">怎么算完成</div>
+            <p>备份目录中有完整的一对文件，两份都成功；没有只有静帧却显示完成的情况。</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- 01 问题 -->
+      <section id="problem">
+        <div class="section-kicker">01 · 问题</div>
+        <h2>这次要解决什么</h2>
+        <p class="section-intro">实况在系统里是两份文件：静帧和配对视频，相册靠文件内的同一配对编号把它们识别成一张。当前 iOS 备份只取第一份资源，配对视频被跳过。</p>
+
+        <div class="callout">
+          <p>用户以为照片已经完整备份，硬盘上却只有一张静止图，live图完全没有了。</p>
+        </div>
+
+      </section>
+
+      <!-- 02 目标 -->
+      <section id="goals">
+        <div class="section-kicker">02 · 目标</div>
+        <h2>目标与非目标</h2>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-top:0">本期目标</h3>
+            <ul class="check-list">
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>实况完整、可还原</strong><span class="desc">静帧和配对视频写入当前备份目录；验证时复制到 DCIM，系统 Photos 导入后是一张能播放、有声音的实况。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>完成状态不说谎</strong><span class="desc">两份都成功才计完成；任一份失败就不显示全部完成，失败可重试。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>普通照片不受影响</strong><span class="desc">普通照片、视频仍只写一个文件，不被当作实况。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>旧实况能补齐</strong><span class="desc">旧版本只有静帧的实况，下次备份补上配对视频并写入当前备份目录。</span></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-top:0">本期不做</h3>
+            <ul class="check-list no">
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不改备份路径和目录结构</strong><span class="desc">仍写入当前任务文件夹，两份文件直接放在同一层，不新建每条实况的子文件夹；DCIM 只在验证时使用。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做 App 内回导页</strong><span class="desc">恢复由用户自己把一对文件复制到 DCIM/100APPLE，用系统 Photos 导入；App 内不提供回导页。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做跨平台转换</strong><span class="desc">Android 实况格式不同；只保证 iOS 产物回到 iOS。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不新增实况开关</strong><span class="desc">跟随现有“照片”开关。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不备份编辑后的版本</strong><span class="desc">与现有逻辑保持一致，只备份原片；裁剪、调色等编辑和编辑参数不写入备份，还原后看到的是未编辑版本。</span></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 方案 -->
+      <section id="solution">
+        <div class="section-kicker">03 · 方案</div>
+        <h2>方案概览</h2>
+
+        <div class="flow">
+          <div class="flow-step">
+            <h3>识别</h3>
+            <p>扫描相册，分出实况、普通照片和视频。</p>
+          </div>
+          <div class="flow-step">
+            <h3>取两份资源</h3>
+            <p>取静帧和配对视频两份原始资源；原片在 iCloud 时允许下载；不转码。</p>
+          </div>
+          <div class="flow-step">
+            <h3>写入备份目录</h3>
+            <p>沿用现有备份目录，不新建每条实况的子文件夹；两份原文件直接放进当前任务文件夹，路径不变，记录配对关系。</p>
+          </div>
+          <div class="flow-step">
+            <h3>判定与收尾</h3>
+            <p>两份都成功才计完成；任一份失败就清理半套并记为失败；旧实况在这里补齐。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 功能需求 -->
+      <section id="requirements">
+        <div class="section-kicker">04 · 需求</div>
+        <h2>功能需求</h2>
+
+        <div class="table-wrap" style="border-bottom:0">
+          <table>
+            <caption>功能需求</caption>
+            <thead>
+              <tr>
+                <th scope="col">编号</th>
+                <th scope="col">优先级</th>
+                <th scope="col">需求</th>
+                <th scope="col">验收标准</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap"><strong>R-01</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>识别实况并备份两份资源</strong><br>实况取原片的静帧和配对视频两份资源，不取编辑后版本，不转码。</td>
+                <td>备份后当前备份目录中有两份文件，配对编号一致。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-02</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>两份都成功才算完成</strong><br>同一张实况两份都成功才计完成；实况按一张计数，两份文件不单独计数；任一份失败，记为失败并清理半套，继续处理其他照片；任务结束按张统计，有失败就不显示全部完成，下次重试失败的。</td>
+                <td>10 张中 1 张实况的配对视频失败：显示 9/10、部分失败，备份目录不留半套，其他照片继续；下次重试该张。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-03</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>保留原始文件和配对关系</strong><br>优先沿用系统原始文件名，两份放在当前备份目录；重跑或补齐时只替换这一对，不留单份。</td>
+                <td>两份文件沿用原始文件名；同一张重跑后仍是一对，不出现单份。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-04</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>旧版本实况补齐</strong><br>旧版本只有静帧的实况，下次备份补上配对视频并写入当前备份目录；旧静帧能读到时复用；备份目录两份都写成功后再清理旧半套；原片已删除的标记无法补齐，不阻塞其他照片。</td>
+                <td>旧记录原片仍在：下次备份后当前备份目录出现完整一对；原片已删除：标记无法补齐，其他照片继续。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-05</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>两份写入同一目录，能验证还原</strong><br>不新建每条实况的子文件夹；静帧和配对视频直接写入当前任务文件夹的同一层，文件名沿用系统原名；Photos 靠文件内配对编号识别，两份编号必须一致；同一张实况只存这一份。</td>
+                <td>备份目录中有完整一对，且没有新增子文件夹；把这一对复制到硬盘根目录的测试 DCIM 后，Photos 导入为一张能播放、有声音的实况，不是照片加视频。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 06 状态 -->
+      <section id="states">
+        <div class="section-kicker">05 · 状态</div>
+        <h2>状态与异常</h2>
+
+        <div class="table-wrap" style="border-bottom:0">
+          <table>
+            <caption>状态与异常</caption>
+            <thead>
+              <tr>
+                <th scope="col">状态</th>
+                <th scope="col">触发条件</th>
+                <th scope="col">用户看到</th>
+                <th scope="col">如何处理</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>原片只在 iCloud</strong></td>
+                <td>开启“优化 iPhone 存储空间”，任一份不在本地。</td>
+                <td>同步中，进度可能长时间不动。</td>
+                <td>两份都允许联网下载；任一份失败，这张失败可重试；不要只下载静帧就计完成。</td>
+              </tr>
+              <tr>
+                <td><strong>配对视频写入失败</strong></td>
+                <td>第二份写入报错或文件系统异常。</td>
+                <td>任务部分失败，失败数增加。</td>
+                <td>清理已写入的静帧，这张不计完成；其他照片继续。</td>
+              </tr>
+              <tr>
+                <td><strong>验证导入后不是实况</strong></td>
+                <td>把备份的一对复制到测试 DCIM，用 Photos 导入。</td>
+                <td>得到照片加视频，或只有静帧。</td>
+                <td>两份必须在同一目录、配对编号一致；不要靠改名或转码掩盖。</td>
+              </tr>
+              <tr>
+                <td><strong>旧版本只有静帧</strong></td>
+                <td>升级后扫描到旧记录。</td>
+                <td>自动补齐；复制到 DCIM 后可导入验证。</td>
+                <td>复用旧静帧补配对视频；写入当前备份目录成功后再清理旧半套；原片已删则标记无法补齐。</td>
+              </tr>
+              <tr>
+                <td><strong>编辑过的实况</strong></td>
+                <td>裁剪、调色或换封面。</td>
+                <td>和普通实况一样，无额外提示。</td>
+                <td>备份原片的两份资源，不取编辑后版本，不写编辑参数；还原后看到的是未编辑版本。</td>
+              </tr>
+              <tr>
+                <td><strong>实况在备份中被删除或修改</strong></td>
+                <td>备份过程中用户删除或编辑这张实况。</td>
+                <td>这张失败；其他照片继续。</td>
+                <td>与非实况照片一致：这张不计完成、不写记录；不因是实况额外重试或补齐。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 07 验收 -->
+      <section id="acceptance">
+        <div class="section-kicker">06 · 验收</div>
+        <h2>验收清单</h2>
+
+        <div class="table-wrap" style="border-bottom:0">
+          <table>
+            <caption>验收清单</caption>
+            <thead>
+              <tr>
+                <th scope="col">编号</th>
+                <th scope="col">前置条件</th>
+                <th scope="col">操作</th>
+                <th scope="col">预期结果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap"><strong>AC-01</strong></td>
+                <td>一张相机直拍的实况，未编辑，原片在本地。</td>
+                <td>执行相册备份。</td>
+                <td>当前备份目录中出现静帧和配对视频两个文件，直接位于任务文件夹下，没有新增子文件夹；两个文件保留原始文件名；这张计入完成。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-02</strong></td>
+                <td>一张实况已备份完成。</td>
+                <td>把备份的静帧和配对视频复制到硬盘根目录 DCIM/100APPLE（都大写），硬盘接 iPhone，用系统 Photos 导入。</td>
+                <td>Photos 出现导入入口；导入后相册中出现一张能播放、有声音的实况，不是照片加独立视频；文件内容未被改动。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-03</strong></td>
+                <td>一张实况的静帧能写入，配对视频写入失败。</td>
+                <td>执行相册备份。</td>
+                <td>这张不计完成；备份目录中不留这张的半套文件；任务部分失败，其他照片继续。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-04</strong></td>
+                <td>实况原片只在 iCloud，手机上只有缩略图。</td>
+                <td>执行相册备份，允许联网。</td>
+                <td>静帧和配对视频都下载并写入；任一份失败，这张失败可重试，不显示完成。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-05</strong></td>
+                <td>旧记录显示已备份，但硬盘上只有静帧，相册原片仍在。</td>
+                <td>升级后执行下一次备份。</td>
+                <td>复用旧静帧，当前备份目录中出现完整一对；不需要全部重备。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-06</strong></td>
+                <td>旧记录只有静帧，相册原片已删除。</td>
+                <td>执行下一次备份。</td>
+                <td>备份目录中不会出现新的配对视频；其他照片继续备份；任务不显示全部完成。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-07</strong></td>
+                <td>本次共 10 张照片，其中 1 张实况的配对视频失败。</td>
+                <td>任务结束。</td>
+                <td>完成数显示 9/10，状态为部分失败，不显示全部完成；下次重试该张。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 08 变更 -->
+      <section id="changelog">
+        <div class="section-kicker">07 · 变更</div>
+        <h2>变更记录</h2>
+
+        <div class="table-wrap" style="border-bottom:0">
+          <table>
+            <caption>变更记录</caption>
+            <thead>
+              <tr>
+                <th scope="col">日期</th>
+                <th scope="col">版本</th>
+                <th scope="col">改了什么</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.14</td>
+                <td>验收改为可从外部观察的结果：删除「记录中能查到两份文件名」「记录变为完整」「标记为无法补齐」，改为检查备份目录里的文件、完成数和任务状态；R-03 不再要求记录文件名。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.13</td>
+                <td>恢复「实况在备份中被删除或修改」，处理方式明确为与非实况照片一致：这张失败、不写记录，不额外重试或补齐。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.12</td>
+                <td>删除「实况在备份中被删除或修改」：普通照片遇到同样情况已是“这张失败、其他继续”，且“下次按最新状态处理”在当前代码里不成立，增量备份会跳过已有记录的资源。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.11</td>
+                <td>删除 P1「状态里体现实况」及对应验收：实况已按一张计入完成数，状态里再报实况张数只是内部统计，不影响完成判定和还原。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.10</td>
+                <td>需求、状态与验收只保留实况相关条目：删除普通照片/视频、拔盘、空间不足、同名、受限权限、暂停退后台等已有能力；完成状态并入 R-02；删除备份清单。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.9</td>
+                <td>删除「用户与场景」章节；明确恢复方式：用户自己把一对文件复制到 DCIM/100APPLE，用系统 Photos 导入。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.8</td>
+                <td>补充计数口径：实况按一张计数，两份文件不单独计数；两份都成功才计完成。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.7</td>
+                <td>删除非目标「不迁移旧普通照片」：备份路径不变，旧备份无需迁移。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.6</td>
+                <td>确认：实测当前备份为原片；编辑过的实况不备份编辑后版本，本期保持不动；待确认问题清空。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.5</td>
+                <td>验证方式已确认：硬盘根目录建 DCIM，其下建 100APPLE，接 iPhone 后系统 Photos 能识别并读取；原阻塞项关闭。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.4</td>
+                <td>明确：现有备份路径和目录结构不用改；两份文件直接写入当前任务文件夹，不新建每条实况的子文件夹。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.3</td>
+                <td>修正：备份路径保持不变；DCIM 只作为验证导入用的测试目录，不作为正式备份位置。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.2</td>
+                <td>回导纳入本期：原计划把备份落到硬盘根目录 DCIM（全大写），用系统 Photos 导入验证；不做 App 内回导页。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.1</td>
+                <td>初稿：收敛为 iOS 备份范围，明确两份资源、完成判定与存量补齐。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="doc-footer">
+        <span><strong>iOS 相册备份支持实况照片</strong></span>
+        <span>v0.14 · 2026-10-26</span>
+      </footer>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var sections = links.map(function (link) {
+    var id = link.getAttribute('href');
+    return id && id.charAt(0) === '#' ? document.querySelector(id) : null;
+  }).filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (link) {
+          var active = link.getAttribute('href') === '#' + entry.target.id;
+          link.classList.toggle('active', active);
+          if (active) {
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      });
+    }, { rootMargin: '-12% 0px -70% 0px', threshold: 0 });
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+
+  var printButtons = document.querySelectorAll('[data-print]');
+  Array.prototype.forEach.call(printButtons, function (button) {
+    button.addEventListener('click', function () { window.print(); });
+  });
+
+  var folds = Array.prototype.slice.call(document.querySelectorAll('details'));
+  window.addEventListener('beforeprint', function () {
+    folds.forEach(function (fold) {
+      fold.dataset.wasOpen = fold.open ? 'true' : 'false';
+      fold.open = true;
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    folds.forEach(function (fold) {
+      fold.open = fold.dataset.wasOpen === 'true';
+    });
+  });
+})();
+</script>
+</body>
+</html>

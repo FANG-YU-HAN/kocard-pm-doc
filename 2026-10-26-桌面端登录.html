@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<!-- prd-template:v5 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kocard新版桌面端注册登录与移动端打通 · PRD</title>
+<meta name="description" content="桌面端登录：地区识别、验证码与第三方登录、登录前切区、跨区账号、异常状态与验收。">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f3ea;
+  --surface: #fbf9f4;
+  --surface-2: #ece7db;
+  --ink: #24211b;
+  --ink-2: #514b41;
+  --muted: #746c5f;
+  --line: #ded7c8;
+  --line-strong: #c7beac;
+  --accent: #b85c3e;
+  --accent-strong: #9c4830;
+  --green: #4f6b52;
+  --amber: #8a6428;
+  --red: #963f31;
+  --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: .005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--accent-strong); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+button { font: inherit; }
+img, svg { display: block; max-width: 100%; }
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--surface-2);
+  padding: .08em .3em;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.skip-link:focus { top: 16px; }
+
+.page {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ---------- 左侧目录 ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 34px 20px 24px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.nav a {
+  display: block;
+  padding: 5px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+.nav a .num { display: none; }
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--accent-strong); font-weight: 600; }
+
+.sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.status-card {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.status-row { display: flex; justify-content: space-between; gap: 12px; }
+.status-row span:first-child { color: var(--muted); }
+.status-value { color: var(--ink-2); text-align: right; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+.btn:hover { color: var(--accent-strong); }
+
+/* ---------- 正文 ---------- */
+main { min-width: 0; padding: 56px clamp(24px, 6vw, 88px) 96px; }
+.doc { max-width: 860px; margin: 0 auto; }
+
+.doc-header { padding-bottom: 8px; margin-bottom: 0; }
+.eyebrow {
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 12px 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(36px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lede {
+  max-width: 660px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 22px;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.meta-item { display: flex; gap: 5px; }
+.meta-label { color: var(--muted); }
+.meta-label::after { content: "："; }
+.meta-value { color: var(--ink-2); }
+.status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--amber);
+  vertical-align: 1px;
+}
+
+.tldr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+.tldr-card { padding-top: 10px; border-top: 1px solid var(--line); }
+.tldr-label {
+  margin-bottom: 4px;
+  color: var(--accent-strong);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
+.tldr-card p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.doc-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+section {
+  padding: 26px 0 0;
+  margin: 44px 0 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 24px;
+}
+.section-kicker {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h2 {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+h3 {
+  margin: 24px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.section-intro { max-width: 700px; margin: 0 0 20px; color: var(--ink-2); font-size: 14.5px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; line-height: 1.65; }
+.placeholder {
+  display: inline-block;
+  padding: 0 2px;
+  border-bottom: 1px dashed var(--line-strong);
+  color: var(--muted);
+  font-size: .92em;
+}
+
+.card {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.callout {
+  margin: 20px 0;
+  padding: 2px 0 2px 18px;
+  border-left: 2px solid var(--accent);
+}
+.callout p {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+
+.mini-card { padding-top: 10px; border-top: 1px solid var(--line); }
+.mini-label {
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+.mini-card p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.mini-card strong { color: var(--ink); font-weight: 600; }
+
+.check-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.check-list li { display: flex; gap: 8px; align-items: flex-start; }
+.check-list .mark {
+  flex: 0 0 12px;
+  width: 12px;
+  margin-top: 1px;
+  color: var(--accent);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.check-list.no .mark { color: var(--muted); }
+.check-list strong { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; }
+.check-list .desc { display: block; margin-top: 1px; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: step; }
+.flow-step { padding-top: 10px; border-top: 1px solid var(--line); }
+.flow-step::before {
+  counter-increment: step;
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .08em;
+}
+.flow-step h3 { margin: 0 0 3px; font-size: 13px; font-weight: 600; }
+.flow-step p { margin: 0; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+
+.table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+}
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
+caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+th {
+  padding: 9px 12px 8px;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-align: left;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  vertical-align: top;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+tr:last-child td { border-bottom: 0; }
+td strong { color: var(--ink); font-weight: 600; }
+.nowrap { white-space: nowrap; }
+.table-note { margin: 10px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.pill-p0 { color: var(--accent-strong); }
+.pill-p1 { color: var(--amber); }
+.pill-p2 { color: var(--muted); }
+.pill-ok { color: var(--green); }
+.pill-warn { color: var(--amber); }
+.pill-block { color: var(--red); }
+
+.fold {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.fold summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.fold summary::-webkit-details-marker { display: none; }
+.fold summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+}
+.fold[open] summary::after { content: "−"; }
+.fold-body { padding: 6px 0 16px; }
+.fold-body > :first-child { margin-top: 0; }
+.fold-body > :last-child { margin-bottom: 0; }
+
+.instructions { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 12.5px; line-height: 1.8; }
+.instructions li + li { margin-top: 3px; }
+
+.doc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 44px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10.5px;
+}
+.doc-footer strong { color: var(--ink-2); font-weight: 500; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+@media (max-width: 960px) {
+  .page { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  main { padding: 40px 22px 64px; }
+  section { scroll-margin-top: 20px; }
+}
+
+@media (max-width: 760px) {
+  .tldr, .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+  h1 { font-size: 34px; }
+  .lede { font-size: 16px; }
+  .callout p { font-size: 16px; }
+  section { margin-top: 36px; }
+  .table-wrap table { min-width: 660px; }
+  #acceptance .table-wrap table,
+  #requirements .table-wrap table { min-width: 780px; }
+}
+
+@media print {
+  body { background: #fff; color: #111; font-size: 10.5pt; }
+  .page { display: block; }
+  .sidebar, .skip-link, .btn, .no-print { display: none !important; }
+  main { padding: 0; }
+  .doc { max-width: none; }
+  section { break-inside: auto; page-break-inside: auto; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  tr { break-inside: avoid; page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .table-wrap { overflow: visible; }
+  table { font-size: 9pt; }
+  th, td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到正文</a>
+
+<div class="page">
+  <aside class="sidebar" aria-label="文档导航">
+    <nav class="nav" aria-label="章节">
+      <a href="#summary" class="active"><span class="num">00</span>三分钟版</a>
+      <a href="#problem"><span class="num">01</span>问题</a>
+      <a href="#goals"><span class="num">02</span>目标与非目标</a>
+      <a href="#users"><span class="num">03</span>用户与场景</a>
+      <a href="#solution"><span class="num">04</span>方案概览</a>
+      <a href="#requirements"><span class="num">05</span>功能需求</a>
+      <a href="#states"><span class="num">06</span>状态与异常</a>
+      <a href="#acceptance"><span class="num">07</span>验收清单</a>
+      <a href="#questions"><span class="num">08</span>待确认问题</a>
+      <a href="#changelog"><span class="num">09</span>变更记录</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-card">
+        <div class="status-row"><span>状态</span><span class="status-value">草稿</span></div>
+        <div class="status-row"><span>更新</span><span class="status-value">2026-10-26</span></div>
+      </div>
+      <button class="btn" type="button" data-print>打印 / 存 PDF</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <article class="doc">
+      <header class="doc-header" id="summary">
+        <div class="eyebrow">PRD</div>
+        <h1>Kocard新版<span style="white-space:nowrap">桌面端</span><span style="white-space:nowrap">注册登录</span>与<span style="white-space:nowrap">移动端打通</span></h1>
+        <p class="lede">让中国大陆和国际用户在桌面端尽可能在对应地区注册登录。</p>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">状态</div>
+            <div class="meta-value"><span class="status-dot"></span>草稿</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">更新</div>
+            <div class="meta-value">2026-10-26</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">适用端</div>
+            <div class="meta-value">macOS · Windows</div>
+          </div>
+        </div>
+
+        <div class="tldr">
+          <div class="tldr-card">
+            <div class="tldr-label">做什么</div>
+            <p>登录前识别国内/海外，可手动切换；国内手机号或邮箱、海外邮箱；默认验证码，6 位自动提交；第三方按地区与移动端一致；首次登录自动注册；中英双语作用于全应用。</p>
+          </div>
+          <div class="tldr-card">
+            <div class="tldr-label">不做什么</div>
+            <p>不做独立注册表单；不做登录后切区；不做跨区账号合并或迁移；不新接移动端没有的第三方渠道。</p>
+          </div>
+          <div class="tldr-card">
+            <div class="tldr-label">怎么算完成</div>
+            <p>国内和海外账号都能登录；移动端账号（含第三方）在桌面进入同一账号；新用户不用单独注册；跨区账号有明确出路。</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- 01 问题 -->
+      <section id="problem">
+        <div class="section-kicker">01 · 问题</div>
+        <h2>这次要解决什么</h2>
+
+        <div class="callout">
+          <p>国内和海外是两套账号。登录前看不出账号属于哪边，登错区就报“账号不存在”，会员和订单也带不过来。</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="mini-card">
+            <div class="mini-label">现状 · 地区是隐式的</div>
+            <p>登录页不显示当前地区，也没有登录前切换入口。</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">约束 · 两套账号不互通</div>
+            <p>国内和海外分属两套服务器，会员和订单不跨区；登录后只能退出再换。</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">变化 · 移动端已有完整登录链路</div>
+            <p>iOS 先输入账号：默认验证码，6 位自动提交；密码登录是次级入口；第三方按地区展示；首次登录自动注册。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 目标 -->
+      <section id="goals">
+        <div class="section-kicker">02 · 目标</div>
+        <h2>目标与非目标</h2>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-top:0">本期目标</h3>
+            <ul class="check-list">
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>用户不用先懂地区就能登录</strong><span class="desc">打开就知道当前地区，识别错了能改。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>国内和海外各用对的方式</strong><span class="desc">国内手机号或邮箱；海外邮箱。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>和移动端用同一套登录方式</strong><span class="desc">验证码默认、密码可选；第三方渠道按地区一致；首次登录自动注册；移动端账号在桌面直接登录。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>地区和账号不串</strong><span class="desc">跨区账号有提示、能切换；登录后锁区。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>语言跟着用户走</strong><span class="desc">登录页中英切换，登录后全应用保持同一语言。</span></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-top:0">本期不做</h3>
+            <ul class="check-list no">
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做独立注册表单</strong><span class="desc">验证码或第三方首次登录即注册，不另设注册页。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做移动端之外的新渠道</strong><span class="desc">第三方只接移动端已有的 Apple、Google、Facebook。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做登录后切区</strong><span class="desc">不提供应用内换区，也不合并、迁移账号或权益。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做海外手机号</strong><span class="desc">海外账号输入只支持邮箱，不显示手机号入口。</span></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="table-note">衡量方式：上线后按周看登录成功率、跨区自助完成率、地区相关工单量；基线待补。</p>
+      </section>
+
+      <!-- 03 用户 -->
+      <section id="users">
+        <div class="section-kicker">03 · 用户</div>
+        <h2>用户与场景</h2>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <caption>用户与场景</caption>
+            <thead>
+              <tr>
+                <th scope="col">用户</th>
+                <th scope="col">情况</th>
+                <th scope="col">本期支持</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>国内用户</strong></td>
+                <td>所在地区为中国大陆。</td>
+                <td>手机号或邮箱 + 验证码或密码；登录前可切区。</td>
+              </tr>
+              <tr>
+                <td><strong>海外用户</strong></td>
+                <td>所在地区为国际。</td>
+                <td>邮箱 + 验证码或密码；不显示手机号。</td>
+              </tr>
+              <tr>
+                <td><strong>移动端第三方登录用户</strong></td>
+                <td>已在 iOS 用 Apple、Google 或 Facebook 登录。</td>
+                <td>桌面按地区展示同一渠道，授权后进入同一账号。</td>
+              </tr>
+              <tr>
+                <td><strong>首次使用的新用户</strong></td>
+                <td>没有账号，直接输入手机号/邮箱或用第三方登录。</td>
+                <td>验证码或第三方首次登录自动创建账号，不出现注册表单。</td>
+              </tr>
+              <tr>
+                <td><strong>跨区老用户</strong></td>
+                <td>账号属于另一地区。</td>
+                <td>提示所属地区；切换后登录。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 04 方案 -->
+      <section id="solution">
+        <div class="section-kicker">04 · 方案</div>
+        <h2>方案概览</h2>
+
+        <div class="flow" style="margin-top:16px">
+          <div class="flow-step">
+            <h3>识别地区</h3>
+            <p>按 IP + 系统语言推荐地区；页面常显当前地区。</p>
+          </div>
+          <div class="flow-step">
+            <h3>输入账号</h3>
+            <p>国内手机号或邮箱；海外邮箱。默认验证码，密码登录是次级入口。</p>
+          </div>
+          <div class="flow-step">
+            <h3>验证身份</h3>
+            <p>6 位验证码输满自动提交；也可切密码登录或第三方登录；勾选协议后才能发起；跨区账号先提示切换。</p>
+          </div>
+          <div class="flow-step">
+            <h3>登录完成</h3>
+            <p>首次登录自动注册；地区锁定，语言作用于全应用；换区先退出。</p>
+          </div>
+        </div>
+
+        <figure style="margin:24px 0 26px">
+          <svg viewBox="0 0 760 560" role="img" aria-label="国内登录窗口线框图：窗口顶部带红黄绿三个按钮，右上角为语言切换，表单含地区、手机号或邮箱、登录注册按钮、密码登录、仅 Apple 第三方入口和协议勾选框" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="520" rx="10" fill="#fbf9f4" stroke="#24211b" stroke-width="1.5"/>
+            <circle cx="44" cy="42" r="6" fill="#ff5f57" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="64" cy="42" r="6" fill="#febc2e" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+            <circle cx="84" cy="42" r="6" fill="#28c840" stroke="#000000" stroke-opacity=".12" stroke-width=".75"/>
+
+            <text x="716" y="96" text-anchor="end" font-size="11" fill="#746c5f">中文 / <tspan fill="#b85c3e" text-decoration="underline">English</tspan></text>
+
+            <text x="210" y="116" font-size="15" fill="#24211b">中国大陆</text>
+            <path d="M282 111 l5 5 l5 -5" fill="none" stroke="#746c5f" stroke-width="1.2"/>
+            <text x="550" y="116" text-anchor="end" font-size="12" fill="#b85c3e" text-decoration="underline">切换</text>
+            <line x1="210" y1="136" x2="550" y2="136" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="210" y="150" width="340" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="228" y="177" font-size="13" fill="#746c5f">输入手机号/邮箱</text>
+
+            <rect x="210" y="212" width="340" height="44" rx="6" fill="#24211b"/>
+            <text x="380" y="239" text-anchor="middle" font-size="14" font-weight="500" fill="#fbf9f4">登录 / 注册</text>
+            <text x="380" y="272" text-anchor="middle" font-size="10.5" fill="#746c5f">获取验证码后首次使用自动创建账号</text>
+
+            <text x="380" y="302" text-anchor="middle" font-size="12" fill="#746c5f" text-decoration="underline">密码登录</text>
+
+            <line x1="210" y1="332" x2="330" y2="332" stroke="#ded7c8" stroke-width="1"/>
+            <text x="380" y="336" text-anchor="middle" font-size="11" fill="#746c5f">或使用以下方式登录</text>
+            <line x1="430" y1="332" x2="550" y2="332" stroke="#ded7c8" stroke-width="1"/>
+
+            <rect x="336" y="350" width="88" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="380" y="373" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+
+            <rect x="258" y="406" width="14" height="14" rx="3" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="280" y="418" font-size="11" fill="#514b41">我已阅读并同意<tspan fill="#b85c3e" text-decoration="underline">《用户协议》</tspan>和<tspan fill="#b85c3e" text-decoration="underline">《隐私政策》</tspan></text>
+            <text x="380" y="442" text-anchor="middle" font-size="10" fill="#746c5f">未勾选不能登录或注册</text>
+
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 1 · 国内登录窗口（Mac 桌面端）。</figcaption>
+        </figure>
+
+        <figure style="margin:0 0 26px">
+          <svg viewBox="0 0 760 236" role="img" aria-label="海外版与国内版的差异线框图：账号只支持邮箱，第三方为 Google、Apple，Facebook 仅在服务端开关开启时显示" style="width:100%;max-width:720px;margin:0 auto">
+            <rect x="20" y="20" width="720" height="196" rx="10" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
+            <text x="44" y="52" font-size="12" fill="#746c5f">海外版 · 与国内版不同的两处</text>
+            <line x1="44" y1="66" x2="716" y2="66" stroke="#ded7c8" stroke-width="1"/>
+
+            <text x="44" y="105" font-size="11" fill="#746c5f">账号</text>
+            <rect x="100" y="78" width="300" height="44" rx="6" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="118" y="105" font-size="13" fill="#746c5f">name@example.com</text>
+            <text x="424" y="105" font-size="11" fill="#514b41">只支持邮箱，不显示手机号</text>
+
+            <text x="44" y="163" font-size="11" fill="#746c5f">第三方</text>
+            <rect x="100" y="140" width="88" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="144" y="163" text-anchor="middle" font-size="12" fill="#24211b">Google</text>
+            <rect x="200" y="140" width="88" height="38" rx="10" fill="none" stroke="#c7beac" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="244" y="163" text-anchor="middle" font-size="12" fill="#746c5f">Facebook</text>
+            <rect x="300" y="140" width="88" height="38" rx="10" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="344" y="163" text-anchor="middle" font-size="12" fill="#24211b">Apple</text>
+            <text x="100" y="202" font-size="11" fill="#746c5f">虚线表示服务端开关开启后才出现，关闭时不占位</text>
+          </svg>
+          <figcaption class="table-note" style="max-width:720px;margin:8px auto 0">图 2 · 海外版与国内版的差异；没有标出的部分与国内版一致。</figcaption>
+        </figure>
+      </section>
+
+      <!-- 05 功能需求 -->
+      <section id="requirements">
+        <div class="section-kicker">05 · 需求</div>
+        <h2>功能需求</h2>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <caption>功能需求</caption>
+            <thead>
+              <tr>
+                <th scope="col">编号</th>
+                <th scope="col">优先级</th>
+                <th scope="col">需求</th>
+                <th scope="col">验收标准</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap"><strong>R-01</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>地区识别与展示</strong><br>启动或退出登录后，按 IP + 系统语言推荐地区，页面常显当前地区。移动端按 App Store 地区判定；桌面没有统一商店地区，按 IP + 系统语言推荐。识别中表单不可提交；IP 失败按系统语言兜底，仍无法判断让用户选，不默认国内。</td>
+                <td>国内 IP + 中文显示国内；海外 IP + 英文显示海外；识别失败不阻塞，也不先闪错误地区。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-02</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>登录前切换地区</strong><br>登录页有切换入口。确认弹窗说明：连另一套服务器，账号/会员/订单不跨区，登录后要退出才能换。确认后更新地区、账号规则和第三方渠道；语言不变；保留账号，清空验证码和密码；取消不改。手机号切到海外时保留原文，提交时提示改用邮箱，不静默清空。手动选择记在当前设备，下次启动优先。</td>
+                <td>切到海外后手机号入口消失；账号保留（手机号保留原文，邮箱可直接沿用）；验证码/密码清空；切换不发登录请求；取消不变。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-03</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>账号规则</strong><br>国内支持手机号或邮箱；海外只支持邮箱。默认验证码登录，密码登录是次级入口。账号为空不发请求；格式由服务端校验，桌面不另写一套手机号/邮箱规则。</td>
+                <td>国内手机号和邮箱都能获取验证码；海外没有手机号入口；账号为空时按钮不发请求；格式错误显示服务端返回的原因。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-04</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>验证码登录（默认）</strong><br>输入账号后点「登录 / 注册」获取 6 位验证码，进入验证码页；输满 6 位自动提交，不需要再点按钮；重发间隔 60 秒。首次使用自动创建账号，已有账号直接登录。</td>
+                <td>验证码 6 位；输满自动提交；60 秒内重发不可点；首次手机号/邮箱登录后直接进入应用，不出现注册表单；再次登录进入同一账号。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-05</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>密码登录</strong><br>「密码登录」进入账号 + 密码表单；「忘记密码」进入重置；「验证码登录」返回默认卡。账号或密码为空不发请求；失败保留账号和密码登录入口。</td>
+                <td>默认卡可切密码登录并返回；密码为空不发请求；失败统一提示“账号或密码不正确”，保留账号；忘记密码可进入重置页。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-06</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>第三方登录</strong><br>渠道与移动端一致：国内仅 Apple；海外 Google、Apple；服务端 Facebook 登录开关开启时海外增加 Facebook。授权成功后调统一第三方登录接口；已有账号进入同一账号，首次登录自动注册。</td>
+                <td>国内只显示 Apple；海外显示 Google、Apple；开关开启时海外显示 Facebook，关闭时消失；首次第三方登录自动创建账号；再次授权进入同一账号；取消授权留在登录页。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-07</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>协议勾选</strong><br>登录窗口底部常显勾选框和「我已阅读并同意《用户协议》和《隐私政策》」，两个链接可点；验证码卡和密码卡共用，切换登录方式保留勾选状态。默认不勾选；未勾选时点任一登录方式（验证码、密码、第三方）提示先勾选，不发请求；勾选后才能发起。每次重新进入登录页恢复未勾选。移动端不设勾选框，桌面端必须手动勾选。协议链接复用服务端配置；非中文使用国际版链接。</td>
+                <td>默认未勾选；不勾选点任一登录方式，有提示且不发请求；勾选后可正常发起；切换验证码/密码卡勾选状态保留；重新进入登录页恢复未勾选；两个链接可打开；中英文链接指向对应版本。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-08</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>跨区账号处理</strong><br>后端返回“账号属于另一地区”的独立错误码和地区字段；页面提示所属地区并可切换。切换后保留账号，重新获取验证码；不在错误地区自动注册、不合并、不报“密码错误”。</td>
+                <td>国内页输入海外账号，出现跨区提示；确认后切到海外页、账号保留、验证码清空；取消留在原页；后端未返回该错误码时此条不通过。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-09</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>登录后锁区</strong><br>登录后不提供切区，换区必须退出。退出后回登录页，保留上次地区，切换入口恢复。</td>
+                <td>登录后的应用内找不到换区入口；退出登录后出现切换入口；切换不会在已登录状态静默发生。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-10</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>语言作用于全应用</strong><br>登录页可切中文/English；选择持久化；登录后沿用；登录页文案全覆盖，不混排。</td>
+                <td>切到 English 后登录页全部英文且无布局溢出；登录后应用主界面为英文；重启仍为英文；切回中文后一致。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-11</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>密码重置</strong><br>从「密码登录」进入「忘记密码」；账号 + 验证码 + 新密码 + 确认新密码；验证码按重置密码场景发送，60 秒重发；新密码 6–18 位字母和数字组合；两次一致。成功后回登录页，账号保留。</td>
+                <td>验证码错误、两次不一致、密码不合规分别提示；成功后回登录页且账号仍在；新密码可登录，旧密码不能登录。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-12</strong></td>
+                <td><span class="pill pill-p1">P1</span></td>
+                <td><strong>服务不可用与诊断</strong><br>区分本地服务未启动和远端不可达；给说明、重试和诊断入口；诊断含版本、地区、错误码，可复制；不无限转圈。</td>
+                <td>本地服务未启动显示启动指引；远端超时显示重试；重试成功后回到登录；诊断信息包含版本、地区、错误码。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-13</strong></td>
+                <td><span class="pill pill-p1">P1</span></td>
+                <td><strong>未激活账号的授权码步骤</strong><br>服务端返回账号未激活，且授权码开关开启时，登录后进入授权码页；输入授权码确认后继续进入应用；可返回登录页。桌面是否开启由服务端开关决定，未配置或关闭时不出现。</td>
+                <td>开关关闭时不出现授权码页；开关开启且账号未激活时出现；授权码正确后进入应用；错误时留在授权码页并提示。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 06 状态 -->
+      <section id="states">
+        <div class="section-kicker">06 · 状态</div>
+        <h2>状态与异常</h2>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <caption>状态与异常</caption>
+            <thead>
+              <tr>
+                <th scope="col">状态</th>
+                <th scope="col">触发条件</th>
+                <th scope="col">用户看到</th>
+                <th scope="col">如何处理</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>地区识别中</strong></td>
+                <td>启动或退出登录后，IP 查询还未返回。</td>
+                <td>登录卡显示识别中，表单暂不可提交。</td>
+                <td>设超时；超时按系统语言兜底，别让用户干等。</td>
+              </tr>
+              <tr>
+                <td><strong>识别失败</strong></td>
+                <td>IP 服务失败，系统语言也无法判断。</td>
+                <td>地区选择，说明“无法自动识别，请选择”。</td>
+                <td>不静默默认国内；未选地区不能登录。</td>
+              </tr>
+              <tr>
+                <td><strong>地区与语言不一致</strong></td>
+                <td>海外 IP + 中文系统，或国内 IP + 英文系统。</td>
+                <td>地区按 IP，语言按用户选择；两者独立显示。</td>
+                <td>不要用语言反推地区；切换语言不改变地区。</td>
+              </tr>
+              <tr>
+                <td><strong>切换地区确认</strong></td>
+                <td>用户点切换入口。</td>
+                <td>弹窗列三条影响，可取消或确认。</td>
+                <td>确认后清空验证码/密码，保留账号，不发请求。</td>
+              </tr>
+              <tr>
+                <td><strong>协议未勾选</strong></td>
+                <td>勾选框未勾选时点任一登录方式。</td>
+                <td>提示先阅读并勾选协议，留在当前页。</td>
+                <td>不发请求；勾选后可继续；每次进入登录页默认未勾选。</td>
+              </tr>
+              <tr>
+                <td><strong>验证码已发送 / 倒计时</strong></td>
+                <td>点「登录 / 注册」或「重新发送」成功。</td>
+                <td>进入验证码页；显示 60 秒倒计时。</td>
+                <td>重发后旧码失效；倒计时期间重发不可点。</td>
+              </tr>
+              <tr>
+                <td><strong>验证码发送中 / 失败</strong></td>
+                <td>点「登录 / 注册」或「重新发送」后，请求未返回或失败。</td>
+                <td>发送中显示加载；失败提示原因，留在当前页，可重试。</td>
+                <td>成功才进入验证码页并启动 60 秒倒计时；失败不清空账号。</td>
+              </tr>
+              <tr>
+                <td><strong>验证码自动提交中</strong></td>
+                <td>输入第 6 位验证码。</td>
+                <td>自动提交，显示加载态；不需要再点按钮。</td>
+                <td>只发一次请求；提交中不接受重复输入。</td>
+              </tr>
+              <tr>
+                <td><strong>验证码错误 / 过期</strong></td>
+                <td>服务端判定验证码不正确或已过期。</td>
+                <td>提示服务端原因；账号保留，重新输入验证码后提交。</td>
+                <td>不清空账号；不把错误码当成功；过期引导重发。</td>
+              </tr>
+              <tr>
+                <td><strong>密码错误 / 账号不存在</strong></td>
+                <td>密码登录失败。</td>
+                <td>统一提示“账号或密码不正确”。</td>
+                <td>不暴露账号是否存在；跨区账号除外，走跨区提示。</td>
+              </tr>
+              <tr>
+                <td><strong>跨区账号</strong></td>
+                <td>登录时账号属于另一地区。</td>
+                <td>弹窗说明账号属于 X，可切换；切换后重新获取验证码。</td>
+                <td>必须用独立错误码；不在错误地区自动注册、不合并账号。</td>
+              </tr>
+              <tr>
+                <td><strong>新用户自动注册</strong></td>
+                <td>首次验证码或第三方登录，服务端判定为新用户。</td>
+                <td>直接进入应用，不出现注册表单。</td>
+                <td>记录注册事件；不要求补填账号资料。</td>
+              </tr>
+              <tr>
+                <td><strong>第三方授权取消 / 失败</strong></td>
+                <td>用户在授权页取消，或授权失败。</td>
+                <td>回到登录页，提示未完成登录，可重试。</td>
+                <td>取消不发起后端请求；不残留上次授权状态。</td>
+              </tr>
+              <tr>
+                <td><strong>未激活账号</strong></td>
+                <td>服务端返回账号未激活，且授权码开关开启。</td>
+                <td>登录后进入授权码页；输入正确后进入应用。</td>
+                <td>开关关闭时不出现；授权码失败留在页面并提示。</td>
+              </tr>
+              <tr>
+                <td><strong>本地服务未启动</strong></td>
+                <td>桌面端本地服务未运行。</td>
+                <td>“服务未启动” + 启动指引 + 重试。</td>
+                <td>不要显示远端不可达；不要无限转圈。</td>
+              </tr>
+              <tr>
+                <td><strong>远端不可达 / 超时</strong></td>
+                <td>账号服务网络失败或超时。</td>
+                <td>“无法连接” + 重试 + 诊断入口。</td>
+                <td>保留已填账号；不误报登录成功。</td>
+              </tr>
+              <tr>
+                <td><strong>登录中重复点击</strong></td>
+                <td>用户连续点登录或第三方登录。</td>
+                <td>按钮进入加载态，不可重复点。</td>
+                <td>只发一次请求；失败后恢复可点。</td>
+              </tr>
+              <tr>
+                <td><strong>登录成功</strong></td>
+                <td>验证码、密码或第三方授权通过。</td>
+                <td>进入应用；新用户已完成注册；地区锁定；语言沿用。</td>
+                <td>不再显示登录页；不提供切区。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <figure style="margin:24px 0 8px">
+          <svg viewBox="0 0 900 260" role="img" aria-label="三个登录状态线框图：验证码输入、验证码错误、跨区账号" style="width:100%;max-width:860px;margin:0 auto">
+            <rect x="20" y="20" width="272" height="220" rx="8" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
+            <text x="36" y="46" font-size="12" fill="#746c5f">A · 验证码输入</text>
+            <line x1="36" y1="58" x2="276" y2="58" stroke="#ded7c8" stroke-width="1"/>
+            <text x="36" y="82" font-size="11" fill="#24211b">138****8000</text>
+            <rect x="36" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="53" y="117" text-anchor="middle" font-size="14" fill="#24211b">1</text>
+            <rect x="76" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="93" y="117" text-anchor="middle" font-size="14" fill="#24211b">2</text>
+            <rect x="116" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="133" y="117" text-anchor="middle" font-size="14" fill="#24211b">3</text>
+            <rect x="156" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="173" y="117" text-anchor="middle" font-size="14" fill="#24211b">4</text>
+            <rect x="196" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="213" y="117" text-anchor="middle" font-size="14" fill="#24211b">5</text>
+            <rect x="236" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="253" y="117" text-anchor="middle" font-size="14" fill="#24211b">6</text>
+            <text x="36" y="158" font-size="11" fill="#b85c3e">验证中…</text>
+            <text x="36" y="182" font-size="10.5" fill="#746c5f">已发送 48s</text>
+            <text x="36" y="208" font-size="10.5" fill="#746c5f">输满第 6 位自动提交</text>
+
+            <rect x="312" y="20" width="272" height="220" rx="8" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
+            <text x="328" y="46" font-size="12" fill="#746c5f">B · 验证码错误</text>
+            <line x1="328" y1="58" x2="568" y2="58" stroke="#ded7c8" stroke-width="1"/>
+            <text x="328" y="82" font-size="11" fill="#24211b">138****8000</text>
+            <rect x="328" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="345" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
+            <rect x="368" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="385" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
+            <rect x="408" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="425" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
+            <rect x="448" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="465" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
+            <rect x="488" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="505" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
+            <rect x="528" y="94" width="34" height="36" rx="4" fill="#fffdf9" stroke="#963f31" stroke-width="1"/>
+            <text x="545" y="117" text-anchor="middle" font-size="14" fill="#24211b">0</text>
+            <text x="328" y="158" font-size="10.5" fill="#963f31">验证码不正确，请重新输入</text>
+            <text x="328" y="182" font-size="10.5" fill="#746c5f">已发送 48s</text>
+            <text x="328" y="208" font-size="10.5" fill="#746c5f">账号保留，重新输入后自动提交</text>
+
+            <rect x="604" y="20" width="272" height="220" rx="8" fill="#fbf9f4" stroke="#ded7c8" stroke-width="1"/>
+            <text x="620" y="46" font-size="12" fill="#746c5f">C · 跨区账号</text>
+            <line x1="620" y1="58" x2="860" y2="58" stroke="#ded7c8" stroke-width="1"/>
+            <text x="620" y="78" font-size="10" fill="#746c5f">地区</text>
+            <text x="620" y="96" font-size="12" fill="#24211b">中国大陆</text>
+            <text x="860" y="96" text-anchor="end" font-size="10.5" fill="#b85c3e" text-decoration="underline">切换</text>
+            <rect x="620" y="112" width="240" height="32" rx="4" fill="#fffdf9" stroke="#c7beac" stroke-width="1"/>
+            <text x="632" y="132" font-size="11" fill="#746c5f">name@example.com</text>
+            <line x1="620" y1="164" x2="620" y2="204" stroke="#963f31" stroke-width="1"/>
+            <text x="632" y="180" font-size="11" fill="#963f31">该账号注册于国际区</text>
+            <text x="632" y="196" font-size="10.5" fill="#746c5f">请切换到国际区后登录</text>
+            <text x="620" y="226" font-size="11" fill="#b85c3e" text-decoration="underline">切换到国际区</text>
+          </svg>
+          <figcaption class="table-note" style="max-width:860px;margin:8px auto 0">图 3 · 验证码输入、验证码错误与跨区账号。</figcaption>
+        </figure>
+      </section>
+
+      <!-- 07 验收 -->
+      <section id="acceptance">
+        <div class="section-kicker">07 · 验收</div>
+        <h2>验收清单</h2>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <caption>验收清单</caption>
+            <thead>
+              <tr>
+                <th scope="col">编号</th>
+                <th scope="col">前置条件</th>
+                <th scope="col">操作</th>
+                <th scope="col">预期结果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap"><strong>AC-01</strong></td>
+                <td>国内 IP、中文系统，打开桌面端登录页。</td>
+                <td>页面加载完成。</td>
+                <td>显示国内；账号输入支持手机号或邮箱；第三方只有 Apple；协议勾选框默认未勾选且链接可点；地区可切换。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-02</strong></td>
+                <td>海外 IP、英文系统，打开桌面端登录页。</td>
+                <td>页面加载完成。</td>
+                <td>显示海外；账号只支持邮箱，不显示手机号；第三方显示 Google、Apple；协议勾选框默认未勾选。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-03</strong></td>
+                <td>海外 IP、中文系统。</td>
+                <td>打开登录页并切到 English。</td>
+                <td>地区仍是海外；文案变英文；邮箱入口不变；无布局溢出。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-04</strong></td>
+                <td>国内页已输入账号和验证码。</td>
+                <td>切到海外并确认。</td>
+                <td>账号保留；验证码、密码清空；手机号入口消失；未发登录请求。手机号切到海外时，提交提示改用邮箱。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-05</strong></td>
+                <td>国内页，输入未注册手机号。</td>
+                <td>获取验证码并输入 6 位。</td>
+                <td>自动提交；自动创建账号并进入应用；不出现注册表单。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-06</strong></td>
+                <td>国内页，输入已注册邮箱。</td>
+                <td>获取验证码并输入 6 位。</td>
+                <td>自动提交；进入同一账号。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-07</strong></td>
+                <td>已获取验证码。</td>
+                <td>输满 6 位；60 秒内点重发；60 秒后点重发。</td>
+                <td>输满自动提交；60 秒内重发不可点；60 秒后可重发，旧码失效；重复输入只发一次请求。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-08</strong></td>
+                <td>已注册且有密码的账号。</td>
+                <td>点「密码登录」。</td>
+                <td>出现账号 + 密码表单；可点「忘记密码」进入重置；可点「验证码登录」返回默认卡；密码为空不发请求。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-09</strong></td>
+                <td>移动端已用 Apple、Google 或 Facebook 登录的账号。</td>
+                <td>桌面用同一渠道完成授权。</td>
+                <td>进入同一账号，不需要重新注册。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-10</strong></td>
+                <td>从未注册的第三方身份。</td>
+                <td>桌面完成授权。</td>
+                <td>自动创建账号并进入应用；不出现注册表单；再次授权进入同一账号。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-11</strong></td>
+                <td>国内/海外切换，或服务端 Facebook 登录开关变化。</td>
+                <td>打开登录页。</td>
+                <td>国内只有 Apple；海外有 Google、Apple；开关开启时海外增加 Facebook，关闭时消失。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-12</strong></td>
+                <td>已进入第三方授权页。</td>
+                <td>取消授权。</td>
+                <td>回登录页，提示未完成登录；不进入应用；取消不发起后端请求。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-13</strong></td>
+                <td>国内页输入海外账号。</td>
+                <td>提交登录。</td>
+                <td>提示账号属于海外并可切换；确认后海外页保留账号、清空验证码；不在错误地区自动注册。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-14</strong></td>
+                <td>用户已登录。</td>
+                <td>在应用内查找换区入口。</td>
+                <td>没有入口；退出登录后回到登录页，保留上次地区并可切换。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-15</strong></td>
+                <td>登录页切到 English 并登录。</td>
+                <td>进入应用。</td>
+                <td>应用为英文；重启后仍为英文；切回中文后一致。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-16</strong></td>
+                <td>用户忘记密码。</td>
+                <td>用账号 + 验证码 + 新密码 + 确认完成重置。</td>
+                <td>验证码错误、两次不一致、密码不合规分别提示；成功后回登录页，账号保留；新密码可登录，旧密码不能登录。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-17</strong></td>
+                <td>本地服务未启动或远端超时。</td>
+                <td>点登录。</td>
+                <td>显示对应说明、重试和诊断；不无限转圈，不误报成功。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-18</strong></td>
+                <td>IP 查询失败，系统语言也无法判断。</td>
+                <td>打开登录页。</td>
+                <td>让用户选地区；未选不能登录；不静默选国内。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-19</strong></td>
+                <td>账号未激活，授权码开关开启。</td>
+                <td>登录成功。</td>
+                <td>进入授权码页；输入正确后进入应用；开关关闭时不出现。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-20</strong></td>
+                <td>表单有效。</td>
+                <td>连续点登录或第三方登录。</td>
+                <td>只发一次请求；按钮加载中不可重复点。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-21</strong></td>
+                <td>登录页协议默认未勾选。</td>
+                <td>不勾选点任一登录方式（验证码、密码、第三方）。</td>
+                <td>提示先勾选，不发请求；勾选后可正常发起；重新进入登录页恢复未勾选。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 08 待确认 -->
+      <section id="questions">
+        <div class="section-kicker">08 · 待确认</div>
+        <h2>待确认问题</h2>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <caption>待确认问题</caption>
+            <thead>
+              <tr>
+                <th scope="col">问题</th>
+                <th scope="col">谁回答</th>
+                <th scope="col">是否阻塞</th>
+                <th scope="col">结论 / 日期</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>桌面端第三方渠道的平台实现：macOS 和 Windows 上 Apple、Google、Facebook 的授权 SDK、资质和审核要求是否齐备？渠道矩阵已按移动端固定。</td>
+                <td>工程 / 产品</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定。决定 R-06 在两个平台的实现范围。</td>
+              </tr>
+              <tr>
+                <td>后端能否返回“账号属于另一地区”的独立错误码和账号地区字段？</td>
+                <td>后端</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定。没有它，R-08 只能退化为一句话提示。</td>
+              </tr>
+              <tr>
+                <td>全应用 i18n 的上线门槛：登录页先上、应用内分批，还是全量？Rust 侧 Accept-Language 目前写死 zh-Hans。</td>
+                <td>工程 / 产品</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定。决定 R-10 的验收范围。</td>
+              </tr>
+              <tr>
+                <td>IP 归属地服务选型和超时兜底：IP 失败按系统语言，二者都失败让用户选地区，是否接受？</td>
+                <td>后端 / 产品</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定。没有 IP 服务只能按语言判断，海外识别会不准。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 09 变更 -->
+      <section id="changelog">
+        <div class="section-kicker">09 · 变更</div>
+        <h2>变更记录</h2>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <caption>变更记录</caption>
+            <thead>
+              <tr>
+                <th scope="col">日期</th>
+                <th scope="col">版本</th>
+                <th scope="col">改了什么</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.5</td>
+                <td>协议改为默认不勾选、手动勾选后才能登录；原型图去掉登录标题、Kocard 字、分割线和字段标签，语言切换移到窗口右上角。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.4</td>
+                <td>按 iOS 实际登录实现校正：国内手机号或邮箱、海外邮箱；验证码默认且 6 位自动提交；第三方渠道按地区和服务端开关；首次登录自动注册；协议改为文字链接；补授权码步骤。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.3</td>
+                <td>范围加入第三方登录，与移动端对齐；用户场景改为已知事实；补第三方登录的状态和验收。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.2</td>
+                <td>加登录窗口和异常态线框图；压缩文案，收敛待确认问题。</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.1</td>
+                <td>初稿。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="doc-footer">
+        <span><strong>Kocard新版桌面端注册登录与移动端打通</strong></span>
+        <span>草稿</span>
+      </footer>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var sections = links.map(function (link) {
+    var id = link.getAttribute('href');
+    return id && id.charAt(0) === '#' ? document.querySelector(id) : null;
+  }).filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (link) {
+          var active = link.getAttribute('href') === '#' + entry.target.id;
+          link.classList.toggle('active', active);
+          if (active) {
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      });
+    }, { rootMargin: '-12% 0px -70% 0px', threshold: 0 });
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+
+  var printButtons = document.querySelectorAll('[data-print]');
+  Array.prototype.forEach.call(printButtons, function (button) {
+    button.addEventListener('click', function () { window.print(); });
+  });
+
+  var folds = Array.prototype.slice.call(document.querySelectorAll('details'));
+  window.addEventListener('beforeprint', function () {
+    folds.forEach(function (fold) {
+      fold.dataset.wasOpen = fold.open ? 'true' : 'false';
+      fold.open = true;
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    folds.forEach(function (fold) {
+      fold.open = fold.dataset.wasOpen === 'true';
+    });
+  });
+})();
+</script>
+</body>
+</html>
