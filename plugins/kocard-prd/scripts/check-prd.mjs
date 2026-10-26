@@ -26,6 +26,23 @@ function extractBlock(html, tag) {
   return match ? match[0] : '';
 }
 
+function sectionHtml(html, id) {
+  const match = html.match(new RegExp(`<section\\s+id="${id}"[\\s\\S]*?<\\/section>`));
+  return match ? match[0] : '';
+}
+
+function tableHeaders(html, id) {
+  const thead = sectionHtml(html, id).match(/<thead>[\s\S]*?<\/thead>/);
+  if (!thead) return null;
+  return Array.from(thead[0].matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/g), (match) => match[1].trim());
+}
+
+function tableRowWidths(html, id) {
+  const tbody = sectionHtml(html, id).match(/<tbody>[\s\S]*?<\/tbody>/);
+  if (!tbody) return [];
+  return Array.from(tbody[0].matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/g), (match) => (match[1].match(/<td\b/g) || []).length);
+}
+
 const args = process.argv.slice(2);
 if (args.includes('--help') || args.includes('-h')) {
   console.log(USAGE);
@@ -92,6 +109,34 @@ for (const input of files) {
   }
   if (extractBlock(doc, 'script') !== templateScript) {
     errors.push('脚本块与模板不一致；请重新从模板复制，不要改脚本。');
+  }
+
+  for (const id of ['requirements', 'states', 'acceptance', 'changelog', 'questions']) {
+    const expectedHeaders = tableHeaders(template, id);
+    const actualHeaders = tableHeaders(doc, id);
+    if (!expectedHeaders || !actualHeaders) continue;
+    if (expectedHeaders.join('|') !== actualHeaders.join('|')) {
+      errors.push(`#${id} 表头与模板不一致；应为：${expectedHeaders.join(' / ')}。`);
+      continue;
+    }
+    const wrongRows = tableRowWidths(doc, id).filter((width) => width !== actualHeaders.length);
+    if (wrongRows.length) {
+      errors.push(`#${id} 有 ${wrongRows.length} 行单元格数与表头（${actualHeaders.length}）不一致。`);
+    }
+  }
+
+  for (const match of doc.matchAll(/href="#([^"]+)"/g)) {
+    if (!doc.includes(`id="${match[1]}"`)) {
+      errors.push(`目录锚点 #${match[1]} 找不到对应章节。`);
+    }
+  }
+
+  const footer = doc.match(/<footer[\s\S]*?<\/footer>/);
+  const footerVersion = footer && footer[0].match(/\bv\d+(?:\.\d+)?\b/);
+  const changelog = sectionHtml(doc, 'changelog');
+  const latestVersion = changelog && changelog.match(/<td class="nowrap">(v\d+(?:\.\d+)?)<\/td>/);
+  if (footerVersion && latestVersion && footerVersion[0] !== latestVersion[1]) {
+    errors.push(`页脚版本 ${footerVersion[0]} 与变更记录最新版本 ${latestVersion[1]} 不一致。`);
   }
 
   for (const id of ['problem', 'goals', 'requirements', 'acceptance']) {

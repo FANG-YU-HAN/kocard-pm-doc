@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- prd-template:v1 -->
+<!-- prd-template:v5 -->
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -648,7 +648,7 @@ td strong { color: var(--ink); font-weight: 600; }
             <caption>功能需求</caption>
             <thead>
               <tr>
-                <th scope="col">ID</th>
+                <th scope="col">编号</th>
                 <th scope="col">优先级</th>
                 <th scope="col">需求</th>
                 <th scope="col">验收标准</th>
@@ -716,7 +716,7 @@ td strong { color: var(--ink); font-weight: 600; }
                 <th scope="col">状态</th>
                 <th scope="col">触发条件</th>
                 <th scope="col">用户看到</th>
-                <th scope="col">开发注意</th>
+                <th scope="col">如何处理</th>
               </tr>
             </thead>
             <tbody>
@@ -778,11 +778,10 @@ td strong { color: var(--ink); font-weight: 600; }
             <caption>验收清单</caption>
             <thead>
               <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Given</th>
-                <th scope="col">When</th>
-                <th scope="col">Then</th>
-                <th scope="col">优先级</th>
+                <th scope="col">编号</th>
+                <th scope="col">前置条件</th>
+                <th scope="col">操作</th>
+                <th scope="col">预期结果</th>
               </tr>
             </thead>
             <tbody>
@@ -791,42 +790,36 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td>未登录用户从会员页点订阅。</td>
                 <td>完成登录。</td>
                 <td>回到订阅页，不丢失入口。</td>
-                <td><span class="pill pill-p0">P0</span></td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-02</strong></td>
                 <td>用户在桌面端选择年付。</td>
                 <td>支付成功。</td>
                 <td>5 秒内权益生效；三端到期时间一致。</td>
-                <td><span class="pill pill-p0">P0</span></td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-03</strong></td>
                 <td>支付渠道返回 pending。</td>
                 <td>用户回到应用。</td>
                 <td>显示处理中；查单成功后自动解锁。</td>
-                <td><span class="pill pill-p0">P0</span></td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-04</strong></td>
                 <td>用户已在移动端订阅。</td>
                 <td>在桌面端点恢复购买。</td>
                 <td>显示当前到期时间；不产生新订单。</td>
-                <td><span class="pill pill-p0">P0</span></td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-05</strong></td>
                 <td>支付失败。</td>
                 <td>用户点重试。</td>
                 <td>回到支付流程；不重复创建订单。</td>
-                <td><span class="pill pill-p1">P1</span></td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-06</strong></td>
                 <td>当前地区不支持桌面端支付。</td>
                 <td>用户进入订阅页。</td>
                 <td>显示明确说明；不展示不可用价格。</td>
-                <td><span class="pill pill-p1">P1</span></td>
               </tr>
             </tbody>
           </table>
@@ -895,7 +888,6 @@ td strong { color: var(--ink); font-weight: 600; }
                 <th scope="col">日期</th>
                 <th scope="col">版本</th>
                 <th scope="col">改了什么</th>
-                <th scope="col">谁</th>
               </tr>
             </thead>
             <tbody>
@@ -903,13 +895,11 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td class="nowrap">2026-10-26</td>
                 <td class="nowrap">v0.1</td>
                 <td>初稿：问题、目标、需求、状态、验收。</td>
-                <td>产品</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
                 <td class="nowrap">v0.1</td>
                 <td>补充支付 pending 和地区不支持的异常状态。</td>
-                <td>产品</td>
               </tr>
             </tbody>
           </table>
