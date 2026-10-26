@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<!-- prd-template:v1 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>桌面端订阅支付 · PRD 示例</title>
+<meta name="description" content="产品需求文档模板示例：桌面端订阅支付。">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f3ea;
+  --surface: #fbf9f4;
+  --surface-2: #ece7db;
+  --ink: #24211b;
+  --ink-2: #514b41;
+  --muted: #746c5f;
+  --line: #ded7c8;
+  --line-strong: #c7beac;
+  --accent: #b85c3e;
+  --accent-strong: #9c4830;
+  --green: #4f6b52;
+  --amber: #8a6428;
+  --red: #963f31;
+  --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: .005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--accent-strong); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+button { font: inherit; }
+img, svg { display: block; max-width: 100%; }
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--surface-2);
+  padding: .08em .3em;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.skip-link:focus { top: 16px; }
+
+.page {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ---------- 左侧目录 ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 34px 20px 24px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.nav a {
+  display: block;
+  padding: 5px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+.nav a .num { display: none; }
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--accent-strong); font-weight: 600; }
+
+.sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.status-card {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.status-row { display: flex; justify-content: space-between; gap: 12px; }
+.status-row span:first-child { color: var(--muted); }
+.status-value { color: var(--ink-2); text-align: right; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+.btn:hover { color: var(--accent-strong); }
+
+/* ---------- 正文 ---------- */
+main { min-width: 0; padding: 56px clamp(24px, 6vw, 88px) 96px; }
+.doc { max-width: 860px; margin: 0 auto; }
+
+.doc-header { padding-bottom: 8px; margin-bottom: 0; }
+.eyebrow {
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 12px 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(36px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lede {
+  max-width: 660px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 22px;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.meta-item { display: flex; gap: 5px; }
+.meta-label { color: var(--muted); }
+.meta-label::after { content: "："; }
+.meta-value { color: var(--ink-2); }
+.status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--amber);
+  vertical-align: 1px;
+}
+
+.tldr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+.tldr-card { padding-top: 10px; border-top: 1px solid var(--line); }
+.tldr-label {
+  margin-bottom: 4px;
+  color: var(--accent-strong);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
+.tldr-card p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.doc-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+section {
+  padding: 26px 0 0;
+  margin: 44px 0 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 24px;
+}
+.section-kicker {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h2 {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+h3 {
+  margin: 24px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.section-intro { max-width: 700px; margin: 0 0 20px; color: var(--ink-2); font-size: 14.5px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; line-height: 1.65; }
+.placeholder {
+  display: inline-block;
+  padding: 0 2px;
+  border-bottom: 1px dashed var(--line-strong);
+  color: var(--muted);
+  font-size: .92em;
+}
+
+.card {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.callout {
+  margin: 20px 0;
+  padding: 2px 0 2px 18px;
+  border-left: 2px solid var(--accent);
+}
+.callout p {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+
+.mini-card { padding-top: 10px; border-top: 1px solid var(--line); }
+.mini-label {
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+.mini-card p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.mini-card strong { color: var(--ink); font-weight: 600; }
+
+.check-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.check-list li { display: flex; gap: 8px; align-items: flex-start; }
+.check-list .mark {
+  flex: 0 0 12px;
+  width: 12px;
+  margin-top: 1px;
+  color: var(--accent);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.check-list.no .mark { color: var(--muted); }
+.check-list strong { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; }
+.check-list .desc { display: block; margin-top: 1px; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: step; }
+.flow-step { padding-top: 10px; border-top: 1px solid var(--line); }
+.flow-step::before {
+  counter-increment: step;
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .08em;
+}
+.flow-step h3 { margin: 0 0 3px; font-size: 13px; font-weight: 600; }
+.flow-step p { margin: 0; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; }
+
+.table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+}
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
+caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+th {
+  padding: 9px 12px 8px;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-align: left;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  vertical-align: top;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+tr:last-child td { border-bottom: 0; }
+td strong { color: var(--ink); font-weight: 600; }
+.nowrap { white-space: nowrap; }
+.table-note { margin: 10px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.pill-p0 { color: var(--accent-strong); }
+.pill-p1 { color: var(--amber); }
+.pill-p2 { color: var(--muted); }
+.pill-ok { color: var(--green); }
+.pill-warn { color: var(--amber); }
+.pill-block { color: var(--red); }
+
+.fold {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.fold summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.fold summary::-webkit-details-marker { display: none; }
+.fold summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+}
+.fold[open] summary::after { content: "−"; }
+.fold-body { padding: 6px 0 16px; }
+.fold-body > :first-child { margin-top: 0; }
+.fold-body > :last-child { margin-bottom: 0; }
+
+.instructions { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 12.5px; line-height: 1.8; }
+.instructions li + li { margin-top: 3px; }
+
+.doc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 44px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10.5px;
+}
+.doc-footer strong { color: var(--ink-2); font-weight: 500; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+@media (max-width: 960px) {
+  .page { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  main { padding: 40px 22px 64px; }
+  section { scroll-margin-top: 20px; }
+}
+
+@media (max-width: 760px) {
+  .tldr, .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+  h1 { font-size: 34px; }
+  .lede { font-size: 16px; }
+  .callout p { font-size: 16px; }
+  section { margin-top: 36px; }
+  .table-wrap table { min-width: 660px; }
+  #acceptance .table-wrap table,
+  #requirements .table-wrap table { min-width: 780px; }
+}
+
+@media print {
+  body { background: #fff; color: #111; font-size: 10.5pt; }
+  .page { display: block; }
+  .sidebar, .skip-link, .btn, .no-print { display: none !important; }
+  main { padding: 0; }
+  .doc { max-width: none; }
+  section { break-inside: auto; page-break-inside: auto; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  tr { break-inside: avoid; page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .table-wrap { overflow: visible; }
+  table { font-size: 9pt; }
+  th, td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到正文</a>
+
+<div class="page">
+  <aside class="sidebar" aria-label="文档导航">
+    <nav class="nav" aria-label="章节">
+      <a href="#summary" class="active"><span class="num">00</span>三分钟版</a>
+      <a href="#problem"><span class="num">01</span>问题与证据</a>
+      <a href="#goals"><span class="num">02</span>目标与非目标</a>
+      <a href="#users"><span class="num">03</span>用户与场景</a>
+      <a href="#solution"><span class="num">04</span>方案概览</a>
+      <a href="#requirements"><span class="num">05</span>功能需求</a>
+      <a href="#states"><span class="num">06</span>状态与异常</a>
+      <a href="#acceptance"><span class="num">07</span>验收清单</a>
+      <a href="#questions"><span class="num">08</span>待确认问题</a>
+      <a href="#changelog"><span class="num">09</span>变更记录</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-card">
+        <div class="status-row"><span>状态</span><span class="status-value">草稿</span></div>
+        <div class="status-row"><span>更新</span><span class="status-value">2026-10-26</span></div>
+      </div>
+      <button class="btn" type="button" data-print>打印 / 存 PDF</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <article class="doc">
+      <header class="doc-header" id="summary">
+        <div class="eyebrow">PRD · 桌面端 · 示例模板</div>
+        <h1>桌面端订阅支付</h1>
+        <p class="lede">让桌面端用户直接完成订阅购买、续费与恢复购买，不再被引导回手机。</p>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">状态</div>
+            <div class="meta-value"><span class="status-dot"></span>草稿</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">更新</div>
+            <div class="meta-value">2026-10-26</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">适用端</div>
+            <div class="meta-value">macOS · Windows</div>
+          </div>
+        </div>
+
+        <div class="tldr">
+          <div class="tldr-card">
+            <div class="tldr-label">做什么</div>
+            <p>桌面端内完成订阅购买、续费、恢复购买；支付成功后立即解锁权益。</p>
+          </div>
+          <div class="tldr-card">
+            <div class="tldr-label">不做什么</div>
+            <p>不改定价；不做企业发票；不做新的账号体系。</p>
+          </div>
+          <div class="tldr-card">
+            <div class="tldr-label">怎么算完成</div>
+            <p>三端权益一致；支付成功率达到移动端基线；失败可恢复。</p>
+          </div>
+        </div>
+        <p class="doc-note">示例文档：数字、结论和排期均为占位，替换成真实内容后再评审。</p>
+      </header>
+
+      <!-- 01 问题 -->
+      <section id="problem">
+        <div class="section-kicker">01 · 问题</div>
+        <h2>这次要解决什么</h2>
+        <p class="section-intro">先用一段话把问题说清楚：谁、在什么场景、现在怎么解决、为什么不够好。</p>
+
+        <div class="callout">
+          <p>桌面端用户增长，但订阅入口只存在于移动端。用户被要求扫码回手机，转化在这里断掉。</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="mini-card">
+            <div class="mini-label">证据 1 · 数据</div>
+            <p>桌面端试用到付费的转化低于移动端 <span class="placeholder">[填数字]</span>。</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">证据 2 · 用户反馈</div>
+            <p>客服工单里出现“桌面端能不能直接买” <span class="placeholder">[填条数]</span>。</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">证据 3 · 业务影响</div>
+            <p>每流失一个用户，损失首年订阅收入 <span class="placeholder">[填估算]</span>。</p>
+          </div>
+        </div>
+        <p class="table-note">证据不足时，明确写“这是假设”，不要写成事实。评审时先补证据，再讨论方案。</p>
+      </section>
+
+      <!-- 02 目标 -->
+      <section id="goals">
+        <div class="section-kicker">02 · 目标</div>
+        <h2>目标与非目标</h2>
+        <p class="section-intro">目标写结果，不写功能；非目标写清楚“这期不做什么”，并说明原因。</p>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-top:0">本期目标</h3>
+            <ul class="check-list">
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>桌面端能独立完成订阅</strong><span class="desc">购买、续费、恢复购买都不依赖手机。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>支付成功后权益立即生效</strong><span class="desc">5 秒内解锁；重启应用后仍然有效；三端状态一致。</span></span>
+              </li>
+              <li>
+                <span class="mark">✓</span>
+                <span><strong>支付成功率不低于移动端基线</strong><span class="desc">基线值 <span class="placeholder">[填基线]</span>；上线后按周看。</span></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-top:0">本期不做</h3>
+            <ul class="check-list no">
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不改定价和套餐结构</strong><span class="desc">本期只加支付入口，价格仍以服务端配置为准。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做企业发票 / 对公转账</strong><span class="desc">有明确客户需求时另开项目，不塞进本期。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做新的账号体系</strong><span class="desc">沿用现有登录态；账号打通另行推进。</span></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 用户 -->
+      <section id="users">
+        <div class="section-kicker">03 · 用户</div>
+        <h2>用户与场景</h2>
+        <p class="section-intro">只写本期真正影响到的用户。每个角色写清楚：现在怎么解决、卡在哪、这期支持到什么程度。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>用户与场景</caption>
+            <thead>
+              <tr>
+                <th scope="col">用户</th>
+                <th scope="col">现在怎么做</th>
+                <th scope="col">卡在哪</th>
+                <th scope="col">本期支持</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>新用户</strong></td>
+                <td>在移动端看到订阅页，扫码回手机完成购买。</td>
+                <td>手边没有手机，或不想换端。</td>
+                <td>桌面端直接购买。</td>
+              </tr>
+              <tr>
+                <td><strong>续费用户</strong></td>
+                <td>收到邮件提醒，回移动端续费。</td>
+                <td>忘记入口，或错过续费时间。</td>
+                <td>桌面端续费 + 到期前站内提醒。</td>
+              </tr>
+              <tr>
+                <td><strong>换机用户</strong></td>
+                <td>重新下载 App，点“恢复购买”。</td>
+                <td>找不到恢复入口，以为权益丢了。</td>
+                <td>桌面端恢复购买，并显示到期时间。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 04 方案 -->
+      <section id="solution">
+        <div class="section-kicker">04 · 方案</div>
+        <h2>方案概览</h2>
+        <p class="section-intro">先用四步讲清楚用户怎么走完；页面细节以设计稿为准，这里只定行为、状态和边界。</p>
+
+        <div class="flow">
+          <div class="flow-step">
+            <h3>入口</h3>
+            <p>会员页、用量限制提示、设置页都能进入订阅页。</p>
+          </div>
+          <div class="flow-step">
+            <h3>选择方案</h3>
+            <p>展示月付 / 年付、价格、权益和自动续费说明。</p>
+          </div>
+          <div class="flow-step">
+            <h3>支付</h3>
+            <p>调起桌面端支付渠道；处理成功、失败、取消和 pending。</p>
+          </div>
+          <div class="flow-step">
+            <h3>解锁权益</h3>
+            <p>支付成功后刷新权益；失败可重试，不重复下单。</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:18px">
+          <p>关键取舍：本期只解决“能不能在桌面端买”，不解决“怎么买得更便宜”。促销、优惠码、企业发票都不在本期。</p>
+        </div>
+      </section>
+
+      <!-- 05 功能需求 -->
+      <section id="requirements">
+        <div class="section-kicker">05 · 需求</div>
+        <h2>功能需求</h2>
+        <p class="section-intro">每条需求都要带验收标准。P0 是没有它就不能上线；P1 是上线后尽快补；P2 是本期不做但设计要留口子。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>功能需求</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">优先级</th>
+                <th scope="col">需求</th>
+                <th scope="col">验收标准</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap"><strong>R-01</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>订阅入口</strong><br>会员页和用量限制提示中提供订阅入口；未登录时先登录，再回到原入口。</td>
+                <td>从两个入口都能进入订阅页；登录后不丢失入口。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-02</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>套餐展示</strong><br>展示月付 / 年付、价格、权益和自动续费说明；价格以服务端配置为准。</td>
+                <td>与移动端同套餐价格一致；切换周期即时更新；不出现 0 元价格。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-03</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>支付</strong><br>调起桌面端支付渠道；处理成功、失败、取消和 pending 四种结果。</td>
+                <td>四种结果都有明确反馈；pending 有后续查单；不重复扣款。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-04</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>权益解锁</strong><br>支付成功后刷新权益；三端状态一致；重启应用后仍然有效。</td>
+                <td>5 秒内解锁；三端显示同一到期时间。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-05</strong></td>
+                <td><span class="pill pill-p0">P0</span></td>
+                <td><strong>恢复购买</strong><br>已订阅用户可恢复权益；换机、重装后可用。</td>
+                <td>恢复成功后显示到期时间；无订阅时给出明确提示。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-06</strong></td>
+                <td><span class="pill pill-p1">P1</span></td>
+                <td><strong>续费提醒</strong><br>到期前 7 天站内提醒；不重复打扰。</td>
+                <td>只提醒一次；用户关闭后不再出现。</td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>R-07</strong></td>
+                <td><span class="pill pill-p2">P2</span></td>
+                <td><strong>促销入口</strong><br>预留优惠码入口，本期不实现。</td>
+                <td>本期不展示；后续接入时不改现有支付流程。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 06 状态 -->
+      <section id="states">
+        <div class="section-kicker">06 · 状态</div>
+        <h2>状态与异常</h2>
+        <p class="section-intro">开发最容易漏的不是主流程，而是这些状态。每一条都写清楚：用户看到什么、系统做什么、不要发生什么。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>状态与异常</caption>
+            <thead>
+              <tr>
+                <th scope="col">状态</th>
+                <th scope="col">触发条件</th>
+                <th scope="col">用户看到</th>
+                <th scope="col">开发注意</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>加载中</strong></td>
+                <td>进入订阅页，套餐接口还没返回。</td>
+                <td>骨架屏或加载态，不出现空白页。</td>
+                <td>失败可重试；不要先显示 0 元。</td>
+              </tr>
+              <tr>
+                <td><strong>无可用套餐</strong></td>
+                <td>服务端没有返回可购买套餐。</td>
+                <td>“暂无可购买套餐”+ 联系客服入口。</td>
+                <td>不要静默失败，也不要显示占位价格。</td>
+              </tr>
+              <tr>
+                <td><strong>支付失败</strong></td>
+                <td>渠道返回失败，或网络错误。</td>
+                <td>失败原因 + 重试按钮。</td>
+                <td>区分“用户取消”和“真实失败”。</td>
+              </tr>
+              <tr>
+                <td><strong>处理中</strong></td>
+                <td>渠道返回 pending，结果还未确认。</td>
+                <td>“支付处理中”，可返回应用。</td>
+                <td>查单/轮询；不要重复创建订单。</td>
+              </tr>
+              <tr>
+                <td><strong>已订阅</strong></td>
+                <td>当前账号已有有效订阅。</td>
+                <td>到期时间 + “管理订阅”。</td>
+                <td>不要再次售卖；注意跨端同步延迟。</td>
+              </tr>
+              <tr>
+                <td><strong>登录失效</strong></td>
+                <td>进入订阅页时登录态过期。</td>
+                <td>重新登录提示。</td>
+                <td>登录后回到原页面，保留上下文。</td>
+              </tr>
+              <tr>
+                <td><strong>地区不支持</strong></td>
+                <td>当前地区没有可用支付方式。</td>
+                <td>明确说明 + 可选方案。</td>
+                <td>不要展示不可用价格；不要静默失败。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 07 验收 -->
+      <section id="acceptance">
+        <div class="section-kicker">07 · 验收</div>
+        <h2>验收清单</h2>
+        <p class="section-intro">用“给定什么条件、做什么、应该得到什么”来写；每条都能独立测试，不写“体验流畅”这种形容词。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>验收清单</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Given</th>
+                <th scope="col">When</th>
+                <th scope="col">Then</th>
+                <th scope="col">优先级</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap"><strong>AC-01</strong></td>
+                <td>未登录用户从会员页点订阅。</td>
+                <td>完成登录。</td>
+                <td>回到订阅页，不丢失入口。</td>
+                <td><span class="pill pill-p0">P0</span></td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-02</strong></td>
+                <td>用户在桌面端选择年付。</td>
+                <td>支付成功。</td>
+                <td>5 秒内权益生效；三端到期时间一致。</td>
+                <td><span class="pill pill-p0">P0</span></td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-03</strong></td>
+                <td>支付渠道返回 pending。</td>
+                <td>用户回到应用。</td>
+                <td>显示处理中；查单成功后自动解锁。</td>
+                <td><span class="pill pill-p0">P0</span></td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-04</strong></td>
+                <td>用户已在移动端订阅。</td>
+                <td>在桌面端点恢复购买。</td>
+                <td>显示当前到期时间；不产生新订单。</td>
+                <td><span class="pill pill-p0">P0</span></td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-05</strong></td>
+                <td>支付失败。</td>
+                <td>用户点重试。</td>
+                <td>回到支付流程；不重复创建订单。</td>
+                <td><span class="pill pill-p1">P1</span></td>
+              </tr>
+              <tr>
+                <td class="nowrap"><strong>AC-06</strong></td>
+                <td>当前地区不支持桌面端支付。</td>
+                <td>用户进入订阅页。</td>
+                <td>显示明确说明；不展示不可用价格。</td>
+                <td><span class="pill pill-p1">P1</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">验收项超过 30 条时，复制到验收清单 Excel；HTML 和 Excel 用同一套 ID，避免同一件事写两遍。</p>
+      </section>
+
+      <!-- 08 待确认 -->
+      <section id="questions">
+        <div class="section-kicker">08 · 待确认</div>
+        <h2>待确认问题</h2>
+        <p class="section-intro">每个问题都要有负责人和“是否阻塞”。阻塞项没有结论，不进入开发。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>待确认问题</caption>
+            <thead>
+              <tr>
+                <th scope="col">问题</th>
+                <th scope="col">谁回答</th>
+                <th scope="col">是否阻塞</th>
+                <th scope="col">结论 / 日期</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>桌面端支付渠道选型（Stripe / Paddle / 应用内购买）。</td>
+                <td>支付 / 法务</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定</td>
+              </tr>
+              <tr>
+                <td>退款由桌面端还是移动端发起。</td>
+                <td>支付 / 客服</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定</td>
+              </tr>
+              <tr>
+                <td>大陆主体是否支持桌面端订阅。</td>
+                <td>法务 / 财务</td>
+                <td><span class="pill pill-block">阻塞</span></td>
+                <td class="muted">待定</td>
+              </tr>
+              <tr>
+                <td>会员权益同步时序：支付成功即解锁，还是等回调。</td>
+                <td>后端</td>
+                <td><span class="pill pill-warn">不阻塞</span></td>
+                <td class="muted">待定</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 09 变更 -->
+      <section id="changelog">
+        <div class="section-kicker">09 · 变更</div>
+        <h2>变更记录</h2>
+        <p class="section-intro">只记“改了什么、为什么改”，不记流水账。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>变更记录</caption>
+            <thead>
+              <tr>
+                <th scope="col">日期</th>
+                <th scope="col">版本</th>
+                <th scope="col">改了什么</th>
+                <th scope="col">谁</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.1</td>
+                <td>初稿：问题、目标、需求、状态、验收。</td>
+                <td>产品</td>
+              </tr>
+              <tr>
+                <td class="nowrap">2026-10-26</td>
+                <td class="nowrap">v0.1</td>
+                <td>补充支付 pending 和地区不支持的异常状态。</td>
+                <td>产品</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <details class="fold">
+          <summary>模板使用说明</summary>
+          <div class="fold-body">
+            <ol class="instructions">
+              <li>复制本文件，按 <code>YYYY-MM-DD-标题.html</code> 命名；模板本身不要按日期命名。</li>
+              <li>替换标题、摘要、元信息和示例内容；示例段落全部删掉。</li>
+              <li>只改内容，不要改样式和脚本；不适用的章节整节删除，问题、目标、功能需求、验收除外。</li>
+              <li>验收项超过 30 条时，同步到验收清单 Excel；HTML 和 Excel 用同一套 ID。</li>
+            </ol>
+          </div>
+        </details>
+      </section>
+
+      <footer class="doc-footer">
+        <span><strong>PRD Template v0.1</strong></span>
+        <span>示例文档 · 替换内容后删除本行</span>
+      </footer>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var sections = links.map(function (link) {
+    var id = link.getAttribute('href');
+    return id && id.charAt(0) === '#' ? document.querySelector(id) : null;
+  }).filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (link) {
+          var active = link.getAttribute('href') === '#' + entry.target.id;
+          link.classList.toggle('active', active);
+          if (active) {
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      });
+    }, { rootMargin: '-12% 0px -70% 0px', threshold: 0 });
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+
+  var printButtons = document.querySelectorAll('[data-print]');
+  Array.prototype.forEach.call(printButtons, function (button) {
+    button.addEventListener('click', function () { window.print(); });
+  });
+
+  var folds = Array.prototype.slice.call(document.querySelectorAll('details'));
+  window.addEventListener('beforeprint', function () {
+    folds.forEach(function (fold) {
+      fold.dataset.wasOpen = fold.open ? 'true' : 'false';
+      fold.open = true;
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    folds.forEach(function (fold) {
+      fold.open = fold.dataset.wasOpen === 'true';
+    });
+  });
+})();
+</script>
+</body>
+</html>

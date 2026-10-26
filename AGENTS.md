@@ -20,9 +20,25 @@ kocard 项目的产品经理工作文档记录，包括需求文档、会议记�
 ## 文档写作规范
 
 - 语言：中文为主，专有名词可保留英文
+- 不要自己发明词汇，用普通大众都能懂的话写，不要用生造的概念、虚拟概念
 - 每篇文档开头包含：日期、参与人/作者、状态（草稿 / 已评审 / 已归档）
 - 会议纪要需包含：结论、待办事项（Action Items，标注负责人和截止时间）
-- PRD 需包含：背景、目标、功能需求、验收标准、埋点、风险
+- Markdown PRD 需包含：背景、目标、功能需求、验收标准、埋点、风险；HTML PRD 按下面的模板写，模板没有的章节不要自己加
+
+### HTML PRD
+
+HTML 版 PRD 统一从模板生成，不要从零写页面：
+
+```bash
+node plugins/kocard-prd/scripts/new-prd.mjs "文档标题"
+node plugins/kocard-prd/scripts/check-prd.mjs "生成的文件.html" --strict
+```
+
+- 模板与插件说明：`templates/prd/prd-template.html`、`plugins/kocard-prd/README.md`
+- 文件名为 `YYYY-MM-DD-标题.html`，放在仓库根目录
+- 只填内容，不改 `<style>` / `<script>`；不适用的章节整节删除，问题、目标、功能需求、验收除外
+- 交付前检查必须 0 错误、0 警告；占位符未填也算警告
+- Qoder 会通过本地插件 `kocard-prd` 自动套用；其他 Agent 以本节为准
 
 ## Git 规范
 

@@ -1,0 +1,19 @@
+{
+  "name": "kocard-prd",
+  "displayName": "Kocard PRD 模板",
+  "version": "0.1.0",
+  "description": "按仓库内的 HTML 模板生成产品需求文档，并在交付前检查结构、样式和禁用内容。",
+  "author": {
+    "name": "Kocard"
+  },
+  "keywords": [
+    "prd",
+    "需求文档",
+    "需求说明",
+    "模板",
+    "产品"
+  ],
+  "skills": [
+    "./skills/prd"
+  ]
+}
