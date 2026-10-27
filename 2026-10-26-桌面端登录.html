@@ -445,7 +445,7 @@ td strong { color: var(--ink); font-weight: 600; }
 
     <div class="sidebar-footer">
       <div class="status-card">
-        <div class="status-row"><span>状态</span><span class="status-value">草稿</span></div>
+        <div class="status-row"><span>状态</span><span class="status-value">待评审</span></div>
         <div class="status-row"><span>更新</span><span class="status-value">2026-10-26</span></div>
       </div>
       <button class="btn" type="button" data-print>打印 / 存 PDF</button>
@@ -462,7 +462,7 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="meta-grid">
           <div class="meta-item">
             <div class="meta-label">状态</div>
-            <div class="meta-value"><span class="status-dot"></span>草稿</div>
+            <div class="meta-value"><span class="status-dot"></span>待评审</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">更新</div>
@@ -554,6 +554,10 @@ td strong { color: var(--ink); font-weight: 600; }
               <li>
                 <span class="mark">×</span>
                 <span><strong>本期不做应用内多语言</strong><span class="desc">应用内英文后续补，本期只覆盖登录页和登录流程。</span></span>
+              </li>
+              <li>
+                <span class="mark">×</span>
+                <span><strong>不做邀请码激活</strong><span class="desc">桌面不出现邀请码页；邀请码只在移动端灰度使用。</span></span>
               </li>
             </ul>
           </div>
@@ -1011,13 +1015,8 @@ td strong { color: var(--ink); font-weight: 600; }
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-12</strong></td>
-                <td><strong>服务不可用与诊断</strong><br>区分本地服务未启动和远端不可达；给说明、重试和诊断入口；诊断含版本、地区、错误码，可复制；不无限转圈。不做的话，本地服务未启动和远端不可达只能共用一条提示，无法定位。</td>
+                <td><strong>服务不可用与诊断</strong><br>区分本地服务未启动和远端不可达；给说明、重试和诊断入口；诊断含版本、地区、错误码，可复制；不无限转圈。</td>
                 <td>本地服务未启动显示启动指引；远端超时显示重试；重试成功后回到登录；诊断信息包含版本、地区、错误码。</td>
-              </tr>
-              <tr>
-                <td class="nowrap"><strong>R-13</strong></td>
-                <td><strong>未激活账号的授权码步骤</strong><br>服务端返回账号未激活，且授权码开关开启时，登录后进入授权码页；输入授权码确认后继续进入应用；可返回登录页。桌面是否开启由服务端开关决定，未配置或关闭时不出现。不做的话，未激活账号没有自助激活入口。</td>
-                <td>开关关闭时不出现授权码页；开关开启且账号未激活时出现；授权码正确后进入应用；错误时留在授权码页并提示。</td>
               </tr>
             </tbody>
           </table>
@@ -1118,12 +1117,6 @@ td strong { color: var(--ink); font-weight: 600; }
                 <td>用户在授权页取消，或授权失败。</td>
                 <td>回到登录页，提示未完成登录，可重试。</td>
                 <td>取消不发起后端请求；不残留上次授权状态。</td>
-              </tr>
-              <tr>
-                <td><strong>未激活账号</strong></td>
-                <td>服务端返回账号未激活，且授权码开关开启。</td>
-                <td>登录后进入授权码页；输入正确后进入应用。</td>
-                <td>开关关闭时不出现；授权码失败留在页面并提示。</td>
               </tr>
               <tr>
                 <td><strong>本地服务未启动</strong></td>
@@ -1264,18 +1257,12 @@ td strong { color: var(--ink); font-weight: 600; }
               </tr>
               <tr>
                 <td class="nowrap"><strong>AC-18</strong></td>
-                <td>账号未激活；授权码开关分别设为开、关。</td>
-                <td>登录成功。</td>
-                <td>开关开启时进入授权码页，输入正确后进入应用，输入错误留在授权码页并提示；开关关闭时不出现授权码页。</td>
-              </tr>
-              <tr>
-                <td class="nowrap"><strong>AC-19</strong></td>
                 <td>表单有效。</td>
                 <td>连续点登录或第三方登录。</td>
                 <td>只发一次请求；按钮加载中不可重复点。</td>
               </tr>
               <tr>
-                <td class="nowrap"><strong>AC-20</strong></td>
+                <td class="nowrap"><strong>AC-19</strong></td>
                 <td>登录页协议默认未勾选。</td>
                 <td>不勾选点「登录 / 注册」；点第三方入口；点「密码登录」后在密码页点「登录」。</td>
                 <td>账号页和密码页勾选框下方分别提示「请先阅读并勾选协议」，不发请求；点「密码登录」只进密码页、不提示；勾选后提示消失，再点一次才发起；重新进入恢复未勾选。</td>
@@ -1303,8 +1290,8 @@ td strong { color: var(--ink); font-weight: 600; }
             <tbody>
               <tr>
                 <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.29–v0.32</td>
-                <td>线框图去掉说明性文字，验证码页把「已发送 48s」改为真实控件「重新发送 48s」；写明一个账号只属于一个区，同一邮箱或手机号不能跨区再注册，两个区账号独立、权益不合并不迁移；删掉重复验证非目标的验收表述（查找换区入口、不出现注册表单），验收编号顺延；IP 失败兜底的验收改为可测的「IP 失败、系统语言中文」。</td>
+                <td class="nowrap">v0.29–v0.34</td>
+                <td>线框图去掉说明性文字，验证码页把「已发送 48s」改为真实控件「重新发送 48s」；写明一个账号只属于一个区，同一邮箱或手机号不能跨区再注册，两个区账号独立、权益不合并不迁移；删掉重复验证非目标的验收表述（查找换区入口、不出现注册表单），验收编号顺延；IP 失败兜底的验收改为可测的「IP 失败、系统语言中文」；删掉未激活账号的授权码步骤，邀请码只用于移动端灰度；删掉 R-12 里「不做的话」的理由说明。</td>
               </tr>
               <tr>
                 <td class="nowrap">2026-10-26</td>
@@ -1338,7 +1325,7 @@ td strong { color: var(--ink); font-weight: 600; }
 
       <footer class="doc-footer">
         <span><strong>Kocard 新版桌面端注册登录与移动端打通</strong></span>
-        <span>草稿</span>
+        <span>待评审</span>
       </footer>
     </article>
   </main>
