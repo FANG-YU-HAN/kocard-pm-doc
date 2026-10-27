@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- prd-template:v5 -->
+<!-- prd-template:v7 -->
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -303,7 +303,6 @@ h3 {
 .table-wrap {
   overflow-x: auto;
   border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line);
 }
 table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
 caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -446,8 +445,8 @@ td strong { color: var(--ink); font-weight: 600; }
 
     <div class="sidebar-footer">
       <div class="status-card">
-        <div class="status-row"><span>状态</span><span class="status-value">待评审</span></div>
-        <div class="status-row"><span>更新</span><span class="status-value">2026-10-26</span></div>
+        <div class="status-row"><span>状态</span><span class="status-value">已评审</span></div>
+        <div class="status-row"><span>更新</span><span class="status-value">2026-10-27</span></div>
       </div>
       <button class="btn" type="button" data-print>打印 / 存 PDF</button>
     </div>
@@ -462,11 +461,11 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="meta-grid">
           <div class="meta-item">
             <div class="meta-label">状态</div>
-            <div class="meta-value"><span class="status-dot"></span>待评审</div>
+            <div class="meta-value"><span class="status-dot"></span>已评审</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">更新</div>
-            <div class="meta-value">2026-10-26</div>
+            <div class="meta-value">2026-10-27</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">适用端</div>
@@ -588,13 +587,12 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="section-kicker">04 · 需求</div>
         <h2>功能需求</h2>
 
-        <div class="table-wrap" style="border-bottom:0">
+        <div class="table-wrap">
           <table>
             <caption>功能需求</caption>
             <thead>
               <tr>
                 <th scope="col">编号</th>
-                <th scope="col">优先级</th>
                 <th scope="col">需求</th>
                 <th scope="col">验收标准</th>
               </tr>
@@ -602,31 +600,26 @@ td strong { color: var(--ink); font-weight: 600; }
             <tbody>
               <tr>
                 <td class="nowrap"><strong>R-01</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>识别实况并备份两份资源</strong><br>实况取原片的静帧和配对视频两份资源，不取编辑后版本，不转码。</td>
                 <td>备份后当前备份目录中有两份文件，配对编号一致。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-02</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>两份都成功才算完成</strong><br>同一张实况两份都成功才计完成；实况按一张计数，两份文件不单独计数；任一份失败，记为失败并清理半套，继续处理其他照片；任务结束按张统计，有失败就不显示全部完成，下次重试失败的。</td>
                 <td>10 张中 1 张实况的配对视频失败：显示 9/10、部分失败，备份目录不留半套，其他照片继续；下次重试该张。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-03</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>保留原始文件和配对关系</strong><br>优先沿用系统原始文件名，两份放在当前备份目录；重跑或补齐时只替换这一对，不留单份。</td>
                 <td>两份文件沿用原始文件名；同一张重跑后仍是一对，不出现单份。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-04</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>旧版本实况补齐</strong><br>旧版本只有静帧的实况，下次备份补上配对视频并写入当前备份目录；旧静帧能读到时复用；备份目录两份都写成功后再清理旧半套；原片已删除的标记无法补齐，不阻塞其他照片。</td>
                 <td>旧记录原片仍在：下次备份后当前备份目录出现完整一对；原片已删除：标记无法补齐，其他照片继续。</td>
               </tr>
               <tr>
                 <td class="nowrap"><strong>R-05</strong></td>
-                <td><span class="pill pill-p0">P0</span></td>
                 <td><strong>两份写入同一目录，能验证还原</strong><br>不新建每条实况的子文件夹；静帧和配对视频直接写入当前任务文件夹的同一层，文件名沿用系统原名；Photos 靠文件内配对编号识别，两份编号必须一致；同一张实况只存这一份。</td>
                 <td>备份目录中有完整一对，且没有新增子文件夹；把这一对复制到硬盘根目录的测试 DCIM 后，Photos 导入为一张能播放、有声音的实况，不是照片加视频。</td>
               </tr>
@@ -640,7 +633,7 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="section-kicker">05 · 状态</div>
         <h2>状态与异常</h2>
 
-        <div class="table-wrap" style="border-bottom:0">
+        <div class="table-wrap">
           <table>
             <caption>状态与异常</caption>
             <thead>
@@ -698,7 +691,7 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="section-kicker">06 · 验收</div>
         <h2>验收清单</h2>
 
-        <div class="table-wrap" style="border-bottom:0">
+        <div class="table-wrap">
           <table>
             <caption>验收清单</caption>
             <thead>
@@ -762,7 +755,7 @@ td strong { color: var(--ink); font-weight: 600; }
         <div class="section-kicker">07 · 变更</div>
         <h2>变更记录</h2>
 
-        <div class="table-wrap" style="border-bottom:0">
+        <div class="table-wrap">
           <table>
             <caption>变更记录</caption>
             <thead>
@@ -776,72 +769,7 @@ td strong { color: var(--ink); font-weight: 600; }
               <tr>
                 <td class="nowrap">2026-10-26</td>
                 <td class="nowrap">v0.14</td>
-                <td>验收改为可从外部观察的结果：删除「记录中能查到两份文件名」「记录变为完整」「标记为无法补齐」，改为检查备份目录里的文件、完成数和任务状态；R-03 不再要求记录文件名。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.13</td>
-                <td>恢复「实况在备份中被删除或修改」，处理方式明确为与非实况照片一致：这张失败、不写记录，不额外重试或补齐。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.12</td>
-                <td>删除「实况在备份中被删除或修改」：普通照片遇到同样情况已是“这张失败、其他继续”，且“下次按最新状态处理”在当前代码里不成立，增量备份会跳过已有记录的资源。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.11</td>
-                <td>删除 P1「状态里体现实况」及对应验收：实况已按一张计入完成数，状态里再报实况张数只是内部统计，不影响完成判定和还原。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.10</td>
-                <td>需求、状态与验收只保留实况相关条目：删除普通照片/视频、拔盘、空间不足、同名、受限权限、暂停退后台等已有能力；完成状态并入 R-02；删除备份清单。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.9</td>
-                <td>删除「用户与场景」章节；明确恢复方式：用户自己把一对文件复制到 DCIM/100APPLE，用系统 Photos 导入。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.8</td>
-                <td>补充计数口径：实况按一张计数，两份文件不单独计数；两份都成功才计完成。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.7</td>
-                <td>删除非目标「不迁移旧普通照片」：备份路径不变，旧备份无需迁移。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.6</td>
-                <td>确认：实测当前备份为原片；编辑过的实况不备份编辑后版本，本期保持不动；待确认问题清空。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.5</td>
-                <td>验证方式已确认：硬盘根目录建 DCIM，其下建 100APPLE，接 iPhone 后系统 Photos 能识别并读取；原阻塞项关闭。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.4</td>
-                <td>明确：现有备份路径和目录结构不用改；两份文件直接写入当前任务文件夹，不新建每条实况的子文件夹。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.3</td>
-                <td>修正：备份路径保持不变；DCIM 只作为验证导入用的测试目录，不作为正式备份位置。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.2</td>
-                <td>回导纳入本期：原计划把备份落到硬盘根目录 DCIM（全大写），用系统 Photos 导入验证；不做 App 内回导页。</td>
-              </tr>
-              <tr>
-                <td class="nowrap">2026-10-26</td>
-                <td class="nowrap">v0.1</td>
-                <td>初稿：收敛为 iOS 备份范围，明确两份资源、完成判定与存量补齐。</td>
+                <td>收敛为实况照片增量：只保留识别两份资源、完成判定、旧版本补齐和还原验证；去掉普通照片已有能力、内部统计和不可观察的验收表述。</td>
               </tr>
             </tbody>
           </table>
@@ -850,7 +778,7 @@ td strong { color: var(--ink); font-weight: 600; }
 
       <footer class="doc-footer">
         <span><strong>iOS 相册备份支持实况照片</strong></span>
-        <span>v0.14 · 2026-10-26</span>
+        <span>v0.14 · 2026-10-27</span>
       </footer>
     </article>
   </main>
