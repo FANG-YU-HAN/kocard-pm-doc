@@ -83,7 +83,7 @@
 
   .disks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .disk {
-    height: 64px;
+    height: 76px;
     padding: 12px 16px;
     display: flex;
     flex-direction: column;
@@ -102,7 +102,28 @@
     text-overflow: ellipsis;
   }
   .disk-fs { flex: none; font-size: 11px; color: #8a9099; }
+  .disk-meta { display: flex; flex-direction: column; gap: 2px; }
   .disk-state { font-size: 11px; color: #8a9099; font-variant-numeric: tabular-nums; }
+  .disk-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #0e1116;
+  }
+  .disk-status .st-ic { width: 10px; height: 10px; }
+  .st-ic {
+    flex: none;
+    fill: none;
+    stroke: #0e1116;
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .disk-status--off { font-weight: 400; color: #9aa1ab; }
+  .disk-status--off .st-ic { stroke: #9aa1ab; }
+  .ntbl .st-ic { vertical-align: -2px; margin-right: 5px; }
   .disk--wide { grid-column: 1 / -1; }
 
   .bar {
@@ -128,25 +149,85 @@
 
   .phone + .phone { margin-top: 40px; }
   .annot + .phone { margin-top: 40px; }
-  .annot { position: relative; }
-  .note { position: absolute; left: -276px; width: 248px; top: 287px; }
-  .nt { font-size: 11px; color: #9aa1ab; margin-bottom: 8px; }
-  .nr {
+  .fig + .phone { margin-top: 40px; }
+  .fig { margin-top: 16px; font-size: 12px; color: #9aa1ab; text-align: center; letter-spacing: .04em; }
+  .vtabs {
+    width: fit-content;
+    max-width: 100%;
+    margin: 16px auto 0;
+    padding: 3px;
     display: flex;
-    gap: 8px;
+    gap: 4px;
+    border: 1px solid #e4e8ee;
+    border-radius: 17px;
+  }
+  .vt {
+    appearance: none;
+    border: 0;
+    background: none;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    font: inherit;
+    font-size: 11px;
+    color: #6b7280;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .vt.on { background: #0e1116; color: #fff; font-weight: 600; }
+  .fig--v { margin-top: 10px; }
+  .annot[data-v="1"] .section--disks,
+  .annot[data-v="2"] .section--disks,
+  .annot[data-v="1"] .note--disk,
+  .annot[data-v="1"] .leader--disk,
+  .annot[data-v="2"] .note--disk,
+  .annot[data-v="2"] .leader--disk,
+  .annot[data-v="1"] .job-chart { display: none; }
+  .annot[data-v="1"] .job-state { font-size: 15px; gap: 6px; }
+  .annot[data-v="1"] .job-state .st-ic { width: 14px; height: 14px; }
+  .annot[data-v="1"] .note { top: 60px; }
+  .annot[data-v="2"] .note { top: 58px; }
+  .annot[data-v="1"] .leader { top: 175.5px; }
+  .annot[data-v="2"] .leader { top: 173.5px; }
+  .annot { position: relative; }
+  .note { position: absolute; left: -388px; width: 360px; top: 227px; }
+  .ntbl {
+    width: 100%;
+    border-collapse: collapse;
     font-size: 11px;
     line-height: 1.9;
     font-variant-numeric: tabular-nums;
   }
-  .nk { flex: none; width: 36px; color: #9aa1ab; }
+  .ntbl th {
+    text-align: left;
+    font-weight: 400;
+    color: #9aa1ab;
+    padding: 0 12px 4px 0;
+    border-bottom: 1px solid #dfe3e9;
+  }
+  .ntbl td { padding: 2px 12px 2px 0; vertical-align: top; }
+  .ntbl td:first-child { white-space: nowrap; }
+  .ntbl th:last-child, .ntbl td:last-child { padding-right: 0; }
+  .ntbl--icons td:first-child { position: relative; padding-left: 17px; }
+  .ntbl--icons td:first-child .st-ic {
+    position: absolute;
+    left: 0;
+    top: 6.4px;
+    margin: 0;
+  }
+  .note--disk { top: 132.5px; }
   .leader {
     position: absolute;
     left: -20px;
-    top: 321px;
+    top: 342px;
     width: 58px;
     height: 1px;
     background: #c9ced6;
     z-index: 1;
+  }
+  .leader--disk {
+    top: 169.5px;
+    width: 56px;
   }
   .leader::after {
     content: "";
@@ -162,51 +243,76 @@
   .nav { display: flex; align-items: center; gap: 10px; }
   .back { width: 24px; height: 24px; display: grid; place-items: center; }
 
-  .progress-card {
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background-image: linear-gradient(90deg,
-      rgba(14, 17, 22, .028) 0,
-      rgba(14, 17, 22, .085) var(--p),
-      rgba(14, 17, 22, 0) var(--p));
-  }
-  .progress-card .top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
-    color: #6b7280;
-  }
-  .progress-card .big {
-    font-size: 44px;
-    font-weight: 600;
-    letter-spacing: -.03em;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-  .progress-card .sub {
+  .chart-card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .status-card { padding: 16px 18px; }
+  .cs-row { display: flex; align-items: center; gap: 6px; }
+  .cs-ic { width: 16px; height: 16px; }
+  .cs-num { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cs-btn {
+    margin-left: auto;
+    height: 28px;
+    padding: 0 14px;
+    border: 1px solid #d7dce3;
+    border-radius: 14px;
+    background: #fff;
+    font: inherit;
     font-size: 12px;
-    color: #6b7280;
-    font-variant-numeric: tabular-nums;
+    color: #0e1116;
+    cursor: pointer;
   }
-  .btn {
-    margin-top: 4px;
-    height: 42px;
-    border: 1px solid #0e1116;
-    border-radius: 21px;
+  .cs-btn:active { background: #f4f6f9; }
+  .cs-sub { margin-top: 6px; padding-left: 22px; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
+  .cs-sub--dim { margin-top: 3px; font-size: 11px; color: #9aa1ab; }
+  .chart-head { display: flex; align-items: center; justify-content: space-between; }
+  .seg { display: inline-flex; padding: 2px; border: 1px solid #e4e8ee; border-radius: 15px; }
+  .seg .ct {
+    height: 26px;
+    padding: 0 14px;
     display: grid;
     place-items: center;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    color: #6b7280;
+    border-radius: 13px;
   }
+  .seg .ct.on { background: #0e1116; color: #fff; font-weight: 600; }
+  .chart-period { font-size: 12px; color: #9aa1ab; font-variant-numeric: tabular-nums; }
+  .chart-view { display: flex; flex-direction: column; gap: 4px; }
+  .chart-view[hidden] { display: none; }
+  .dc-bars {
+    display: grid;
+    gap: 3px;
+    height: 110px;
+    align-items: end;
+    border-bottom: 1px solid #eef1f4;
+  }
+  .dc-bars.month { grid-template-columns: repeat(28, 1fr); }
+  .dc-bars.year { grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  .dc-bars i { display: block; min-height: 1px; border-radius: 2px 2px 0 0; background: #0e1116; }
+  .dc-bars i.dim { background: #c9ced6; }
+  .dc-bars i.on { background: #e4e8ee; position: relative; }
+  .dc-bars i.on b {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    border-radius: 2px 2px 0 0;
+    background: #0e1116;
+  }
+  .dc-axis { display: grid; gap: 3px; font-size: 9px; line-height: 10px; color: #9aa1ab; font-variant-numeric: tabular-nums; }
+  .dc-axis.month { grid-template-columns: repeat(28, 1fr); }
+  .dc-axis.year { grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  .dc-axis.month .mid { grid-column: 15; }
+  .dc-axis.month .end { grid-column: 28; }
+  .dc-axis.year .mid { grid-column: 6; }
+  .dc-axis.year .end { grid-column: 10; }
+  .dc-axis .end { justify-self: end; white-space: nowrap; }
 
   .section-head { font-size: 13px; color: #6b7280; }
+  .hint { padding: 0 16px; font-size: 12px; color: #8a9099; line-height: 1.5; }
+  .hint--c { text-align: center; }
 
   .list { display: flex; flex-direction: column; }
-  .row .r { display: flex; align-items: center; gap: 8px; }
-  .row .r svg { flex: none; }
   .row {
     height: 48px;
     padding: 0 16px;
@@ -236,8 +342,23 @@
     border-radius: 50%;
     background: #fff;
   }
-  .job-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .job-head { display: flex; align-items: center; justify-content: space-between; }
+  .job-head-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .job-title { font-size: 16px; font-weight: 600; }
+  .job-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+    padding: 0 7px;
+    border: 1px solid #dfe3e9;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .job-tag .st-ic { width: 10px; height: 10px; }
+  .annot[data-v="3"] .job-tag { display: none; }
   .job-tail { display: flex; align-items: center; gap: 8px; }
   .job-tail svg { flex: none; }
   .job-speed { flex: none; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
@@ -248,14 +369,53 @@
     color: #6b7280;
     font-variant-numeric: tabular-nums;
   }
+  .job-state { display: inline-flex; align-items: center; gap: 5px; }
+  .job-state .st-ic { flex: none; }
   .job-route {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     font-size: 11px;
+    line-height: 13px;
     color: #9aa1ab;
   }
+  .job-chart { display: flex; flex-direction: column; gap: 4px; }
+  .job-chart .bars {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 6px;
+    height: 34px;
+    align-items: end;
+    border-bottom: 1px solid #eef1f4;
+  }
+  .job-chart .bars i {
+    display: block;
+    min-height: 1px;
+    border-radius: 2px 2px 0 0;
+    background: #0e1116;
+  }
+  .job-chart .bars i.on { background: #e4e8ee; position: relative; }
+  .job-chart .bars i.on b {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    border-radius: 2px 2px 0 0;
+    background: #0e1116;
+  }
+  .job-chart .axis {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 6px;
+    font-size: 9px;
+    line-height: 10px;
+    color: #9aa1ab;
+    font-variant-numeric: tabular-nums;
+  }
+  .job-chart .axis .mid { grid-column: 8; }
+  .job-chart .axis .end { grid-column: 14; justify-self: end; white-space: nowrap; }
   .route { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .route > span:not(.arrow) {
     overflow: hidden;
@@ -328,14 +488,28 @@
 </style>
 </head>
 <body>
-  <div class="annot">
+  <div class="annot" data-v="1">
+    <div class="note note--disk">
+      <table class="ntbl">
+        <thead><tr><th>卡状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</td><td>卡、ssd等插上了</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M4.3 4.3l3.4 3.4M7.7 4.3l-3.4 3.4"/></svg>未连接</td><td>拔了，但是卡信息要留在app中</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="leader leader--disk"></div>
     <div class="note">
-      <div class="nt">数量行 · 随状态变</div>
-      <div class="nr"><span class="nk">首次</span><span>已备份 1,284 / 3,642 张</span></div>
-      <div class="nr"><span class="nk">新增</span><span>已备份 557 / 960 张</span></div>
-      <div class="nr"><span class="nk">待备份</span><span>10 张待备份</span></div>
-      <div class="nr"><span class="nk">已最新</span><span>全部已备份 · 今天 9:41</span></div>
-      <div class="nr"><span class="nk">有失败</span><span>3 张未备份</span></div>
+      <table class="ntbl ntbl--icons">
+        <thead><tr><th>备份状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>有10张待备份</td><td>新拍的、上次没备份成功的、目标盘内备份文件夹被删时，插卡后会显示全量需要备份的数量</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>1,284 / 3,642 张 · 剩余 4 分钟</td><td>正在备份数量 / 目标数量<br>末尾是剩余时间</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>备份完成 · 今天 9:41</td><td>有0张待备份，都在盘上；时间是最后一次备份</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.9 10.6 10.1H1.4Z"/><path d="M6 4.4v2.4"/><circle cx="6" cy="8.3" r=".65" fill="#0e1116" stroke="none"/></svg>目标盘空间不足</td><td>放不下，换盘或清理</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标盘只读</td><td>写不进去，换盘或改格式</td></tr>
+        </tbody>
+      </table>
     </div>
     <div class="leader"></div>
   <div class="phone">
@@ -373,28 +547,37 @@
     </div>
 
     <div class="content">
-      <div class="section">
+      <div class="section section--disks">
         <div class="disks">
           <div class="card disk" style="--p:62%">
             <div class="disk-head">
               <div class="disk-name">Kocard Go</div>
               <div class="disk-fs">exFAT</div>
             </div>
-            <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+            <div class="disk-meta">
+              <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+            </div>
           </div>
           <div class="card disk" style="--p:70%">
             <div class="disk-head">
               <div class="disk-name">EOS_DIGITAL</div>
               <div class="disk-fs">exFAT</div>
             </div>
-            <div class="disk-state">总 128 GB · 剩余 38 GB</div>
+            <div class="disk-meta">
+              <div class="disk-state">总 128 GB · 剩余 38 GB</div>
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+            </div>
           </div>
           <div class="card disk disk--wide" style="--p:49%">
             <div class="disk-head">
               <div class="disk-name">DJI</div>
               <div class="disk-fs">exFAT</div>
             </div>
-            <div class="disk-state">总 512 GB · 剩余 260 GB</div>
+            <div class="disk-meta">
+              <div class="disk-state">总 512 GB · 剩余 260 GB</div>
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+            </div>
           </div>
         </div>
       </div>
@@ -403,37 +586,77 @@
         <div class="jobs">
           <div class="card job">
             <div class="job-head">
-              <div class="job-title">相册备份</div>
+              <div class="job-head-main">
+                <div class="job-title">相册→Kocard Go</div>
+                <span class="job-tag"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</span>
+              </div>
               <div class="job-tail">
                 <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
               </div>
             </div>
             <div class="job-meta">
-              <span>首次 · 已备份 1,284 / 3,642 张</span>
-              <span>约 4 分钟</span>
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>1,284 / 3,642 张 · 剩余 4 分钟</span>
             </div>
-            <div class="bar"><i style="width:35%"></i></div>
-            <div class="job-route">
-              <span class="route"><span>相册</span><span class="arrow">→</span><span>Kocard Go</span></span>
-              <span class="job-speed">48 MB/s</span>
+            <div class="job-chart">
+              <div class="bars">
+                <i style="height:10%"></i>
+                <i style="height:24%"></i>
+                <i style="height:37%"></i>
+                <i style="height:6%"></i>
+                <i style="height:16%"></i>
+                <i style="height:48%"></i>
+                <i style="height:3%"></i>
+                <i style="height:21%"></i>
+                <i style="height:9%"></i>
+                <i style="height:65%"></i>
+                <i style="height:12%"></i>
+                <i style="height:30%"></i>
+                <i style="height:19%"></i>
+                <i class="on" style="height:100%"><b style="height:35%"></b></i>
+              </div>
+              <div class="axis">
+                <span>15</span>
+                <span class="mid">22</span>
+                <span class="end">今天</span>
+              </div>
             </div>
           </div>
 
           <div class="card job">
             <div class="job-head">
-              <div class="job-title">相册备份</div>
+              <div class="job-head-main">
+                <div class="job-title">相册→EOS_DIGITAL</div>
+                <span class="job-tag"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</span>
+              </div>
               <div class="job-tail">
                 <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
               </div>
             </div>
             <div class="job-meta">
-              <span>新增 · 已备份 557 / 960 张</span>
-              <span>约 1 分钟</span>
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>557 / 960 张 · 剩余 1 分钟</span>
             </div>
-            <div class="bar"><i style="width:58%"></i></div>
-            <div class="job-route">
-              <span class="route"><span>相册</span><span class="arrow">→</span><span>EOS_DIGITAL</span></span>
-              <span class="job-speed">36 MB/s</span>
+            <div class="job-chart">
+              <div class="bars">
+                <i style="height:10%"></i>
+                <i style="height:25%"></i>
+                <i style="height:46%"></i>
+                <i style="height:7%"></i>
+                <i style="height:18%"></i>
+                <i style="height:100%"></i>
+                <i style="height:15%"></i>
+                <i style="height:21%"></i>
+                <i style="height:9%"></i>
+                <i style="height:39%"></i>
+                <i style="height:13%"></i>
+                <i style="height:31%"></i>
+                <i style="height:20%"></i>
+                <i class="on" style="height:100%"><b style="height:58%"></b></i>
+              </div>
+              <div class="axis">
+                <span>15</span>
+                <span class="mid">22</span>
+                <span class="end">今天</span>
+              </div>
             </div>
           </div>
 
@@ -466,8 +689,13 @@
     </div>
     <div class="home-indicator"></div>
   </div>
+    <div class="vtabs" role="tablist" aria-label="图1 版本">
+      <button class="vt on" data-v="1" role="tab" aria-selected="true">图1-1</button>
+      <button class="vt" data-v="2" role="tab">图1-2</button>
+      <button class="vt" data-v="3" role="tab">图1-3</button>
+    </div>
+    <div class="fig fig--v">图1-1 · 无顶部三张卡，相册无柱形图</div>
   </div>
-
   <div class="phone">
     <div class="island"></div>
     <div class="status">
@@ -499,46 +727,173 @@
         </div>
         <div class="page-title">相册 <span class="title-arrow">→</span> Kocard Go</div>
       </div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </div>
 
     <div class="content">
       <div class="section">
-        <div class="card progress-card" style="--p:35%">
-          <div class="top">
-            <span>正在备份</span>
-            <span>48 MB/s</span>
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div class="seg">
+              <span class="ct on" data-view="month">月</span>
+              <span class="ct" data-view="year">年</span>
+            </div>
+            <span class="chart-period">2026年10月</span>
           </div>
-          <div class="big">35%</div>
-          <div class="sub">1,284 / 3,642 张 · 约 4 分钟</div>
-          <div class="btn">暂停</div>
+          <div class="chart-view" data-view="month">
+            <div class="dc-bars month">
+              <i style="height:1%"></i>
+              <i style="height:3%"></i>
+              <i style="height:7%"></i>
+              <i style="height:1%"></i>
+              <i style="height:5%"></i>
+              <i style="height:9%"></i>
+              <i style="height:1%"></i>
+              <i style="height:2%"></i>
+              <i style="height:6%"></i>
+              <i style="height:2%"></i>
+              <i style="height:4%"></i>
+              <i style="height:1%"></i>
+              <i style="height:3%"></i>
+              <i style="height:14%"></i>
+              <i style="height:10%"></i>
+              <i style="height:24%"></i>
+              <i style="height:37%"></i>
+              <i style="height:6%"></i>
+              <i style="height:16%"></i>
+              <i style="height:48%"></i>
+              <i style="height:3%"></i>
+              <i style="height:21%"></i>
+              <i style="height:9%"></i>
+              <i style="height:65%"></i>
+              <i style="height:12%"></i>
+              <i style="height:30%"></i>
+              <i style="height:19%"></i>
+              <i class="on" style="height:100%"><b style="height:35%"></b></i>
+            </div>
+            <div class="dc-axis month">
+              <span>1</span>
+              <span class="mid">15</span>
+              <span class="end">今天</span>
+            </div>
+          </div>
+          <div class="chart-view" data-view="year" hidden>
+            <div class="dc-bars year">
+              <i style="height:38%"></i>
+              <i style="height:30%"></i>
+              <i style="height:56%"></i>
+              <i style="height:41%"></i>
+              <i style="height:63%"></i>
+              <i style="height:49%"></i>
+              <i style="height:34%"></i>
+              <i style="height:78%"></i>
+              <i style="height:100%"></i>
+              <i class="dim" style="height:92%"></i>
+            </div>
+            <div class="dc-axis year">
+              <span>1月</span>
+              <span class="mid">6月</span>
+              <span class="end">10月</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-head">备份记录</div>
+        <div class="card status-card">
+          <div class="cs-row">
+            <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>
+            <span class="cs-num">1,284 / 3,642 张</span>
+            <button class="cs-btn" type="button">暂停</button>
+          </div>
+          <div class="cs-sub">剩余 4 分钟 · 112 MB/s</div>
+          <div class="cs-sub cs-sub--dim">本次新增 3,642 张 · 已用 2 分钟</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card disk" style="--p:62%">
+          <div class="disk-head">
+            <div class="disk-name">Kocard Go</div>
+            <div class="disk-fs">exFAT</div>
+          </div>
+          <div class="disk-meta">
+            <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+            <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
         <div class="card list">
           <div class="row">
             <span class="k">今天 15:20</span>
-            <span class="r">
-              <span class="v">首次备份 · 进行中</span>
-              <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
-            </span>
+            <span class="v">3,642 张</span>
+          </div>
+          <div class="row">
+            <span class="k">昨天 21:04</span>
+            <span class="v">692 张</span>
+          </div>
+          <div class="row">
+            <span class="k">10月26日 09:12</span>
+            <span class="v">1,093 张</span>
+          </div>
+          <div class="row">
+            <span class="k">10月25日 20:36</span>
+            <span class="v">437 张</span>
           </div>
         </div>
+        <div class="hint hint--c">仅展示最近30天</div>
       </div>
 
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+  <div class="fig">图2</div>
+
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status">
+      <span class="time">9:41</span>
+      <span class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+          <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+          <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+          <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+          <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+          <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+          <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+          <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="header">
+      <div class="nav">
+        <div class="back">
+          <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+        </div>
+        <div class="page-title">同步设置</div>
+      </div>
+    </div>
+
+    <div class="content">
       <div class="section">
         <div class="card list">
           <div class="row">
-            <span class="k">目标盘</span>
+            <span class="k">备份盘</span>
             <span class="v">Kocard Go</span>
           </div>
           <div class="row">
-            <span class="k">备份内容</span>
-            <span class="v">照片 · 视频</span>
-          </div>
-          <div class="row">
-            <span class="v">打开备份文件夹</span>
+            <span class="v">变更磁盘</span>
             <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
           </div>
         </div>
@@ -547,7 +902,21 @@
       <div class="section">
         <div class="card list">
           <div class="row">
-            <span class="k">接入盘时自动备份</span>
+            <span class="k">自动备份</span>
+            <span class="switch"><i></i></span>
+          </div>
+        </div>
+        <div class="hint">连接备份磁盘并打开 App 时，会进行自动备份</div>
+      </div>
+
+      <div class="section">
+        <div class="card list">
+          <div class="row">
+            <span class="k">照片</span>
+            <span class="switch"><i></i></span>
+          </div>
+          <div class="row">
+            <span class="k">视频</span>
             <span class="switch"><i></i></span>
           </div>
         </div>
@@ -556,6 +925,7 @@
 
     <div class="home-indicator"></div>
   </div>
+  <div class="fig">图3</div>
 
   <div class="fsm">
     <div class="fsm-title">相册备份 · 状态与流转</div>
@@ -617,6 +987,38 @@
       <div class="fsm-rule"><span class="rk">有失败</span><span>卡片多一行“N 张未备份”，重试在详情页</span></div>
     </div>
   </div>
+  <script>
+    const segTabs = document.querySelectorAll('.seg .ct');
+    const chartPeriod = document.querySelector('.chart-period');
+    segTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        segTabs.forEach((t) => t.classList.toggle('on', t === tab));
+        document.querySelectorAll('.chart-view').forEach((v) => {
+          v.hidden = v.dataset.view !== tab.dataset.view;
+        });
+        chartPeriod.textContent = tab.dataset.view === 'month' ? '2026年10月' : '2026年';
+      });
+    });
+
+    const annot = document.querySelector('.annot');
+    const versionTabs = document.querySelectorAll('.vt');
+    const figV = document.querySelector('.fig--v');
+    const vCaption = {
+      1: '图1-1 · 无顶部三张卡，相册无柱形图',
+      2: '图1-2 · 无顶部三张卡，相册有柱形图',
+      3: '图1-3 · 顶部三张卡 + 相册柱形图',
+    };
+    versionTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        versionTabs.forEach((t) => {
+          t.classList.toggle('on', t === tab);
+          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+        });
+        annot.dataset.v = tab.dataset.v;
+        figV.textContent = vCaption[tab.dataset.v];
+      });
+    });
+  </script>
 </body>
 </html>
 
