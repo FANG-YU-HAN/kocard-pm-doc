@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kocard 人群与设备漏斗</title>
+<meta name="description" content="从内容发布者到职业创作者，再到设备能接住的人：Kocard 的人群、设备与付费参照漏斗。">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f3ea;
+  --surface: #fbf9f4;
+  --surface-2: #ece7db;
+  --ink: #24211b;
+  --ink-2: #514b41;
+  --muted: #746c5f;
+  --line: #ded7c8;
+  --line-strong: #c7beac;
+  --accent: #b85c3e;
+  --accent-strong: #9c4830;
+  --green: #4f6b52;
+  --amber: #8a6428;
+  --red: #963f31;
+  --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: .005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--accent-strong); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+button { font: inherit; }
+img, svg { display: block; max-width: 100%; }
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.skip-link:focus { top: 16px; }
+
+.page {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ---------- 左侧目录 ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 34px 20px 24px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.nav a {
+  display: block;
+  padding: 5px 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--accent-strong); font-weight: 600; }
+
+.sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.status-card {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.status-row { display: flex; justify-content: space-between; gap: 12px; }
+.status-row span:first-child { color: var(--muted); }
+.status-value { color: var(--ink-2); text-align: right; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+.btn:hover { color: var(--accent-strong); }
+
+/* ---------- 正文 ---------- */
+main { min-width: 0; padding: 56px clamp(24px, 5vw, 72px) 96px; }
+.doc { max-width: 960px; margin: 0 auto; }
+
+.doc-header { padding-bottom: 8px; }
+.eyebrow {
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 12px 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(36px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.lede {
+  max-width: 700px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 22px;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.meta-item { display: flex; gap: 5px; }
+.meta-label { color: var(--muted); }
+.meta-label::after { content: "："; }
+.meta-value { color: var(--ink-2); }
+.status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--amber);
+  vertical-align: 1px;
+}
+
+.keyfacts {
+  margin: 34px 0 0;
+  border-top: 1px solid var(--line-strong);
+}
+.keyfact {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.keyfact dt {
+  margin: 0;
+  padding-top: 2px;
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+.keyfact dd {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.keyfact strong { color: var(--ink); font-weight: 600; }
+
+section {
+  padding: 26px 0 0;
+  margin: 44px 0 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 24px;
+}
+.section-kicker {
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+}
+h2 {
+  margin: 8px 0 10px;
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.section-intro {
+  max-width: 760px;
+  margin: 0 0 8px;
+  color: var(--ink-2);
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+h3 {
+  margin: 26px 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+p { margin: 0 0 12px; }
+ul { margin: 0 0 12px; padding-left: 20px; }
+li { margin-bottom: 5px; }
+
+.note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.note strong { color: var(--ink-2); font-weight: 500; }
+.src {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.est { color: var(--amber); }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.callout {
+  margin: 22px 0 6px;
+  padding: 2px 0 2px 16px;
+  border-left: 2px solid var(--accent);
+}
+.callout p {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* ---------- 市场数字 ---------- */
+.market {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 24px;
+  border-top: 1px solid var(--line-strong);
+}
+.market-item {
+  padding: 16px 18px 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.market-item + .market-item {
+  padding-left: 18px;
+  border-left: 1px solid var(--line);
+}
+.market-num {
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.4vw, 31px);
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.market-num small { font-size: .56em; letter-spacing: 0; }
+.market-label {
+  margin-top: 4px;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.market-src {
+  margin-top: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
+/* ---------- 漏斗 ---------- */
+.funnel {
+  margin: 26px 0 0;
+  border-top: 1px solid var(--line-strong);
+}
+.funnel-axis {
+  position: relative;
+  height: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.funnel-axis span {
+  position: absolute;
+  bottom: 5px;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  white-space: nowrap;
+}
+.funnel-axis span:first-child { transform: none; }
+.funnel-axis span:last-child { transform: translateX(-100%); }
+
+.funnel-stage {
+  padding: 15px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.funnel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+}
+.funnel-name {
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.funnel-name .stage-num {
+  margin-right: 8px;
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10.5px;
+}
+.funnel-value {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.funnel-track {
+  position: relative;
+  height: 18px;
+  margin-top: 9px;
+}
+.funnel-track::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: var(--line);
+}
+.bar-lo {
+  position: absolute;
+  left: 0; top: 2px;
+  width: var(--lo);
+  height: 14px;
+  background: var(--accent);
+}
+.bar-hi {
+  position: absolute;
+  left: var(--lo); top: 2px;
+  width: calc(var(--hi) - var(--lo));
+  height: 14px;
+  background: var(--accent);
+  opacity: .22;
+}
+.funnel-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.funnel-sub .sep { color: var(--line-strong); }
+
+.funnel-drop {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 0 0 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .02em;
+}
+.funnel-drop::before {
+  content: "↓";
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 12px;
+}
+
+/* 分叉 */
+.fork {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.fork > div { padding: 15px 20px 15px 0; }
+.fork > div + div {
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+}
+.fork-label {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.fork-value {
+  margin-top: 3px;
+  font-family: var(--serif);
+  font-size: 23px;
+  line-height: 1.25;
+}
+.fork-note {
+  margin-top: 3px;
+  color: var(--ink-2);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+/* ---------- 筛选器 ---------- */
+.filters {
+  margin-top: 22px;
+  border-top: 1px solid var(--line-strong);
+}
+.filter {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.filter-label {
+  padding-top: 1px;
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+.filter-body p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.filter-body p + p { margin-top: 5px; }
+
+/* ---------- 两种尺子 ---------- */
+.twoscale {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: 0;
+  margin-top: 24px;
+  border-top: 1px solid var(--line-strong);
+}
+.scale-col { padding: 18px 26px 18px 0; }
+.scale-col + .scale-col {
+  padding-left: 26px;
+  border-left: 1px solid var(--line);
+}
+.scale-title {
+  margin: 0 0 2px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.scale-sub {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.scale-row {
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+.scale-row:last-child { border-bottom: 1px solid var(--line); }
+.scale-value {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.2;
+}
+.scale-label {
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.scale-row .funnel-track { margin-top: 7px; }
+.arrowline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.arrowline:last-child { border-bottom: 1px solid var(--line); }
+.arrowline .k { color: var(--muted); }
+.arrowline .v { color: var(--ink); font-family: var(--mono); font-size: 11.5px; white-space: nowrap; }
+.equation {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.equation strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- 表格 ---------- */
+.table-wrap {
+  margin-top: 20px;
+  border-top: 1px solid var(--line-strong);
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  line-height: 1.6;
+}
+caption {
+  text-align: left;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 7px 0;
+}
+th {
+  padding: 8px 10px 8px 0;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-align: left;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 10px 11px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  vertical-align: top;
+}
+th + th, td + td { padding-left: 10px; }
+td:first-child {
+  color: var(--ink);
+  font-weight: 600;
+  min-width: 108px;
+}
+th:last-child, td:last-child { white-space: nowrap; }
+td .tiny { display: block; color: var(--muted); font-size: 10.5px; line-height: 1.5; }
+.mark-yes { color: var(--green); font-weight: 600; }
+.mark-part { color: var(--amber); font-weight: 600; }
+.mark-no { color: var(--red); font-weight: 600; }
+.legend {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.table-hint {
+  display: none;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ---------- 优先级 ---------- */
+.lanes {
+  margin-top: 22px;
+  border-top: 1px solid var(--line-strong);
+}
+.lane {
+  display: grid;
+  grid-template-columns: 54px 196px minmax(0, 1fr);
+  gap: 18px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.lane-id {
+  padding-top: 2px;
+  color: var(--accent-strong);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+}
+.lane-groups {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+.lane-why {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+.doc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 56px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.7;
+}
+.doc-footer strong { color: var(--ink-2); font-weight: 500; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+@media (max-width: 960px) {
+  .page { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  main { padding: 40px 22px 64px; }
+  section { scroll-margin-top: 20px; }
+}
+
+@media (max-width: 760px) {
+  h1 { font-size: 34px; }
+  .lede { font-size: 16px; }
+  .market { grid-template-columns: 1fr 1fr; }
+  .market-item:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .market-item:nth-child(4) { padding-left: 18px; }
+  .fork { grid-template-columns: 1fr; }
+  .fork > div + div {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .twoscale { grid-template-columns: 1fr; }
+  .scale-col + .scale-col {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+  .lane { grid-template-columns: 44px minmax(0, 1fr); }
+  .lane-why { grid-column: 2; }
+  .table-wrap table { min-width: 860px; }
+  .table-hint { display: block; }
+  th:first-child, td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--bg);
+    box-shadow: 1px 0 0 var(--line);
+  }
+  .callout p { font-size: 16px; }
+}
+
+@media (max-width: 560px) {
+  .keyfact { grid-template-columns: 1fr; gap: 3px; }
+  .market { grid-template-columns: 1fr; }
+  .market-item + .market-item {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .filter { grid-template-columns: 1fr; gap: 4px; }
+  .funnel-value { font-size: 17px; }
+  .funnel-name { font-size: 13px; }
+}
+
+@media print {
+  body { background: #fff; color: #111; font-size: 10.5pt; }
+  .page { display: block; }
+  .sidebar, .skip-link, .btn { display: none !important; }
+  main { padding: 0; }
+  .doc { max-width: none; }
+  section { break-inside: auto; page-break-inside: auto; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  .funnel-stage, .fork, .lane, tr { break-inside: avoid; page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .table-wrap { overflow: visible; }
+  table { font-size: 8.5pt; }
+  th, td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到正文</a>
+
+<div class="page">
+  <aside class="sidebar" aria-label="文档导航">
+    <nav class="nav" aria-label="章节">
+      <a href="#summary" class="active">一页结论</a>
+      <a href="#how">01 · 怎么读</a>
+      <a href="#market">02 · 市场底盘</a>
+      <a href="#people">03 · 人群漏斗</a>
+      <a href="#devices">04 · 设备漏斗</a>
+      <a href="#groups">05 · 七类人群</a>
+      <a href="#payment">06 · 中国付费参照</a>
+      <a href="#priority">07 · 先打谁</a>
+      <a href="#evidence">08 · 证据与缺口</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="status-card">
+        <div class="status-row"><span>状态</span><span class="status-value">草稿</span></div>
+        <div class="status-row"><span>更新</span><span class="status-value">2026-10-27</span></div>
+        <div class="status-row"><span>自有样本</span><span class="status-value">n=63</span></div>
+      </div>
+      <button class="btn" type="button" onclick="window.print()">打印 / 存 PDF</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <article class="doc">
+      <header class="doc-header" id="summary">
+        <div class="eyebrow">2026-10-27 · 全球 / 中国 / 美国</div>
+        <h1>从 3 亿内容发布者，<br>到 200 万职业创作者</h1>
+        <p class="lede">这张漏斗回答三件事：影像创作的人有多少、他们的设备能不能接上 Kocard、其中多少人真的会为拷卡和备份掏钱。条宽按刻度画，所有估算都单独标出。</p>
+
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">状态</div><div class="meta-value"><span class="status-dot"></span>草稿</div></div>
+          <div class="meta-item"><div class="meta-label">更新</div><div class="meta-value">2026-10-27</div></div>
+          <div class="meta-item"><div class="meta-label">口径</div><div class="meta-value">2025 出货 / 2026-09 存量</div></div>
+          <div class="meta-item"><div class="meta-label">自有调研</div><div class="meta-value">n=63，非概率抽样</div></div>
+        </div>
+
+        <dl class="keyfacts">
+          <div class="keyfact">
+            <dt>结论</dt>
+            <dd><strong>增量在口袋、运动、全景相机，不在微单。</strong>2025 年手持智能相机 1,665 万台、增长 83%，是数码相机的 1.8 倍；这类设备基本都用 microSD，拍完就要现场倒卡。</dd>
+          </div>
+          <div class="keyfact">
+            <dt>能触达</dt>
+            <dd>全球约 <strong>3,325 万–4,710 万</strong>人有可换镜头相机、会产出卡素材；中国 595 万–871 万，美国 498 万–857 万（推算，未计无人机和运动相机）。</dd>
+          </div>
+          <div class="keyfact">
+            <dt>会付钱</dt>
+            <dd>全球约 <strong>200 万</strong>职业创作者，用来近似有拷卡和现场处理需求的人；中国 25.3 万–52.4 万，美国 14.5 万–21.7 万。这是“有需求”的上限，不是 Kocard 的客户数。</dd>
+          </div>
+          <div class="keyfact">
+            <dt>卡在哪</dt>
+            <dd>GO 只读 SD 和 microSD。<strong>剧组和高端商业机的主卡是 CFexpress 或专有卡，读不了；</strong>手机不是 10G 的用户，也跑不满 GO 的速度。</dd>
+          </div>
+        </dl>
+      </header>
+
+      <!-- 01 -->
+      <section id="how">
+        <div class="section-kicker">01 · 怎么读</div>
+        <h2>先看口径，再看长度</h2>
+        <p class="section-intro">三个口径混在一起，会得出“市场很大”的错误结论。这里先把刻度、深浅和“人 / 设备”分开说清楚。</p>
+
+        <div class="filters">
+          <div class="filter">
+            <div class="filter-label">刻度</div>
+            <div class="filter-body">
+              <p>人群漏斗和第六节的注意力漏斗是<strong>对数刻度</strong>（分别为 5 万–4 亿、1 万–20 亿）；设备漏斗是<strong>线性刻度</strong>（0–200 万），否则看不出卡型这一刀的幅度。线性刻度下，200 万在 3 亿面前会变成一条看不见的线。</p>
+            </div>
+          </div>
+          <div class="filter">
+            <div class="filter-label">深浅</div>
+            <div class="filter-body">
+              <p>深色 = 区间下限；浅色延伸 = 区间上限。标“推算”或“估算”的，不是公开统计，不能当事实引用。</p>
+            </div>
+          </div>
+          <div class="filter">
+            <div class="filter-label">术语</div>
+            <div class="filter-body">
+              <p><strong>10G / 5G 指 USB 接口速率</strong>（10Gbps / 5Gbps），不是手机网络。DIT 指剧组的数字影像技术岗位。</p>
+            </div>
+          </div>
+          <div class="filter">
+            <div class="filter-label">边界</div>
+            <div class="filter-body">
+              <p>漏斗只算“人”，设备筛选单独一节。人 × 设备 × 付费意愿不能直接相乘成收入，收入在第六节单独算。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p>能读卡的人，比会拍的人少一个量级；愿意为它掏钱的人，再少一个量级。</p>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section id="market">
+        <div class="section-kicker">02 · 市场底盘</div>
+        <h2>增量在口袋相机，不在微单</h2>
+        <p class="section-intro">2025 年两个市场的增速差 7 倍多。传统相机在回暖，但真正把“拍素材”变成日常动作的，是口袋、运动、全景相机。</p>
+
+        <div class="market">
+          <div class="market-item">
+            <div class="market-num">944 <small>万台</small></div>
+            <div class="market-label">数码相机出货，同比 +11.2%</div>
+            <div class="market-src">CIPA（日本相机影像产品工业协会）2025</div>
+          </div>
+          <div class="market-item">
+            <div class="market-num">1,665 <small>万台</small></div>
+            <div class="market-label">手持智能相机出货，同比 +83%</div>
+            <div class="market-src">2025 出货 · 媒体转引</div>
+          </div>
+          <div class="market-item">
+            <div class="market-num">10.12 <small>亿</small></div>
+            <div class="market-label">中国短视频用户</div>
+            <div class="market-src">官方口径</div>
+          </div>
+          <div class="market-item">
+            <div class="market-num">200 <small>万</small></div>
+            <div class="market-label">全球职业创作者，用来近似目标人群</div>
+            <div class="market-src">Goldman Sachs 2025</div>
+          </div>
+        </div>
+
+        <p style="margin-top:18px">手持智能相机里，大疆 1,040 万台、影石 340 万台，两家合计是日本厂商无反出货（631 万台）的两倍多。这类设备基本都用 microSD，拍完要现场倒卡——正好是 GO 的卡型和场景。</p>
+        <p class="note"><strong>品牌份额（2025 出货，日本厂商口径）：</strong>佳能 45.7%、索尼 24.6%、富士 11.8%、尼康 8.9%、松下 4.4%。富士首次超过尼康，用户偏直出和视频；这类用户对转码、校色的需求和传统“佳能索尼”不一样。</p>
+      </section>
+
+      <!-- 03 -->
+      <section id="people">
+        <div class="section-kicker">03 · 人群漏斗</div>
+        <h2>三层口径，别把“创作者”当“客户”</h2>
+        <p class="section-intro">第一层是内容发布者，第二层是有可换镜头相机的人，第三层才是有拷卡和现场处理需求的职业 / 半职业者。三层来源不同，不能混着用。</p>
+
+        <div class="funnel" aria-label="全球人群漏斗">
+          <div class="funnel-axis" aria-hidden="true">
+            <span style="left:0">5 万</span>
+            <span style="left:33.3%">100 万</span>
+            <span style="left:59%">1,000 万</span>
+            <span style="left:84.6%">1 亿</span>
+            <span style="left:100%">4 亿</span>
+          </div>
+
+          <div class="funnel-stage">
+            <div class="funnel-head">
+              <div class="funnel-name"><span class="stage-num">①</span>潜在影像创作者全体</div>
+              <div class="funnel-value">6,660 万 – 3.03 亿</div>
+            </div>
+            <div class="funnel-track" aria-hidden="true">
+              <span class="bar-lo" style="--lo:80.1%"></span>
+              <span class="bar-hi" style="--lo:80.1%;--hi:96.9%"></span>
+            </div>
+            <div class="funnel-sub">
+              <span>中国 3,800 万（月活开播账号）</span>
+              <span class="sep">·</span>
+              <span>美国 无公开口径</span>
+              <span class="sep">·</span>
+              <span class="src">公开调研</span>
+            </div>
+          </div>
+
+          <div class="funnel-drop">口径切换：从“发布内容”到“有可换镜头相机”，两层来源不同，不能算转化率</div>
+
+          <div class="funnel-stage">
+            <div class="funnel-head">
+              <div class="funnel-name"><span class="stage-num">②</span>用相机 / 无人机 / 运动相机产出卡素材的人</div>
+              <div class="funnel-value">3,325 万 – 4,710 万</div>
+            </div>
+            <div class="funnel-track" aria-hidden="true">
+              <span class="bar-lo" style="--lo:72.3%"></span>
+              <span class="bar-hi" style="--lo:72.3%;--hi:76.2%"></span>
+            </div>
+            <div class="funnel-sub">
+              <span>中国 595 万–871 万</span>
+              <span class="sep">·</span>
+              <span>美国 498 万–857 万</span>
+              <span class="sep">·</span>
+              <span class="src est">推算 · 只计可换镜头</span>
+            </div>
+          </div>
+
+          <div class="funnel-drop">再少一个量级：从“有相机”到“靠它吃饭、要拷卡”（口径不同，仅作量级参考）</div>
+
+          <div class="funnel-stage">
+            <div class="funnel-head">
+              <div class="funnel-name"><span class="stage-num">③</span>有拷卡备份与现场处理需求的人</div>
+              <div class="funnel-value">约 200 万</div>
+            </div>
+            <div class="funnel-track" aria-hidden="true">
+              <span class="bar-lo" style="--lo:41%;--hi:41%"></span>
+            </div>
+            <div class="funnel-sub">
+              <span>中国 25.3 万–52.4 万</span>
+              <span class="sep">·</span>
+              <span>美国 14.5 万–21.7 万</span>
+              <span class="sep">·</span>
+              <span class="src">Goldman / BLS / 推算</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="note" style="margin-top:14px">对数刻度会放大尾部：第三层的 200 万，只占第一层下限的 3%、上限的 0.7%。但它已经是“职业创作者”总数，不等于 Kocard 客户；真正的可服务人数还要过下一节的设备筛选。</p>
+
+        <p class="note"><strong>三层怎么来的：</strong>第一层下限是 Goldman Sachs 2025“自认创作者”6,660 万，上限是 Adobe 2022“每月至少发布一次原创内容”3.03 亿，口径差 4.5 倍。第二层是 CIPA 2018–25 可换镜头相机出货 5,541 万台 × 在用率 60–85%，只算可换镜头，不含无人机和运动相机，所以是下限。第三层用 Goldman Sachs“职业创作者”约 200 万作为近似；中国没有直接数据，按全球第三 / 第二层比例 4.2–6.0% 推算；美国用美国劳工统计局（BLS）摄影师 14.5 万 + 摄像 3.26 万 + 剪辑 3.94 万。</p>
+      </section>
+
+      <!-- 04 -->
+      <section id="devices">
+        <div class="section-kicker">04 · 设备漏斗</div>
+        <h2>卡型先砍一刀，手机再分两条线</h2>
+        <p class="section-intro">人群漏斗到 200 万为止；这一节看这 200 万里，设备能接住多少。第一条筛的是卡，第二条筛的是手机，第三条看电脑能不能落到工作流。</p>
+
+        <div class="funnel" aria-label="设备可达漏斗，线性刻度 0 到 200 万">
+          <div class="funnel-axis" aria-hidden="true">
+            <span style="left:0">0</span>
+            <span style="left:50%">100 万</span>
+            <span style="left:100%">200 万</span>
+          </div>
+
+          <div class="funnel-stage">
+            <div class="funnel-head">
+              <div class="funnel-name">目标人群</div>
+              <div class="funnel-value">200 万</div>
+            </div>
+            <div class="funnel-track" aria-hidden="true">
+              <span class="bar-lo" style="--lo:100%;--hi:100%"></span>
+            </div>
+            <div class="funnel-sub"><span>职业 / 半职业，有拷卡与现场处理需求</span></div>
+          </div>
+
+          <div class="funnel-drop">× 70–85%：主记录卡是 SD 或 microSD</div>
+
+          <div class="funnel-stage">
+            <div class="funnel-head">
+              <div class="funnel-name">卡型可读</div>
+              <div class="funnel-value">140 万 – 170 万</div>
+            </div>
+            <div class="funnel-track" aria-hidden="true">
+              <span class="bar-lo" style="--lo:70%"></span>
+              <span class="bar-hi" style="--lo:70%;--hi:85%"></span>
+            </div>
+            <div class="funnel-sub">
+              <span>婚礼、vlog、旅行、爱好者、高校为主</span>
+              <span class="sep">·</span>
+              <span class="src est">估算，无公开统计</span>
+            </div>
+          </div>
+
+          <div class="funnel-drop">手机档位分叉：10G 配 GO，非 10G 配 Lite</div>
+
+          <div class="fork">
+            <div>
+              <div class="fork-label">10G 手机 · 占可读人群 52%</div>
+              <div class="fork-value">73 万 – 88 万</div>
+              <div class="fork-note">GO 能跑满 10Gbps；iPhone Pro 和部分 Android 旗舰在这一档。</div>
+            </div>
+            <div>
+              <div class="fork-label">非 10G · 占可读人群 48%</div>
+              <div class="fork-value">67 万 – 82 万</div>
+              <div class="fork-note">Lite 的主场；其中 Lightning 只有 USB 2.0，读卡能用但盘速没意义。</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="note" style="margin-top:14px"><strong>70–85% 是估算：</strong>婚礼、vlog、旅行、爱好者、高校以 SD / microSD 为主；商业和剧组的主卡常是 CFexpress 或专有卡，只能读副卡或完全读不了。没有公开统计，按人群结构给区间。手机档位按目标人群的 52% / 48% 分布估算，假设卡型和手机档位不相关。</p>
+        <p class="note"><strong>三年能卖多少：</strong>按 1–3% 渗透，单线约 0.7–2.6 万台（扣卡型后）；调研报告不扣卡型的口径是 1.0–3.1 万台 / 线。GO 与 Lite 是替代关系，不能相加。</p>
+
+        <div class="filters">
+          <div class="filter">
+            <div class="filter-label">卡型</div>
+            <div class="filter-body">
+              <p><strong>硬门槛。</strong>GO 只有 SD 4.0 + microSD 4.0。婚礼、vlog、旅行、爱好者、高校的大部分机型能读；商业和剧组的主卡常是 CFexpress 或专有卡，只能读副卡，或者完全读不了。具体机型见下一节。</p>
+            </div>
+          </div>
+          <div class="filter">
+            <div class="filter-label">手机</div>
+            <div class="filter-body">
+              <p><strong>决定卖哪条线。</strong>10G 手机（iPhone Pro、部分 Android 旗舰）配 GO；非 10G（标准 iPhone、Lightning、多数 Android）配 Lite。Lightning 只有 USB 2.0，读卡能用，但盘速优势消失。</p>
+              <p>样本实测（n=59）：10G 49%、5G 7%、USB-C 2.0 12%、Lightning 32%；调研报告 Part 3 把适配口径简化成 10G 52% / 非 10G 48%。</p>
+            </div>
+          </div>
+          <div class="filter">
+            <div class="filter-label">电脑</div>
+            <div class="filter-body">
+              <p><strong>决定工作流落点。</strong>Mac + Final Cut / ProRes、Windows + Adobe 都能接。桌面端能不能落到 NAS（网络存储）以外的用户，还没验证；非 NAS 用户目前只用到 App + 硬件，“桌面”这一环还没闭合。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p>三张卡都过，才是硬件 + App + 桌面的完整闭环；只过前两张，卖的是硬件 + App。</p>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section id="groups">
+        <div class="section-kicker">05 · 七类人群</div>
+        <h2>谁用什么设备，卡能不能读</h2>
+        <p class="section-intro">设备不是参数表，是筛选器。最后一列直接决定 GO 能不能接住这群人。</p>
+        <p class="table-hint">左右滑动查看完整表格 →</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>七类创作者 + 普通手机用户；机型为常见组合，不是穷举。</caption>
+            <thead>
+              <tr>
+                <th scope="col">人群</th>
+                <th scope="col">规模信号</th>
+                <th scope="col">相机 / 主记录卡</th>
+                <th scope="col">手机</th>
+                <th scope="col">电脑 / 后期</th>
+                <th scope="col">卡型</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>婚礼 / 活动摄影摄像</td>
+                <td>美国摄影师 14.5 万（67% 自雇）；中国 / 全球人数缺失</td>
+                <td>A7 IV、R6 II、R5 II、Z6 III、X-T5；SD UHS-II 为主，高端机 CFexpress</td>
+                <td>iPhone Pro 为主，少量华为</td>
+                <td>MacBook Pro；Lightroom / PS / PR / FCP / 剪映 / Photo Mechanic</td>
+                <td><span class="mark-yes">✓</span> / <span class="mark-part">◐</span></td>
+              </tr>
+              <tr>
+                <td>短视频 / vlog / 自媒体</td>
+                <td>中国短视频用户 10.12 亿；创作者约 1.8 亿，职业 / 半职业百万级</td>
+                <td>iPhone Pro、Pocket 3、ZV-E1 / E10、A7C II、GoPro、Insta360；microSD / SD</td>
+                <td>iPhone Pro、Android 旗舰</td>
+                <td>MacBook Air / Pro、Windows、iPad；剪映 / CapCut / FCP / PR / 达芬奇</td>
+                <td><span class="mark-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>旅行 / 户外 / 运动 / 无人机</td>
+                <td>2025 手持智能相机 1,665 万台（大疆 1,040 万、影石 340 万）</td>
+                <td>DJI 无人机 / Osmo、Insta360、GoPro；microSD</td>
+                <td>iPhone / Android 混合；样本中 Lightning 占一半</td>
+                <td>MacBook Air、iPad、手机剪辑；剪映 / DJI Mimo / Insta360</td>
+                <td><span class="mark-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>商业 / 电商 / 产品 / 建筑</td>
+                <td>项目制，单价高；客户要原片 / 分层文件；全球规模数据缺失</td>
+                <td>GFX、Phase One、A7R V、R5、移轴；SD / CFexpress B，联机拍摄</td>
+                <td>iPhone Pro</td>
+                <td>Mac Studio + 校色显示器；Capture One / LR / PS</td>
+                <td><span class="mark-part">◐</span></td>
+              </tr>
+              <tr>
+                <td>影视剧组 / DIT</td>
+                <td>项目制；美国摄像 3.26 万 + 剪辑 3.94 万（BLS）</td>
+                <td>ARRI / RED / Venice / Blackmagic；CFexpress B / CFast / RED MINI-MAG / SxS</td>
+                <td>iPhone（监看 / 回传）</td>
+                <td>MacBook Pro M Max + RAID；Silverstack / Hedge / 达芬奇 / Avid</td>
+                <td><span class="mark-no">✗</span> / <span class="mark-part">◐</span></td>
+              </tr>
+              <tr>
+                <td>摄影爱好者</td>
+                <td>2025 中国微单用户结构中爱好者占 39.6%（单一来源，低置信度）</td>
+                <td>X100VI、X-T5、A7C II、R8、GR；SD</td>
+                <td>iPhone / Android</td>
+                <td>MacBook Air、iPad、Windows；LR 手机版 / 醒图 / 美图 / 剪映</td>
+                <td><span class="mark-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>高校影视 / 传媒</td>
+                <td>2025 高校采购微单教学套机 14.3 万台（单一来源，低置信度）</td>
+                <td>ZV-E10、R50、X-S20 等学校资产；SD</td>
+                <td>混合</td>
+                <td>Windows 机房 + 个人电脑；PR / 达芬奇免费版 / 剪映</td>
+                <td><span class="mark-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>普通手机用户（非目标）</td>
+                <td>中国短视频用户 10.12 亿；全球手机存量数十亿</td>
+                <td>无独立相机、无卡</td>
+                <td>全档位</td>
+                <td>手机内完成</td>
+                <td><span class="mark-no">✗</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="legend"><span class="mark-yes">✓</span> 能读 SD / microSD　<span class="mark-part">◐</span> 只能读副卡或部分机型　<span class="mark-no">✗</span> 读不了（主卡为 CFexpress 或专有介质）</p>
+
+        <p class="note"><strong>规模信号的置信度不一样：</strong>美国摄影师（BLS）、CIPA 出货、手持智能相机出货是公开统计；中国微单用户结构、高校采购来自单一市场研究报告，置信度低，只作方向参考。支付意愿见第七节。</p>
+      </section>
+
+      <!-- 06 -->
+      <section id="payment">
+        <div class="section-kicker">06 · 中国付费参照</div>
+        <h2>10 亿人刷短视频，412 万人为影像资产付过钱</h2>
+        <p class="section-intro">这两件事不是同一条链：刷短视频的人不等于会买拷卡设备的人。左边看注意力盘，右边看付费参照，两把尺子分开用。</p>
+
+        <div class="twoscale">
+          <div class="scale-col">
+            <p class="scale-title">注意力盘：人多，但和拷卡不是同一个需求</p>
+            <p class="scale-sub">对数刻度，1 万–20 亿。只说明内容创作是大众行为，不能直接当市场。</p>
+
+            <div class="scale-row">
+              <div class="scale-value">10.12 亿</div>
+              <div class="scale-label">中国短视频用户</div>
+              <div class="funnel-track" aria-hidden="true">
+                <span class="bar-lo" style="--lo:94.4%;--hi:94.4%"></span>
+              </div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-value">1.8 亿</div>
+              <div class="scale-label">内容创作者，账号口径，非去重人数（17.8%）</div>
+              <div class="funnel-track" aria-hidden="true">
+                <span class="bar-lo" style="--lo:80.3%;--hi:80.3%"></span>
+              </div>
+            </div>
+            <p class="note" style="margin-top:10px">真正靠这个吃饭的是百万级，但没有可靠口径，不画条。</p>
+          </div>
+
+          <div class="scale-col">
+            <p class="scale-title">付费参照：相机品牌云服务的付费用户</p>
+            <p class="scale-sub">412 万不是 Kocard 的可比市场，只说明中国有一批愿意为影像资产服务掏钱的人。</p>
+
+            <div class="arrowline"><span class="k">影像云存储付费用户</span><span class="v">412 万 · +63.5%</span></div>
+            <div class="arrowline"><span class="k">取 1% / 3%</span><span class="v">4.1 万 / 12.4 万</span></div>
+            <div class="arrowline"><span class="k">× ¥369 / 年</span><span class="v">¥1,500 万 / ¥4,500 万</span></div>
+
+            <div class="equation">
+              <strong>这是算术参照，不是预测。</strong>412 万来自单一市场研究报告（百度文库转引），没有交叉验证；1% / 3% 是假设，不是转化率结论。
+            </div>
+          </div>
+        </div>
+
+        <p class="note"><strong>硬件线单独算：</strong>全球三年 1.0–3.1 万台 × $133–232，报告口径约 130 万–660 万美元。硬件和订阅是两条线，不能相加；桌面端能不能覆盖 NAS 以外的用户，还没验证。</p>
+      </section>
+
+      <!-- 07 -->
+      <section id="priority">
+        <div class="section-kicker">07 · 先打谁</div>
+        <h2>三档，不按人头排</h2>
+        <p class="section-intro">按“设备能接 + 场景高频 + 愿意付钱”排，不按人群大小排。</p>
+
+        <div class="lanes">
+          <div class="lane">
+            <div class="lane-id">P0</div>
+            <div class="lane-groups">婚礼 / 活动<br>短视频 / vlog<br>旅行 / 户外</div>
+            <div class="lane-why">SD / microSD 为主、移动场景、现场就要备份；GO + App 的拷贝 / 转码 / 校验正好闭环。支付意愿也靠前：美国婚礼 $250–310、vlog $200–250；中国婚礼 ¥1,000–1,350、vlog ¥750–1,100（推断）。</div>
+          </div>
+          <div class="lane">
+            <div class="lane-id">P1</div>
+            <div class="lane-groups">商业 / 电商<br>摄影爱好者</div>
+            <div class="lane-why">需要桌面 / NAS 和联机拍摄；爱好者付费意愿低。要靠器材商、教育渠道慢慢养，不适合作为第一版的增长主力。</div>
+          </div>
+          <div class="lane">
+            <div class="lane-id">P2</div>
+            <div class="lane-groups">影视剧组 / DIT<br>高校 / 普通手机用户</div>
+            <div class="lane-why">剧组主卡是 CFexpress 或专有卡，GO 读不了；高校采购周期长；普通用户没有卡。DIT 支付意愿最高（$300–550），但设备接不住，先不碰。</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 08 -->
+      <section id="evidence">
+        <div class="section-kicker">08 · 证据与缺口</div>
+        <h2>每个数字的来路和底气</h2>
+        <p class="section-intro">同一张图里，公开统计和推算的权重完全不同。引用前先看这一列。</p>
+
+        <div class="table-wrap">
+          <table>
+            <caption>数据、来源与置信度；置信度为本文判断，不是来源自评。</caption>
+            <thead>
+              <tr>
+                <th scope="col">数据</th>
+                <th scope="col">值</th>
+                <th scope="col">来源 / 置信度</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025 数码相机出货</td>
+                <td>944 万台（+11.2%）；无反 631 万、单反 69 万、卡片机 244 万</td>
+                <td>CIPA，多家媒体转引 · 高</td>
+              </tr>
+              <tr>
+                <td>2025 手持智能相机</td>
+                <td>1,665 万台（+83%）；大疆 1,040 万、影石 340 万</td>
+                <td>媒体转引同一批出货数据 · 中高</td>
+              </tr>
+              <tr>
+                <td>2025 品牌份额</td>
+                <td>佳能 45.7%、索尼 24.6%、富士 11.8%、尼康 8.9%、松下 4.4%</td>
+                <td>行业统计转引，日本厂商口径 · 中</td>
+              </tr>
+              <tr>
+                <td>中国短视频用户</td>
+                <td>10.12 亿；直播 7.51 亿</td>
+                <td>官方口径 · 高</td>
+              </tr>
+              <tr>
+                <td>中国内容创作者</td>
+                <td>约 1.8 亿；月活开播账号 3,800 万</td>
+                <td>平台 / 账号口径，非去重人数 · 中</td>
+              </tr>
+              <tr>
+                <td>全球创作者</td>
+                <td>6,660 万–3.03 亿</td>
+                <td>Goldman Sachs 2025 / Adobe 2022，口径差 4.5 倍 · 中</td>
+              </tr>
+              <tr>
+                <td>有可换镜头相机的人</td>
+                <td>3,325 万–4,710 万</td>
+                <td>CIPA 出货 × 在用率 60–85% · 推算</td>
+              </tr>
+              <tr>
+                <td>有拷卡需求的人</td>
+                <td>全球 200 万；中国 25.3–52.4 万；美国 14.5–21.7 万</td>
+                <td>Goldman Sachs / 比例推算 / BLS · 中</td>
+              </tr>
+              <tr>
+                <td>手机档位（目标用户）</td>
+                <td>10G 49%、5G 7%、USB-C 2.0 12%、Lightning 32%（n=59）</td>
+                <td>社区抽样，偏 iPhone · 中</td>
+              </tr>
+              <tr>
+                <td>支付意愿</td>
+                <td>美国 $150–550；中国 ¥600–2,000</td>
+                <td>以替代组合花费为锚，未问卷验证 · 推断</td>
+              </tr>
+              <tr>
+                <td>三年可获取（报告口径）</td>
+                <td>单线 1.0–3.1 万台</td>
+                <td>目标人群 × 手机适配 52% / 48% × 1–3%；未扣卡型 · 估算</td>
+              </tr>
+              <tr>
+                <td>中国云存储付费</td>
+                <td>412 万（+63.5%）</td>
+                <td>单一市场研究报告，百度文库转引 · 低</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>这份漏斗没回答的</h3>
+        <ul>
+          <li>七类人群没有各自的人数拆分。漏斗只到总盘，分群规模仍是空白。</li>
+          <li>卡型覆盖率 70–85% 是估算，没有公开统计；需要用出货机型结构补。</li>
+          <li>支付意愿是推断，样本 n=63、偏 iPhone 和 YouTube，不能代表中国安卓用户。</li>
+          <li>412 万是中国相机品牌云服务付费用户，不是 Kocard 的可比市场，只能当方向。</li>
+          <li>硬件和订阅是两条收入线，不能相加；桌面端能不能覆盖 NAS 以外的用户，还没验证。</li>
+        </ul>
+      </section>
+
+      <footer class="doc-footer">
+        <span><strong>数据截至 2026-10-27</strong> · 公开数据为 2025 年出货与 2026-09 存量口径</span>
+        <span>自有调研 n=63，非概率抽样；估算项已在文中标注</span>
+      </footer>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var sections = links.map(function (link) {
+    var id = link.getAttribute('href');
+    return id && id.charAt(0) === '#' ? document.querySelector(id) : null;
+  }).filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (link) {
+          var active = link.getAttribute('href') === '#' + entry.target.id;
+          link.classList.toggle('active', active);
+          if (active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+})();
+</script>
+</body>
+</html>

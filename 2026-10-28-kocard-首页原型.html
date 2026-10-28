@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kocard 首页原型</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: #0e1116;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 64px;
+  }
+  .phone {
+    position: relative;
+    width: 402px;
+    height: 874px;
+    zoom: 0.9;
+    border: 1px solid #d7dce3;
+    border-radius: 52px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 122px;
+    height: 35px;
+    border: 1px solid #d7dce3;
+    border-radius: 18px;
+  }
+  .status {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 40px;
+  }
+  .time { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+
+  .header {
+    height: 52px;
+    margin-top: 6px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-title { font-size: 20px; font-weight: 600; }
+  .title-arrow { color: #9aa1ab; font-weight: 400; }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #d7dce3;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #0e1116;
+  }
+
+  .content {
+    padding: 20px 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .section { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    border: 1px solid #dfe3e9;
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .disks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .disk {
+    height: 64px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: linear-gradient(90deg,
+      rgba(14, 17, 22, .025) 0,
+      rgba(14, 17, 22, .075) var(--p),
+      rgba(14, 17, 22, 0) var(--p));
+  }
+  .disk-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .disk-name {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .disk-fs { flex: none; font-size: 11px; color: #8a9099; }
+  .disk-state { font-size: 11px; color: #8a9099; font-variant-numeric: tabular-nums; }
+  .disk--wide { grid-column: 1 / -1; }
+
+  .bar {
+    height: 3px;
+    border-radius: 2px;
+    background: #eef1f4;
+    overflow: hidden;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: #0e1116;
+  }
+
+  .jobs { display: flex; flex-direction: column; gap: 10px; }
+  .job {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .phone + .phone { margin-top: 40px; }
+  .annot + .phone { margin-top: 40px; }
+  .annot { position: relative; }
+  .note { position: absolute; left: -276px; width: 248px; top: 287px; }
+  .nt { font-size: 11px; color: #9aa1ab; margin-bottom: 8px; }
+  .nr {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    line-height: 1.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .nk { flex: none; width: 36px; color: #9aa1ab; }
+  .leader {
+    position: absolute;
+    left: -20px;
+    top: 321px;
+    width: 58px;
+    height: 1px;
+    background: #c9ced6;
+    z-index: 1;
+  }
+  .leader::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -2.5px;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid #c9ced6;
+    border-right: 1px solid #c9ced6;
+    transform: rotate(45deg);
+  }
+  .nav { display: flex; align-items: center; gap: 10px; }
+  .back { width: 24px; height: 24px; display: grid; place-items: center; }
+
+  .progress-card {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-image: linear-gradient(90deg,
+      rgba(14, 17, 22, .028) 0,
+      rgba(14, 17, 22, .085) var(--p),
+      rgba(14, 17, 22, 0) var(--p));
+  }
+  .progress-card .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #6b7280;
+  }
+  .progress-card .big {
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-card .sub {
+    font-size: 12px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .btn {
+    margin-top: 4px;
+    height: 42px;
+    border: 1px solid #0e1116;
+    border-radius: 21px;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .section-head { font-size: 13px; color: #6b7280; }
+
+  .list { display: flex; flex-direction: column; }
+  .row .r { display: flex; align-items: center; gap: 8px; }
+  .row .r svg { flex: none; }
+  .row {
+    height: 48px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .row + .row { border-top: 1px solid #eef1f4; }
+  .row .k { color: #6b7280; }
+  .row .v { font-variant-numeric: tabular-nums; }
+  .switch {
+    position: relative;
+    flex: none;
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: #0e1116;
+  }
+  .switch i {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .job-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .job-title { font-size: 16px; font-weight: 600; }
+  .job-tail { display: flex; align-items: center; gap: 8px; }
+  .job-tail svg { flex: none; }
+  .job-speed { flex: none; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
+  .job-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .job-route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 11px;
+    color: #9aa1ab;
+  }
+  .route { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .route > span:not(.arrow) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .route .arrow { flex: none; }
+
+  .tabbar {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 34px;
+    height: 58px;
+    border: 1px solid #dfe3e9;
+    border-radius: 29px;
+    display: flex;
+    align-items: center;
+  }
+  .tabbar .pill {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    bottom: 4px;
+    width: calc((100% - 8px) / 3);
+    border: 1px solid #0e1116;
+    border-radius: 25px;
+  }
+  .tab {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #8a9099;
+  }
+  .tab.active { color: #0e1116; font-weight: 600; }
+
+  .home-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    border-radius: 3px;
+    background: #0e1116;
+  }
+
+  .fsm { width: 860px; max-width: 100%; margin-top: 48px; }
+  .fsm-title { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+  .fsm svg { width: 100%; height: auto; display: block; }
+  .box { fill: #fff; stroke: #dfe3e9; }
+  .box.on { fill: #0e1116; stroke: #0e1116; }
+  .st { font-size: 14px; font-weight: 600; fill: #0e1116; text-anchor: middle; }
+  .st.on { fill: #fff; }
+  .sub2 { font-size: 11px; fill: #8a9099; text-anchor: middle; }
+  .t { font-size: 11px; fill: #6b7280; }
+  .edge { fill: none; stroke: #b9c0ca; stroke-width: 1.2; }
+  .edge.dash { stroke-dasharray: 4 4; }
+
+  .fsm-rules { margin-top: 24px; display: flex; flex-direction: column; }
+  .fsm-rule {
+    display: flex;
+    gap: 16px;
+    padding: 10px 0;
+    font-size: 12px;
+    border-top: 1px solid #eef1f4;
+  }
+  .fsm-rule .rk { width: 84px; flex: none; color: #9aa1ab; }
+</style>
+</head>
+<body>
+  <div class="annot">
+    <div class="note">
+      <div class="nt">数量行 · 随状态变</div>
+      <div class="nr"><span class="nk">首次</span><span>已备份 1,284 / 3,642 张</span></div>
+      <div class="nr"><span class="nk">新增</span><span>已备份 557 / 960 张</span></div>
+      <div class="nr"><span class="nk">待备份</span><span>10 张待备份</span></div>
+      <div class="nr"><span class="nk">已最新</span><span>全部已备份 · 今天 9:41</span></div>
+      <div class="nr"><span class="nk">有失败</span><span>3 张未备份</span></div>
+    </div>
+    <div class="leader"></div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status">
+      <span class="time">9:41</span>
+      <span class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+          <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+          <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+          <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+          <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+          <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+          <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+          <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="header">
+      <div class="page-title">首页</div>
+      <div class="avatar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="9" r="3.6"/>
+          <path d="M4.8 20c0-3.4 3.2-6 7.2-6s7.2 2.6 7.2 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="disks">
+          <div class="card disk" style="--p:62%">
+            <div class="disk-head">
+              <div class="disk-name">Kocard Go</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+            <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+          </div>
+          <div class="card disk" style="--p:70%">
+            <div class="disk-head">
+              <div class="disk-name">EOS_DIGITAL</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+            <div class="disk-state">总 128 GB · 剩余 38 GB</div>
+          </div>
+          <div class="card disk disk--wide" style="--p:49%">
+            <div class="disk-head">
+              <div class="disk-name">DJI</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+            <div class="disk-state">总 512 GB · 剩余 260 GB</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="jobs">
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-title">相册备份</div>
+              <div class="job-tail">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+              </div>
+            </div>
+            <div class="job-meta">
+              <span>首次 · 已备份 1,284 / 3,642 张</span>
+              <span>约 4 分钟</span>
+            </div>
+            <div class="bar"><i style="width:35%"></i></div>
+            <div class="job-route">
+              <span class="route"><span>相册</span><span class="arrow">→</span><span>Kocard Go</span></span>
+              <span class="job-speed">48 MB/s</span>
+            </div>
+          </div>
+
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-title">相册备份</div>
+              <div class="job-tail">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+              </div>
+            </div>
+            <div class="job-meta">
+              <span>新增 · 已备份 557 / 960 张</span>
+              <span>约 1 分钟</span>
+            </div>
+            <div class="bar"><i style="width:58%"></i></div>
+            <div class="job-route">
+              <span class="route"><span>相册</span><span class="arrow">→</span><span>EOS_DIGITAL</span></span>
+              <span class="job-speed">36 MB/s</span>
+            </div>
+          </div>
+
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-title">素材拷贝</div>
+              <div class="job-tail">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+              </div>
+            </div>
+            <div class="job-meta">
+              <span>72.4 / 210 GB</span>
+              <span>320 / 1,284 个</span>
+            </div>
+            <div class="bar"><i style="width:34%"></i></div>
+            <div class="job-route">
+              <span class="route"><span>DJI/婚礼素材</span><span class="arrow">→</span><span>Kocard Go/1012 婚礼</span></span>
+              <span class="job-speed">112 MB/s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div class="pill"></div>
+      <div class="tab active">首页</div>
+      <div class="tab">任务</div>
+      <div class="tab">AI</div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+  </div>
+
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status">
+      <span class="time">9:41</span>
+      <span class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+          <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+          <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+          <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+          <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+          <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+          <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+          <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="header">
+      <div class="nav">
+        <div class="back">
+          <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+        </div>
+        <div class="page-title">相册 <span class="title-arrow">→</span> Kocard Go</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="card progress-card" style="--p:35%">
+          <div class="top">
+            <span>正在备份</span>
+            <span>48 MB/s</span>
+          </div>
+          <div class="big">35%</div>
+          <div class="sub">1,284 / 3,642 张 · 约 4 分钟</div>
+          <div class="btn">暂停</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">备份记录</div>
+        <div class="card list">
+          <div class="row">
+            <span class="k">今天 15:20</span>
+            <span class="r">
+              <span class="v">首次备份 · 进行中</span>
+              <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card list">
+          <div class="row">
+            <span class="k">目标盘</span>
+            <span class="v">Kocard Go</span>
+          </div>
+          <div class="row">
+            <span class="k">备份内容</span>
+            <span class="v">照片 · 视频</span>
+          </div>
+          <div class="row">
+            <span class="v">打开备份文件夹</span>
+            <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card list">
+          <div class="row">
+            <span class="k">接入盘时自动备份</span>
+            <span class="switch"><i></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+
+  <div class="fsm">
+    <div class="fsm-title">相册备份 · 状态与流转</div>
+    <svg viewBox="0 0 860 380" role="img" aria-label="相册备份状态流转">
+      <defs>
+        <marker id="ar" viewBox="0 0 6 6" refX="5.5" refY="3" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#b9c0ca"/>
+        </marker>
+      </defs>
+
+      <path class="edge dash" d="M780,56 V32 Q780,24 772,24 H608 Q600,24 600,32 V50" marker-end="url(#ar)"/>
+      <text class="t" x="690" y="16" text-anchor="middle">重试（有失败时）</text>
+
+      <rect class="box" x="0" y="56" width="156" height="56" rx="14"/>
+      <text class="st" x="78" y="89">未接入</text>
+      <text class="sub2" x="78" y="130">盘没插上</text>
+
+      <rect class="box" x="234" y="56" width="156" height="56" rx="14"/>
+      <text class="st" x="312" y="89">有待备份</text>
+      <text class="sub2" x="312" y="130">有新照片</text>
+
+      <rect class="box on" x="468" y="56" width="156" height="56" rx="14"/>
+      <text class="st on" x="546" y="89">备份中</text>
+      <text class="sub2" x="546" y="130">正在写入</text>
+
+      <rect class="box" x="702" y="56" width="156" height="56" rx="14"/>
+      <text class="st" x="780" y="89">已最新</text>
+      <text class="sub2" x="780" y="130">都在盘上</text>
+
+      <path class="edge" d="M160,84 H224" marker-end="url(#ar)"/>
+      <text class="t" x="192" y="76" text-anchor="middle">插盘</text>
+
+      <path class="edge" d="M394,84 H458" marker-end="url(#ar)"/>
+      <text class="t" x="426" y="76" text-anchor="middle">自动开始</text>
+
+      <path class="edge" d="M628,84 H692" marker-end="url(#ar)"/>
+      <text class="t" x="660" y="76" text-anchor="middle">完成</text>
+
+      <rect class="box" x="468" y="242" width="156" height="56" rx="14"/>
+      <text class="st" x="546" y="275">已暂停</text>
+      <text class="sub2" x="546" y="316">等你继续</text>
+
+      <path class="edge" d="M594,112 V238" marker-end="url(#ar)" marker-start="url(#ar)"/>
+      <text class="t" x="582" y="180" text-anchor="end">暂停</text>
+      <text class="t" x="606" y="180" text-anchor="start">继续</text>
+
+      <path class="edge" d="M830,112 V350 H376 V116" marker-end="url(#ar)"/>
+      <text class="t" x="430" y="342" text-anchor="middle">拍了新照片</text>
+    </svg>
+
+    <div class="fsm-rules">
+      <div class="fsm-rule"><span class="rk">首页无动作</span><span>卡片只显示状态，暂停、开始、重试都在详情页</span></div>
+      <div class="fsm-rule"><span class="rk">0 张新增</span><span>不生成记录，不提示</span></div>
+      <div class="fsm-rule"><span class="rk">自动备份关</span><span>停在“有待备份”，不自动跑</span></div>
+      <div class="fsm-rule"><span class="rk">首次或长任务</span><span>显示百分比、速度、剩余时间</span></div>
+      <div class="fsm-rule"><span class="rk">几十秒的增量</span><span>只显示“新增 10 张”，不给进度</span></div>
+      <div class="fsm-rule"><span class="rk">相册删照片</span><span>盘上保留，备份是存档不是镜像</span></div>
+      <div class="fsm-rule"><span class="rk">拔盘</span><span>回到未接入，插回从未完成的那张继续</span></div>
+      <div class="fsm-rule"><span class="rk">有失败</span><span>卡片多一行“N 张未备份”，重试在详情页</span></div>
+    </div>
+  </div>
+</body>
+</html>
+

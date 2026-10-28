@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>读卡状态机 · 2026-10-28</title>
+<style>
+  :root {
+    --page: #ffffff;
+    --ink: #0e1116;
+    --ink-2: #39414b;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 56px 40px 40px;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    color: var(--muted);
+  }
+
+  h1 {
+    margin: 8px 0 0;
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 650;
+    letter-spacing: -.02em;
+  }
+
+  .sub {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  figure { margin: 20px 0 0; }
+  svg { display: block; width: 100%; height: auto; }
+
+  .state rect {
+    fill: #fff;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .state .title {
+    font-size: 16px;
+    font-weight: 650;
+    fill: var(--ink);
+  }
+  .state .desc {
+    font-size: 12px;
+    fill: var(--ink-2);
+  }
+  .state .note {
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+
+  .edge {
+    stroke: var(--ink);
+    stroke-width: 1.4;
+    fill: none;
+  }
+  .label {
+    font-size: 11.5px;
+    fill: var(--ink-2);
+  }
+  .label.small {
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+
+  footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 40px;
+  }
+  footer p {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  footer b {
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+
+  @media print {
+    @page { size: A4 landscape; margin: 10mm; }
+    main { padding: 0; max-width: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">通用读卡方案</p>
+    <h1>读卡状态机</h1>
+    <p class="sub">任何读卡器插上后，App 只有这四种状态。第一次授权一次，以后插卡打开就看。</p>
+  </header>
+
+  <figure>
+    <svg viewBox="0 64 1120 506" role="img" aria-label="读卡状态机">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9.5" refY="5"
+                markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#0e1116"/>
+        </marker>
+      </defs>
+
+      <!-- 初始 -->
+      <circle cx="22" cy="248" r="5" fill="#0e1116"/>
+      <line class="edge" x1="28" y1="248" x2="44" y2="248" marker-end="url(#arrow)"/>
+
+      <!-- 状态：未授权 -->
+      <g class="state">
+        <rect x="48" y="196" width="224" height="104" rx="12"/>
+        <text class="title" x="160" y="232" text-anchor="middle">未授权</text>
+        <text class="desc" x="160" y="258" text-anchor="middle">只有一个按钮「选择卡」</text>
+        <text class="note" x="160" y="280" text-anchor="middle">读卡器会出现在选择器里</text>
+      </g>
+
+      <!-- 状态：卡在位 -->
+      <g class="state">
+        <rect x="428" y="196" width="224" height="104" rx="12"/>
+        <text class="title" x="540" y="232" text-anchor="middle">卡在位</text>
+        <text class="desc" x="540" y="258" text-anchor="middle">打开就看卡里的内容</text>
+        <text class="note" x="540" y="280" text-anchor="middle">几张在位就并排几张</text>
+      </g>
+
+      <!-- 状态：卡不在位 -->
+      <g class="state">
+        <rect x="808" y="196" width="224" height="104" rx="12"/>
+        <text class="title" x="920" y="232" text-anchor="middle">卡不在位</text>
+        <text class="desc" x="920" y="258" text-anchor="middle">显示「请插入卡」</text>
+        <text class="note" x="920" y="280" text-anchor="middle">记住的卡都在列表里</text>
+      </g>
+
+      <!-- 状态：读取中断 -->
+      <g class="state">
+        <rect x="428" y="424" width="224" height="104" rx="12"/>
+        <text class="title" x="540" y="460" text-anchor="middle">读取中断</text>
+        <text class="desc" x="540" y="486" text-anchor="middle">暂停任务 · 标记已拔出</text>
+        <text class="note" x="540" y="508" text-anchor="middle">插回后继续，进度保留</text>
+      </g>
+
+      <!-- 未授权 → 卡在位 -->
+      <line class="edge" x1="272" y1="248" x2="426" y2="248" marker-end="url(#arrow)"/>
+      <text class="label" x="349" y="274" text-anchor="middle">点「选择卡」</text>
+      <text class="label small" x="349" y="292" text-anchor="middle">在文件选择器里选卡并记住</text>
+
+      <!-- 卡在位 → 卡不在位 -->
+      <line class="edge" x1="652" y1="248" x2="806" y2="248" marker-end="url(#arrow)"/>
+      <text class="label" x="729" y="274" text-anchor="middle">卡被拔出</text>
+
+      <!-- 卡不在位 → 卡在位（上方回环） -->
+      <path class="edge" d="M 920 196 V 118 H 566 V 192" marker-end="url(#arrow)"/>
+      <text class="label" x="743" y="88" text-anchor="middle">插回同一张卡 · 自动恢复</text>
+      <text class="label small" x="743" y="106" text-anchor="middle">换新卡 · 点「选择卡」再授权</text>
+
+      <!-- 卡在位 → 读取中断 -->
+      <line class="edge" x1="516" y1="300" x2="516" y2="420" marker-end="url(#arrow)"/>
+      <text class="label small" x="506" y="368" text-anchor="end">读取中拔卡</text>
+
+      <!-- 读取中断 → 卡在位 -->
+      <line class="edge" x1="596" y1="424" x2="596" y2="304" marker-end="url(#arrow)"/>
+      <text class="label small" x="606" y="368" text-anchor="start">插回后继续</text>
+    </svg>
+  </figure>
+
+  <footer>
+    <p><b>检测时机</b> 打开 App、回到前台、停在读卡页时，每 2–3 秒检查一次记住的卡。系统没有插拔通知，也不能枚举卷；App 没打开时不会被叫醒。</p>
+    <p><b>多卡</b> 每张卡授权一次；在位的自动并排显示，缺的卡留「添加」入口。</p>
+    <p><b>未授权</b> 只出现在第一次；以后换新卡，从「卡不在位」点「选择卡」补授权。</p>
+    <p><b>通用</b> 离开读卡页后按「卡不在位」处理，进度保留；Android、桌面替换底层卷接口，状态机不变。</p>
+  </footer>
+</main>
+</body>
+</html>

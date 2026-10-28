@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>随身数据市场漏斗 · 2026-10-27</title>
+<style>
+  :root {
+    --page: #ffffff;
+    --ink: #0e1116;
+    --ink-2: #39414b;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --grid: #f1f2f4;
+    --blue: #1d4ed8;
+    --teal: #0f766e;
+    --amber: #b45309;
+    --gray-bar: #d1d5db;
+    --gray-mark: #9ca3af;
+    --green: #15803d;
+    --red: #b91c1c;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+  }
+
+  figure { margin: 0; }
+
+  .eyebrow {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .02em;
+  }
+
+  h1 {
+    margin: 14px 0 0;
+    font-size: clamp(32px, 4.6vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -.03em;
+    font-weight: 650;
+  }
+  h1 span { display: block; }
+
+  .lede {
+    margin: 20px 0 0;
+    max-width: 640px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+
+  .legend {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  section {
+    margin-top: 84px;
+    padding-top: 36px;
+    border-top: 1px solid var(--line);
+  }
+
+  .kicker {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    color: var(--muted);
+  }
+
+  h2 {
+    margin: 8px 0 0;
+    font-size: 24px;
+    font-weight: 650;
+    letter-spacing: -.02em;
+  }
+
+  .note {
+    margin: 24px 0 0;
+    max-width: 760px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .note strong { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- log dot plot ---------- */
+
+  .chart { margin-top: 30px; }
+
+  .axis, .row, .drow {
+    display: grid;
+    grid-template-columns: 232px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .axis { height: 42px; }
+
+  .axis-left {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: var(--muted);
+  }
+
+  .axis-track {
+    position: relative;
+    height: 100%;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tick {
+    position: absolute;
+    bottom: 7px;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .tick:first-child { transform: none; }
+  .tick:last-child { transform: translateX(-100%); }
+
+  .row { height: 80px; }
+
+  .row-name {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .row-value {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plot {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .gl {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--grid);
+    z-index: 0;
+  }
+
+  .dot {
+    position: absolute;
+    top: 50%;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--blue);
+    transform: translate(-50%, -50%);
+  }
+
+  .dot-gray { background: var(--gray-mark); }
+
+  /* ---------- stacked bars ---------- */
+
+  .drow { height: 92px; }
+
+  .bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 46px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .seg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1.15;
+    font-size: 12.5px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    letter-spacing: -.01em;
+  }
+  .seg b {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .seg small {
+    font-size: 10.5px;
+    font-weight: 400;
+    opacity: .85;
+  }
+  .seg-blue { background: var(--blue); }
+  .seg-teal { background: var(--teal); }
+  .seg-gray { background: var(--gray-bar); color: #374151; }
+
+  /* ---------- funnel ---------- */
+
+  .funnel {
+    max-width: 640px;
+    margin: 34px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .fs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .fs-name {
+    font-size: 11.5px;
+    color: #4b5563;
+  }
+  .fs-2 .fs-name, .fs-3 .fs-name { color: #fff; }
+  .fs-4 .fs-name { color: var(--blue); }
+  .fs-value {
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fs-1 {
+    height: 68px;
+    background: var(--gray-bar);
+    color: #1f2937;
+    clip-path: polygon(0 0, 100% 0, 92.51% 100%, 7.49% 100%);
+  }
+  .fs-2 {
+    height: 68px;
+    background: #6b7280;
+    color: #fff;
+    clip-path: polygon(7.49% 0, 92.51% 0, 76.12% 100%, 23.88% 100%);
+  }
+  .fs-3 {
+    height: 72px;
+    background: var(--blue);
+    color: #fff;
+    clip-path: polygon(23.88% 0, 76.12% 0, 60.92% 100%, 39.08% 100%);
+  }
+  .fs-4 {
+    width: 21.85%;
+    min-width: 132px;
+    height: 66px;
+    margin: 2px auto 0;
+    background: #eff6ff;
+    border: 1.5px dashed var(--blue);
+    border-radius: 2px;
+    color: var(--blue);
+  }
+  .fs-4 .fs-name { font-size: 9.5px; }
+  .fs-4 .fs-value { font-size: 14px; }
+
+  /* ---------- table ---------- */
+
+  .scroll-hint {
+    display: none;
+    margin: 24px 0 -12px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .table-wrap {
+    margin-top: 28px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  caption {
+    caption-side: bottom;
+    padding-top: 14px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  th {
+    padding: 0 16px 10px 0;
+    border-bottom: 1px solid var(--ink);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-align: left;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  td {
+    padding: 13px 16px 13px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  th:last-child, td:last-child {
+    padding-right: 0;
+    white-space: nowrap;
+  }
+  .mk {
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .mk-good { color: var(--green); }
+  .mk-part { color: var(--amber); }
+  .mk-bad { color: var(--red); }
+
+  /* ---------- priority ---------- */
+
+  .rows { margin-top: 28px; }
+
+  .row-p {
+    display: grid;
+    grid-template-columns: 48px 210px minmax(0, 1fr);
+    gap: 20px;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .row-p:first-child { border-top: 1px solid var(--ink); }
+  .p-id {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+  }
+  .p0 { color: var(--blue); }
+  .p1 { color: var(--teal); }
+  .p2 { color: var(--gray-mark); }
+  .p-name { font-size: 14px; font-weight: 600; }
+  .p-why { font-size: 13px; color: var(--muted); }
+
+  footer {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  footer p { margin: 0 0 4px; }
+
+  @media (max-width: 760px) {
+    main { padding: 40px 20px 64px; }
+
+    section { margin-top: 60px; padding-top: 28px; }
+    h2 { font-size: 21px; }
+
+    .axis, .row, .drow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .axis { height: 34px; }
+    .axis-left { display: none; }
+
+    .row {
+      height: auto;
+      padding: 16px 0 10px;
+    }
+    .row-label {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .row-name { font-size: 12px; }
+    .row-value { font-size: 19px; }
+    .plot { height: 46px; }
+
+    .drow {
+      height: auto;
+      padding: 14px 0 8px;
+    }
+    .drow .row-label { margin-bottom: 8px; }
+    .bar { height: 44px; }
+    .seg { font-size: 11.5px; }
+    .seg b { font-size: 12px; }
+    .seg small { font-size: 9px; }
+
+    .funnel { margin-top: 26px; }
+    .fs-1, .fs-2 { height: 58px; }
+    .fs-3 { height: 62px; }
+    .fs-4 { height: 60px; }
+    .fs-value { font-size: 18px; }
+    .fs-4 .fs-value { font-size: 13px; }
+
+    .scroll-hint { display: block; }
+    table { min-width: 780px; }
+    th:first-child, td:first-child {
+      position: sticky;
+      left: 0;
+      background: var(--page);
+      box-shadow: 1px 0 0 var(--line);
+    }
+
+    .row-p {
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 6px 14px;
+      padding: 16px 0;
+    }
+    .p-why { grid-column: 2; }
+  }
+
+  @media print {
+    main { max-width: none; padding: 0; }
+    section { break-inside: avoid; margin-top: 40px; }
+    .scroll-hint { display: none; }
+    table { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <div class="eyebrow">2026-10-27 · 全球 / 中国 / 美国</div>
+    <h1><span>每年 3,400 万台影像设备，</span><span>数据都落在卡上</span></h1>
+    <p class="lede">相机、运动相机、无人机、行车记录仪、手机 TF 卡、移动 SSD。先看数据从哪来，再看谁需要转存。</p>
+    <p class="legend">数字为准；灰字是来源与口径。</p>
+  </header>
+
+  <!-- 01 -->
+  <section id="people">
+    <div class="kicker">01 · 数据来源</div>
+    <h2>蓝点要读卡，灰点不用</h2>
+
+    <figure class="chart" role="img" aria-label="2025 年全球设备出货点线图：行车记录仪 6,000 万台，便携 SSD 约 3,000 万台，手持智能相机 1,665 万台，数码相机 944 万台，消费级无人机约 800 万台">
+      <div class="axis">
+        <div class="axis-left">对数刻度</div>
+        <div class="axis-track">
+          <span class="tick" style="left:0">100 万</span>
+          <span class="tick" style="left:50%">1,000 万</span>
+          <span class="tick" style="left:100%">1 亿</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <div class="row-name">行车记录仪</div>
+          <div class="row-value">6,000 万台</div>
+        </div>
+        <div class="plot">
+          <i class="gl" style="left:0"></i>
+          <i class="gl" style="left:50%"></i>
+          <i class="dot dot-gray" style="left:88.91%"></i>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <div class="row-name">便携 SSD（估算）</div>
+          <div class="row-value">约 3,000 万台</div>
+        </div>
+        <div class="plot">
+          <i class="gl" style="left:0"></i>
+          <i class="gl" style="left:50%"></i>
+          <i class="dot dot-gray" style="left:73.86%"></i>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <div class="row-name">手持智能相机</div>
+          <div class="row-value">1,665 万台</div>
+        </div>
+        <div class="plot">
+          <i class="gl" style="left:0"></i>
+          <i class="gl" style="left:50%"></i>
+          <i class="dot" style="left:61.07%"></i>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <div class="row-name">数码相机</div>
+          <div class="row-value">944 万台</div>
+        </div>
+        <div class="plot">
+          <i class="gl" style="left:0"></i>
+          <i class="gl" style="left:50%"></i>
+          <i class="dot" style="left:48.75%"></i>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <div class="row-name">消费级无人机（含商用）</div>
+          <div class="row-value">约 800 万台</div>
+        </div>
+        <div class="plot">
+          <i class="gl" style="left:0"></i>
+          <i class="gl" style="left:50%"></i>
+          <i class="dot" style="left:45.15%"></i>
+        </div>
+      </div>
+    </figure>
+
+    <p class="note"><strong>蓝点三类合计 3,400 万台/年</strong>，数据先落在卡上，是 Kocard 的核心来源。行车记录仪 6,000 万台/年，但循环覆盖，只在事故时导出；便携 SSD 3,000 万台按 26 亿美元市场、均价 80 美元估，用户已经在用随身存储。</p>
+    <p class="note">TF/microSD 卡年出货约 12 亿张（低置信），活跃流通约 35 亿张；绝大多数是手机扩容和 IoT，不是备份需求。卡多不等于人多。</p>
+  </section>
+
+  <!-- 02 -->
+  <section id="devices">
+    <div class="kicker">02 · 从设备到人</div>
+    <h2>要转存的设备 0.9–1.2 亿台，7,500 万–1 亿人</h2>
+
+    <p class="scroll-hint">左右滑动查看完整表格 →</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">设备</th>
+            <th scope="col">出货窗口</th>
+            <th scope="col">出货</th>
+            <th scope="col">在用率</th>
+            <th scope="col">在用存量</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>可换镜头相机</td>
+            <td>2018–2025</td>
+            <td>约 5,400 万</td>
+            <td>60–85%</td>
+            <td>3,240–4,590 万</td>
+          </tr>
+          <tr>
+            <td>卡片机</td>
+            <td>2018–2025</td>
+            <td>3,260 万</td>
+            <td>40–60%</td>
+            <td>1,304–1,956 万</td>
+          </tr>
+          <tr>
+            <td>手持智能相机</td>
+            <td>2021–2025</td>
+            <td>约 3,800 万</td>
+            <td>70–85%</td>
+            <td>2,660–3,230 万</td>
+          </tr>
+          <tr>
+            <td>消费级无人机</td>
+            <td>2021–2025</td>
+            <td>2,500–3,000 万</td>
+            <td>70–85%</td>
+            <td>1,750–2,550 万</td>
+          </tr>
+          <tr>
+            <td>合计</td>
+            <td>—</td>
+            <td>约 1.5 亿</td>
+            <td>—</td>
+            <td>9,000 万–1.23 亿</td>
+          </tr>
+        </tbody>
+        <caption>在用率按品类寿命估，没有公开统计。四类设备的共同点：数据先落在卡上，早晚要转存。</caption>
+      </table>
+    </div>
+
+    <p class="note">按 1.2 台/人折，约 7,500 万–1 亿人。这是“有卡、要转存”的人，不是“愿意为工具付费”的人。200 万高收入创作者（Goldman 2023，年入 &gt;10 万美元）是收入线的参照，不是人群总数。</p>
+    <p class="note">手机 TF 卡另算：年出货约 12 亿张，但绝大多数是扩容，不是备份需求；只有 10G 手机 + 大量拍摄的人，才是 GO 的用户。</p>
+    <p class="note">这是硬件（GO / Lite）的目标。桌面端软件的目标更大：已经在用便携 SSD 的人、手机 TF 卡用户、行车记录仪导出，都是“有随身数据”的人；但他们的痛点是整理和跨设备，不是读卡。</p>
+  </section>
+
+  <!-- 03 -->
+  <section id="groups">
+    <div class="kicker">03 · 人群与设备</div>
+    <h2>谁用什么设备</h2>
+
+    <p class="scroll-hint">左右滑动查看完整表格 →</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">人群</th>
+            <th scope="col">规模信号</th>
+            <th scope="col">相机 · 主记录卡</th>
+            <th scope="col">手机</th>
+            <th scope="col">电脑 · 后期</th>
+            <th scope="col">卡型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>婚礼 / 活动</td>
+            <td>美国摄影师岗位 14.5 万</td>
+            <td>A7 IV · R6 II · Z6 III；SD UHS-II</td>
+            <td>iPhone Pro</td>
+            <td>MacBook Pro · LR / PR</td>
+            <td><span class="mk mk-part">◐ 部分</span></td>
+          </tr>
+          <tr>
+            <td>短视频 / vlog</td>
+            <td>中国创作者约 1.8 亿</td>
+            <td>Pocket 3 · ZV-E1 · A7C II；microSD / SD</td>
+            <td>iPhone / Android 旗舰</td>
+            <td>MacBook Air · 剪映 / FCP</td>
+            <td><span class="mk mk-good">✓ 能读</span></td>
+          </tr>
+          <tr>
+            <td>旅行 / 户外 / 运动</td>
+            <td>手持智能相机 1,665 万台</td>
+            <td>Action · Pocket · GoPro；microSD</td>
+            <td>iPhone / Android，Lightning 约一半</td>
+            <td>MacBook / iPad · 剪映</td>
+            <td><span class="mk mk-good">✓ 能读</span></td>
+          </tr>
+          <tr>
+            <td>商业 / 电商 / 建筑</td>
+            <td>全球无公开数据</td>
+            <td>GFX · Phase One · A7R V；SD + CFe B</td>
+            <td>iPhone Pro</td>
+            <td>Mac Studio · Capture One</td>
+            <td><span class="mk mk-part">◐ 部分</span></td>
+          </tr>
+          <tr>
+            <td>影视剧组 / DIT</td>
+            <td>美国摄像 3.26 万 + 剪辑 3.94 万</td>
+            <td>ARRI · RED · Venice；CFe B / RED MINI-MAG</td>
+            <td>iPhone（监看）</td>
+            <td>MacBook Pro Max + RAID</td>
+            <td><span class="mk mk-bad">✗ 读不了</span></td>
+          </tr>
+          <tr>
+            <td>摄影爱好者</td>
+            <td>中国微单用户 39.6%（单一来源）</td>
+            <td>X100VI · X-T5 · A7C II；SD</td>
+            <td>iPhone / Android</td>
+            <td>MacBook Air · LR</td>
+            <td><span class="mk mk-good">✓ 能读</span></td>
+          </tr>
+          <tr>
+            <td>高校影视 / 传媒</td>
+            <td>教学套机 14.3 万台（单一来源）</td>
+            <td>ZV-E10 · R50 · X-S20；SD</td>
+            <td>混合</td>
+            <td>Windows 机房 · PR / 达芬奇</td>
+            <td><span class="mk mk-good">✓ 能读</span></td>
+          </tr>
+          <tr>
+            <td>手机 TF 卡用户（低频）</td>
+            <td>TF 卡年出货约 12 亿张（低置信）</td>
+            <td>无相机；microSD</td>
+            <td>Android 中低端</td>
+            <td>手机内完成</td>
+            <td><span class="mk mk-good">✓ 能读</span></td>
+          </tr>
+        </tbody>
+        <caption>◐ 只能读副卡或部分机型；✗ 主卡为 CFexpress 或专有介质。BLS、CIPA、手持相机出货为公开统计；中国微单用户结构、高校采购来自单一报告，只作方向。</caption>
+      </table>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="payment">
+    <div class="kicker">04 · 中国付费参照</div>
+    <h2>注意力 ≠ 付费</h2>
+
+    <figure class="funnel" role="img" aria-label="中国付费参照漏斗：短视频用户 10.12 亿，内容创作者 1.8 亿，影像云存储付费用户 412 万，按 1% 到 3% 渗透为 4.1 万到 12.4 万">
+      <div class="fs fs-1">
+        <span class="fs-name">中国短视频用户</span>
+        <span class="fs-value">10.12 亿</span>
+      </div>
+      <div class="fs fs-2">
+        <span class="fs-name">内容创作者（账号口径）</span>
+        <span class="fs-value">1.8 亿</span>
+      </div>
+      <div class="fs fs-3">
+        <span class="fs-name">影像云存储付费用户</span>
+        <span class="fs-value">412 万</span>
+      </div>
+      <div class="fs fs-4">
+        <span class="fs-name">渗透 1% / 3%（假设）</span>
+        <span class="fs-value">4.1–12.4 万</span>
+      </div>
+    </figure>
+
+    <p class="note">宽度按对数缩放，不能按面积比。412 万是相机品牌云服务的付费用户（+63.5%，单一报告），不是 Kocard 的可比市场；按 ¥369 / 年算，对应收入 ¥1,500 万–4,500 万，是算术参照，不是预测。</p>
+  </section>
+
+  <!-- 05 -->
+  <section id="priority">
+    <div class="kicker">05 · 先打谁</div>
+    <h2>三档，不按人头排</h2>
+
+    <div class="rows">
+      <div class="row-p">
+        <div class="p-id p0">P0</div>
+        <div class="p-name">运动 · 旅行 · 婚礼 · 短视频</div>
+        <div class="p-why">SD / microSD 为主，现场就要备份，支付意愿也靠前。</div>
+      </div>
+      <div class="row-p">
+        <div class="p-id p1">P1</div>
+        <div class="p-name">商业 · 摄影爱好者</div>
+        <div class="p-why">要桌面 / NAS 和联机拍摄，付费意愿低，靠渠道慢慢养。</div>
+      </div>
+      <div class="row-p">
+        <div class="p-id p2">P2</div>
+        <div class="p-name">剧组 · 高校 · 普通用户</div>
+        <div class="p-why">主卡读不了、采购周期长、没有卡；DIT 支付意愿最高但接不住。</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>来源：CIPA 2025（数码相机）、IDC 2025（手持智能相机）、Counterpoint 2025（无人机，含商用推算）、弗若斯特沙利文 2025（车载影像，按盯盯拍 4.9% 份额反算）、QYResearch 2024（便携 SSD 市场规模）、Goldman Sachs 2023、BLS 2025、市场报告（TF 卡，低置信）、自有社区抽样 n=63 / n=59。</p>
+    <p>标“推算”“估算”“假设”的为本文计算，不是公开统计。数据截至 2026-10-27。</p>
+  </footer>
+
+</main>
+</body>
+</html>
