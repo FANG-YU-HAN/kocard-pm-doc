@@ -662,16 +662,6 @@
   .t { font-size: 11px; fill: #6b7280; }
   .edge { fill: none; stroke: #b9c0ca; stroke-width: 1.2; }
   .edge.dash { stroke-dasharray: 4 4; }
-
-  .fsm-rules { margin-top: 24px; display: flex; flex-direction: column; }
-  .fsm-rule {
-    display: flex;
-    gap: 16px;
-    padding: 10px 0;
-    font-size: 12px;
-    border-top: 1px solid #eef1f4;
-  }
-  .fsm-rule .rk { width: 84px; flex: none; color: #9aa1ab; }
 </style>
 </head>
 <body>
@@ -1444,7 +1434,7 @@
 
   <div class="fsm">
     <div class="fsm-title">相册备份 · 状态与流转</div>
-    <svg viewBox="0 0 860 420" role="img" aria-label="相册备份状态流转">
+    <svg viewBox="0 0 860 400" role="img" aria-label="相册备份状态流转">
       <defs>
         <marker id="ar" viewBox="0 0 6 6" refX="5.5" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M0,0 L6,3 L0,6 Z" fill="#b9c0ca"/>
@@ -1502,18 +1492,6 @@
       <path class="edge" d="M661,234 H679 Q687,234 687,242 V292 Q687,300 695,300 H777 Q785,300 785,308 V324" marker-start="url(#ar)" marker-end="url(#ar)"/>
       <text class="t" x="736" y="292" text-anchor="middle">暂停 / 继续</text>
     </svg>
-
-    <div class="fsm-rules">
-      <div class="fsm-rule"><span class="rk">首页无动作</span><span>卡片只显示状态，暂停、继续、开始都在详情页</span></div>
-      <div class="fsm-rule"><span class="rk">0 张新增</span><span>不生成记录，不提示</span></div>
-      <div class="fsm-rule"><span class="rk">自动备份关</span><span>停在有 N 张待备份，不自动跑</span></div>
-      <div class="fsm-rule"><span class="rk">拔卡</span><span>卡状态变未连接；没备完的变成有 N 张待备份，插回接着备份</span></div>
-      <div class="fsm-rule"><span class="rk">相册删照片</span><span>盘上保留，备份是存档不是镜像</span></div>
-      <div class="fsm-rule"><span class="rk">有失败</span><span>卡片多一行“N 张未备份”，重试在详情页</span></div>
-      <div class="fsm-rule"><span class="rk">几十秒的增量</span><span>只显示“新增 10 张”，不给进度</span></div>
-      <div class="fsm-rule"><span class="rk">首次或长任务</span><span>显示百分比、速度、剩余时间</span></div>
-      <div class="fsm-rule"><span class="rk">盘只读</span><span>换一张盘或改格式、重新插盘后才能继续</span></div>
-    </div>
   </div>
 
   <div class="sep"></div>
