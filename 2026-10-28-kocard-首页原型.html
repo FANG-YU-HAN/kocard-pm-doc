@@ -121,6 +121,9 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+  .disk-module { overflow: hidden; }
+  .disk-module .disk { border-radius: 0; }
+  .disk-module .disk + .disk { border-top: 1px solid #e3e7ed; }
   .disk-status--off { font-weight: 400; color: #9aa1ab; }
   .disk-status--off .st-ic { stroke: #9aa1ab; }
   .ntbl .st-ic { vertical-align: -2px; margin-right: 5px; }
@@ -240,6 +243,7 @@
   .sep + .annot,
   .sep + .fx3,
   .sep + .fx4,
+  .sep + .fx5,
   .sep + .phone,
   .sep + .fsm { margin-top: 0; }
 
@@ -284,6 +288,10 @@
     text-align: right;
   }
   .fx4 .fx4-leader { top: 185.5px; width: 20px; }
+  /* 图5 左侧：素材自动拷贝状态说明 */
+  .fx5 { position: relative; margin-top: 40px; }
+  .fx5 .note { top: 242px; }
+  .fx5 .leader { top: 375.8px; width: 50px; }
   .vtabs {
     width: fit-content;
     max-width: 100%;
@@ -887,8 +895,8 @@
           </svg>
         </div>
         <div class="h0-tx">
-          <div class="h0-t">素材自动备份</div>
-          <div class="h0-s">支持将拍摄存储设备中的素材文件自动备份至其他存储设备。</div>
+          <div class="h0-t">素材自动拷贝</div>
+          <div class="h0-s">支持将拍摄存储设备中的素材文件自动拷贝至其他存储设备。</div>
         </div>
       </div>
 
@@ -1139,8 +1147,8 @@
               </svg>
             </div>
             <div class="h0-tx">
-              <div class="h0-t">素材自动备份</div>
-              <div class="h0-s">支持将拍摄存储设备中的素材文件自动备份至其他存储设备。</div>
+              <div class="h0-t">素材自动拷贝</div>
+              <div class="h0-s">支持将拍摄存储设备中的素材文件自动拷贝至其他存储设备。</div>
             </div>
           </div>
 
@@ -1578,6 +1586,21 @@
 
   <div class="sep"></div>
 
+  <div class="fx5">
+    <div class="note">
+      <table class="ntbl ntbl--icons">
+        <thead><tr><th>拷贝状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>557 / 960 个文件 · 剩余 1 分钟</td><td>两张盘都连接，且有任务在进行</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>自动拷贝完成 · 今天 9:41</td><td>两张盘都连接，且任务已完成，无文件需要拷贝</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M4.3 4.3l3.4 3.4M7.7 4.3l-3.4 3.4"/></svg>SD卡或备份磁盘未连接</td><td>源盘未连接，目标盘已连接<br>源盘已连接，目标盘未连接<br>两张盘都未连接</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>排队中</td><td>目标盘或源盘有其他任务在进行</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.9 10.6 10.1H1.4Z"/><path d="M6 4.4v2.4"/><circle cx="6" cy="8.3" r=".65" fill="#0e1116" stroke="none"/></svg>目标盘空间不足</td><td>放不下，换盘或清理</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标盘无法写入</td><td>写不进去，换盘或改格式</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="leader"></div>
   <div class="phone home-list">
     <div class="island"></div>
     <div class="status">
@@ -1641,7 +1664,7 @@
               </div>
             </div>
             <div class="job-meta">
-              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>320 / 1,204 个文件 · 剩余 2 分钟</span>
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>557 / 960 个文件 · 剩余 1 分钟</span>
             </div>
           </div>
 
@@ -1656,7 +1679,7 @@
               </div>
             </div>
             <div class="job-meta">
-              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已备份 · 今天 09:12</span>
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>自动拷贝完成 · 今天 9:41</span>
             </div>
           </div>
 
@@ -1684,20 +1707,195 @@
     </div>
     <div class="home-indicator"></div>
   </div>
-  <div class="fig">图5 · 一个相册备份任务 + 两个素材自动备份任务</div>
+  <div class="fig">图5 · 一个相册备份任务 + 两个素材自动拷贝任务</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status">
+      <span class="time">9:41</span>
+      <span class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+          <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+          <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+          <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+          <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+          <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+          <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+          <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="header">
+      <div class="nav">
+        <div class="back">
+          <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+        </div>
+        <div class="page-title">EOS_DIGITAL <span class="title-arrow">→</span> Kocard Go</div>
+      </div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div class="seg">
+              <span class="ct on" data-view="month">月</span>
+              <span class="ct" data-view="year">年</span>
+            </div>
+            <span class="chart-period">2026年10月</span>
+          </div>
+          <div class="chart-view" data-view="month">
+            <div class="dc-bars month">
+              <i style="height:1%"></i>
+              <i style="height:3%"></i>
+              <i style="height:7%"></i>
+              <i style="height:1%"></i>
+              <i style="height:5%"></i>
+              <i style="height:9%"></i>
+              <i style="height:1%"></i>
+              <i style="height:2%"></i>
+              <i style="height:6%"></i>
+              <i style="height:2%"></i>
+              <i style="height:4%"></i>
+              <i style="height:1%"></i>
+              <i style="height:3%"></i>
+              <i style="height:14%"></i>
+              <i style="height:10%"></i>
+              <i style="height:24%"></i>
+              <i style="height:37%"></i>
+              <i style="height:6%"></i>
+              <i style="height:16%"></i>
+              <i style="height:48%"></i>
+              <i style="height:3%"></i>
+              <i style="height:21%"></i>
+              <i style="height:9%"></i>
+              <i style="height:65%"></i>
+              <i style="height:12%"></i>
+              <i style="height:30%"></i>
+              <i style="height:19%"></i>
+              <i class="on" style="height:100%"><b style="height:27%"></b></i>
+            </div>
+            <div class="dc-axis month">
+              <span>1</span>
+              <span class="mid">15</span>
+              <span class="end">今天</span>
+            </div>
+          </div>
+          <div class="chart-view" data-view="year" hidden>
+            <div class="dc-bars year">
+              <i style="height:38%"></i>
+              <i style="height:30%"></i>
+              <i style="height:56%"></i>
+              <i style="height:41%"></i>
+              <i style="height:63%"></i>
+              <i style="height:49%"></i>
+              <i style="height:34%"></i>
+              <i style="height:78%"></i>
+              <i style="height:100%"></i>
+              <i class="dim" style="height:92%"></i>
+            </div>
+            <div class="dc-axis year">
+              <span>1月</span>
+              <span class="mid">6月</span>
+              <span class="end">10月</span>
+            </div>
+          </div>
+        </div>
+        <div class="hint hint--c">仅展示最近一个月</div>
+      </div>
+
+      <div class="section">
+        <div class="card status-card">
+          <div class="cs-row">
+            <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>
+            <span class="cs-num">557 / 960 个文件</span>
+            <button class="cs-btn" type="button">暂停</button>
+          </div>
+          <div class="cs-sub">剩余 1 分钟 · 33 MB/s</div>
+          <div class="cs-sub cs-sub--dim">本次新增 960 个文件 · 已用 1 分钟</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card disk-module">
+          <div class="disk disk--detail" style="--p:70%">
+            <div class="disk-head">
+              <div class="disk-name">EOS_DIGITAL</div>
+              <span class="disk-open">查看源文件夹<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
+            </div>
+            <div class="disk-foot">
+              <div class="disk-meta">
+                <div class="disk-state">总 128 GB · 剩余 38 GB</div>
+                <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+              </div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+          </div>
+          <div class="disk disk--detail" style="--p:62%">
+            <div class="disk-head">
+              <div class="disk-name">Kocard Go</div>
+              <span class="disk-open">查看目标文件夹<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
+            </div>
+            <div class="disk-foot">
+              <div class="disk-meta">
+                <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+                <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+              </div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card list">
+          <div class="row">
+            <span class="k">昨天 21:04</span>
+            <span class="v">229 个文件</span>
+          </div>
+          <div class="row">
+            <span class="k">10月26日 09:12</span>
+            <span class="v">361 个文件</span>
+          </div>
+          <div class="row">
+            <span class="k">10月25日 20:36</span>
+            <span class="v">144 个文件</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+  <div class="fig">图6 · 素材自动拷贝子页面</div>
 
   <script>
-    const segTabs = document.querySelectorAll('.seg .ct');
-    const chartPeriod = document.querySelector('.chart-period');
-    const chartNote = document.getElementById('chart-note');
-    segTabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        segTabs.forEach((t) => t.classList.toggle('on', t === tab));
-        document.querySelectorAll('.chart-view').forEach((v) => {
-          v.hidden = v.dataset.view !== tab.dataset.view;
+    document.querySelectorAll('.chart-card').forEach((card) => {
+      const tabs = card.querySelectorAll('.seg .ct');
+      const views = card.querySelectorAll('.chart-view');
+      const period = card.querySelector('.chart-period');
+      const note = card.closest('.section').querySelector('.hint');
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach((t) => t.classList.toggle('on', t === tab));
+          views.forEach((v) => {
+            v.hidden = v.dataset.view !== tab.dataset.view;
+          });
+          period.textContent = tab.dataset.view === 'month' ? '2026年10月' : '2026年';
+          if (note) note.textContent = tab.dataset.view === 'month' ? '仅展示最近一个月' : '仅展示最近一年';
         });
-        chartPeriod.textContent = tab.dataset.view === 'month' ? '2026年10月' : '2026年';
-        chartNote.textContent = tab.dataset.view === 'month' ? '仅展示最近一个月' : '仅展示最近一年';
       });
     });
 
