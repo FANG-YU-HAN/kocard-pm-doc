@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kocard 首页原型 · 图2-2 / 图2-3（备份）</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: #0e1116;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 64px;
+  }
+  .phone {
+    position: relative;
+    width: 402px;
+    height: 874px;
+    zoom: 0.9;
+    border: 1px solid #d7dce3;
+    border-radius: 52px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 122px;
+    height: 35px;
+    border: 1px solid #d7dce3;
+    border-radius: 18px;
+  }
+  .status {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 40px;
+  }
+  .time { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+
+  .header {
+    height: 52px;
+    margin-top: 6px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-title { font-size: 20px; font-weight: 600; }
+  .title-arrow { color: #9aa1ab; font-weight: 400; }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #d7dce3;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #0e1116;
+  }
+
+  .content {
+    padding: 20px 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .section { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    border: 1px solid #dfe3e9;
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .disks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .disk {
+    height: 76px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: linear-gradient(90deg,
+      rgba(14, 17, 22, .025) 0,
+      rgba(14, 17, 22, .075) var(--p),
+      rgba(14, 17, 22, 0) var(--p));
+  }
+  .disk-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .disk-name {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .disk-fs { flex: none; font-size: 11px; color: #8a9099; }
+  .disk-meta { display: flex; flex-direction: column; gap: 2px; }
+  .disk-state { font-size: 11px; color: #8a9099; font-variant-numeric: tabular-nums; }
+  .disk-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #0e1116;
+  }
+  .disk-status .st-ic { width: 10px; height: 10px; }
+  .st-ic {
+    flex: none;
+    fill: none;
+    stroke: #0e1116;
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .disk-module { overflow: hidden; }
+  .disk-module .disk { border-radius: 0; }
+  .disk-module .disk + .disk { border-top: 1px solid #e3e7ed; }
+  .disk-status--off { font-weight: 400; color: #9aa1ab; }
+  .disk-status--off .st-ic { stroke: #9aa1ab; }
+  .ntbl .st-ic { vertical-align: -2px; margin-right: 5px; }
+  .disk--wide { grid-column: 1 / -1; }
+
+  /* 图3 详情页磁盘卡：右上「查看备份文件」，exFAT 移到右下 */
+  .disk--detail .disk-head { align-items: center; }
+  .disk-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+  .disk-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex: none;
+    font-size: 12px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+
+  .bar {
+    height: 3px;
+    border-radius: 2px;
+    background: #eef1f4;
+    overflow: hidden;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: #0e1116;
+  }
+
+  .jobs { display: flex; flex-direction: column; gap: 10px; }
+  .job {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* 图0 · 当前线上首页 */
+  .h0-head {
+    height: 60px;
+    margin-bottom: 20px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .h0-avatar {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d7dce3;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+  .h0-name { font-size: 14px; }
+  .h0-gear { margin-left: auto; display: grid; place-items: center; }
+  .h0-content { padding: 0 24px; display: flex; flex-direction: column; gap: 16px; }
+  .h0-row { height: 100px; padding: 0 15px; display: flex; align-items: center; gap: 16px; }
+  .h0-ic { flex: none; width: 42px; height: 42px; display: grid; place-items: center; }
+  .h0-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .h0-t { font-size: 18px; font-weight: 600; line-height: 1.25; }
+  .h0-s { font-size: 12px; line-height: 1.45; color: #8a9099; }
+  .h0-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .panel { display: flex; flex-direction: column; gap: 16px; }
+  .panel[hidden] { display: none; }
+  .h0-small { height: 180px; padding: 24px 30px 0 18px; display: flex; flex-direction: column; gap: 20px; }
+  .h0-small .h0-ic { width: 32px; height: 32px; }
+  .h0-small .h0-tx { gap: 12px; }
+  .h0-small .h0-s { font-size: 10px; line-height: 1.5; }
+  .h0-tabbar {
+    position: absolute;
+    left: 62px;
+    right: 62px;
+    bottom: 34px;
+    height: 58px;
+    border: 1px solid #dfe3e9;
+    border-radius: 29px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+  }
+  .h0-tab {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    font-size: 10px;
+    color: #9aa1ab;
+  }
+  .h0-tab.active { color: #0e1116; }
+  .h0-tab .sel {
+    position: absolute;
+    inset: 4px;
+    border-radius: 25px;
+    background: #f1f3f6;
+    z-index: 0;
+  }
+  .h0-tab > svg, .h0-tab > span:not(.sel) { position: relative; z-index: 1; }
+
+  .phone + .phone { margin-top: 40px; }
+  .annot + .phone { margin-top: 40px; }
+  .fig + .phone { margin-top: 40px; }
+  .fig + .annot { margin-top: 40px; }
+  .fig + .nwrap { margin-top: 40px; }
+  .fig { margin-top: 16px; font-size: 12px; color: #9aa1ab; text-align: center; letter-spacing: .04em; }
+  .cover {
+    flex: none;
+    width: 100%;
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 150px 0 56px;
+  }
+  .cover-title { margin-bottom: 48px; text-align: center; font-size: 20px; font-weight: 600; letter-spacing: .01em; }
+
+  /* 图与图之间的分隔细线 */
+  .sep { flex: none; width: 100%; height: 1px; margin: 40px 0; background: #e6eaf0; }
+  .sep + .nwrap,
+  .sep + .annot,
+  .sep + .fx3,
+  .sep + .fx4,
+  .sep + .fx5,
+  .sep + .fx6,
+  .sep + .fx7,
+  .sep + .phone,
+  .sep + .fsm { margin-top: 0; }
+
+  /* 图3 左侧：备份状态卡单卡展示，后续状态往下追加 */
+  .fx3 { position: relative; margin-top: 40px; }
+  .fx3-panel {
+    position: absolute;
+    left: -431px;
+    top: 30px;
+    width: 352px;
+    zoom: 0.9;
+  }
+  .fx3-title { font-size: 12px; font-weight: 600; line-height: 1.6; }
+  .fx3-state { margin-top: 12px; }
+  .fx3-label { margin-bottom: 4px; font-size: 11px; line-height: 1.4; color: #6b7280; }
+  .fx3-hint { margin-top: 10px; font-size: 11px; line-height: 1.7; color: #6b7280; }
+  /* 图3 右侧：查看备份文件 说明 */
+  .fx3-note {
+    position: absolute;
+    right: -388px;
+    top: 475px;
+    width: 360px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: #6b7280;
+  }
+  .fx3 .fx3-leader { top: 485px; }
+  .fx3-note--top { top: 66.5px; }
+  .fx3 .fx3-leader--page { top: 77px; width: 20px; }
+  .fx3-note--rec { top: 633.5px; }
+  .fx3 .fx3-leader--rec { top: 644px; }
+  /* 图5 左侧：变更磁盘 说明 */
+  .fx4 { position: relative; width: 361.8px; }
+  .fx4-note {
+    position: absolute;
+    right: calc(100% + 28px);
+    top: 175px;
+    width: 300px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: #6b7280;
+    text-align: right;
+  }
+  .fx4 .fx4-leader { top: 185.5px; width: 20px; }
+  /* 图5 右侧：删除 说明 */
+  .fx4-rnote {
+    position: absolute;
+    left: calc(100% + 28px);
+    top: 472.5px;
+    width: 360px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: #6b7280;
+  }
+  .fx4 .fx4-rleader { left: 100%; right: auto; top: 483px; width: 20px; }
+  /* 图6 左侧：素材自动拷贝状态说明 */
+  .fx5 { position: relative; margin-top: 40px; }
+  .fx5 .note { top: 242px; }
+  .fx5 .leader { top: 375.8px; width: 50px; }
+  /* 图7 左侧：素材拷贝状态卡，与图6 状态表逐条对应 */
+  .fx6 { position: relative; padding-bottom: 90px; }
+  .fx6-panel {
+    position: absolute;
+    left: -431px;
+    top: 16px;
+    width: 352px;
+    zoom: 0.9;
+  }
+  .fx6-title { font-size: 12px; font-weight: 600; line-height: 1.6; }
+  .fx6-state { margin-top: 8px; }
+  .fx6-state .status-card + .status-card { margin-top: 8px; }
+  .fx6-label { margin-bottom: 3px; font-size: 11px; line-height: 1.3; color: #6b7280; }
+  .fx6-hint { margin-top: 10px; font-size: 11px; line-height: 1.7; color: #6b7280; }
+  /* 图8 左侧：设置项说明 */
+  .fx7 { position: relative; width: 361.8px; }
+  .fx7-note {
+    position: absolute;
+    right: calc(100% + 28px);
+    top: 210px;
+    width: 300px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: #6b7280;
+    text-align: right;
+  }
+  .fx7 .fx7-leader { top: 220.5px; width: 20px; }
+  /* 图8 右侧：删除 说明 */
+  .fx7-rnote {
+    position: absolute;
+    left: calc(100% + 28px);
+    top: 335.5px;
+    width: 360px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: #6b7280;
+  }
+  .fx7 .fx7-rleader { left: 100%; right: auto; top: 346px; width: 20px; }
+  .switch.switch--off { background: #dfe3e9; }
+  .switch.switch--off i { left: 3px; right: auto; }
+  .vtabs {
+    width: fit-content;
+    max-width: 100%;
+    margin: 16px auto 0;
+    padding: 3px;
+    display: flex;
+    gap: 4px;
+    border: 1px solid #e4e8ee;
+    border-radius: 17px;
+  }
+  .vt {
+    appearance: none;
+    border: 0;
+    background: none;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    font: inherit;
+    font-size: 11px;
+    color: #6b7280;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .vt.on { background: #0e1116; color: #fff; font-weight: 600; }
+  .fig--v { margin-top: 10px; }
+  /* 图3 / 图7 版本切换：图3-1、图7-1 不显示柱形图 */
+  .fx3[data-v="1"] .section:has(.chart-card),
+  .fx6[data-v="1"] .section:has(.chart-card) { display: none; }
+  /* 图3-1 无柱形图：右侧两条说明随内容上移 234.3px */
+  .fx3[data-v="1"] .fx3-note--file { top: 240.3px; }
+  .fx3[data-v="1"] .fx3-leader--file { top: 250.7px; }
+  .fx3[data-v="1"] .fx3-note--rec { top: 399.2px; }
+  .fx3[data-v="1"] .fx3-leader--rec { top: 409.7px; }
+  .annot[data-v="1"] .section--disks,
+  .annot[data-v="2"] .section--disks,
+  .annot[data-v="1"] .job-chart { display: none; }
+  /* 各页面统一：小横线下方为新增入口卡组，顺序 手机相册备份 → 素材自动拷贝 → 外部素材拷贝 */
+  .add-block { display: flex; flex-direction: column; gap: 10px; }
+  .add-sep { width: 32px; height: 1px; margin: 6px auto 0; background: #dfe3e9; }
+  /* 图2-2/图2-3 版面放不下第三张入口卡，只留前两张：手机相册备份、素材自动拷贝 */
+  .annot[data-v="2"] .add-ext,
+  .annot[data-v="3"] .add-ext { display: none; }
+  /* 图7-2 内容已到屏幕底边，记录说明只在 7-1 显示 */
+  .fx6[data-v="2"] .hint--rec { display: none; }
+  .annot[data-v="1"] .job-state { font-size: 15px; gap: 6px; }
+  .annot[data-v="1"] .job-state .st-ic { width: 14px; height: 14px; }
+  .annot[data-v="1"] .job { height: 100px; justify-content: center; }
+  .annot[data-v="1"] .note:not(.note--disk) { top: 60px; }
+  .annot[data-v="2"] .note:not(.note--disk) { top: 58px; }
+  .annot[data-v="1"] .leader { top: 179.3px; }
+  .annot[data-v="2"] .leader { top: 173.5px; }
+  /* 图2-3 内容超过一屏：列表在 tab 栏下方可滚动 */
+  .annot[data-v="3"] .phone { display: flex; flex-direction: column; }
+  .annot[data-v="3"] .content {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 104px;
+    overflow-y: auto;
+    padding-bottom: 56px;
+    scrollbar-width: none;
+  }
+  .annot[data-v="3"] .content::-webkit-scrollbar { display: none; }
+  /* 图6 三张任务卡 + 三张入口卡超过一屏：内容可滚动，最后一张滑到 tab 栏下 */
+  .fx5 .phone { display: flex; flex-direction: column; }
+  .fx5 .status,
+  .fx5 .header { flex: none; }
+  .fx5 .content {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 84px;
+    overflow-y: auto;
+    padding-bottom: 56px;
+    scrollbar-width: none;
+  }
+  .fx5 .content::-webkit-scrollbar { display: none; }
+  .annot .h0-t { font-size: 16px; }
+  .home-list .h0-t { font-size: 16px; }
+  .home-list .job { height: 100px; justify-content: center; }
+  .home-list .job-state { font-size: 15px; gap: 6px; }
+  .home-list .job-state .st-ic { width: 14px; height: 14px; }
+  .home-list .job-title .job-conn { vertical-align: -2px; margin: 0 3px; }
+  .annot { position: relative; }
+  .note { position: absolute; left: -388px; width: 360px; top: 227px; }
+  .ntbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    line-height: 1.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .ntbl th {
+    text-align: left;
+    font-weight: 400;
+    color: #9aa1ab;
+    padding: 0 12px 4px 0;
+    border-bottom: 1px solid #dfe3e9;
+  }
+  .ntbl td { padding: 2px 12px 2px 0; vertical-align: top; }
+  .ntbl td:first-child { white-space: nowrap; }
+  .ntbl th:last-child, .ntbl td:last-child { padding-right: 0; }
+  .ntbl--icons td:first-child { position: relative; padding-left: 17px; }
+  .ntbl--icons td:first-child .st-ic {
+    position: absolute;
+    left: 0;
+    top: 6.4px;
+    margin: 0;
+  }
+  .note--disk { left: auto; right: -388px; top: 116.5px; }
+  .leader {
+    position: absolute;
+    left: -20px;
+    top: 342px;
+    width: 58px;
+    height: 1px;
+    background: #c9ced6;
+    z-index: 1;
+  }
+  .nwrap { position: relative; }
+  .nwrap-note {
+    position: absolute;
+    left: -228px;
+    width: 200px;
+    top: 65px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: #6b7280;
+    text-align: right;
+  }
+  .nwrap-note .sub { display: block; margin-top: -2px; color: #9aa1ab; }
+  .note-right {
+    left: calc(100% + 28px);
+    width: 220px;
+    text-align: left;
+  }
+  .leader--note {
+    top: 75.5px;
+    width: 20px;
+  }
+  .leader--title { width: 38px; }
+  .leader--right {
+    left: auto;
+    right: -20px;
+    top: 75.5px;
+    width: 36px;
+  }
+  .nwrap--new .nwrap-note { top: 68px; }
+  .nwrap--new .leader--note,
+  .nwrap--new .leader--right { top: 77.9px; }
+  .nwrap--new .nwrap-note--tab { top: 718.5px; left: -268px; width: 240px; }
+  .nwrap--new .nwrap-note--page { top: 540px; left: -288px; width: 260px; }
+  .nwrap--new .nwrap-note--cards { top: 382.9px; left: -288px; width: 260px; }
+  .nwrap--new .h0-t { font-size: 16px; }
+  .nwrap--new .leader--tab { top: 728.5px; width: 41px; }
+  .nwrap--new .leader--page { top: 550.5px; width: 20px; }
+  .nwrap--new .leader--cards { top: 393.3px; width: 20px; }
+  .leader::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -2.5px;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid #c9ced6;
+    border-right: 1px solid #c9ced6;
+    transform: rotate(45deg);
+  }
+  .leader--right::after {
+    right: auto;
+    left: 0;
+    border-right: 0;
+    border-left: 1px solid #c9ced6;
+    transform: rotate(-45deg);
+  }
+  .nav { display: flex; align-items: center; gap: 10px; }
+  .back { width: 24px; height: 24px; display: grid; place-items: center; }
+
+  .chart-card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .status-card { padding: 16px 18px; }
+  .cs-row { display: flex; align-items: center; gap: 6px; }
+  .cs-ic { width: 16px; height: 16px; }
+  .cs-num { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cs-btn {
+    margin-left: auto;
+    height: 28px;
+    padding: 0 14px;
+    border: 1px solid #d7dce3;
+    border-radius: 14px;
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .cs-btn:active { background: #f4f6f9; }
+  .cs-sub { margin-top: 6px; padding-left: 22px; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
+  .cs-sub--dim { margin-top: 3px; font-size: 11px; color: #9aa1ab; }
+  .chart-head { display: flex; align-items: center; justify-content: space-between; }
+  .seg { display: inline-flex; padding: 2px; border: 1px solid #e4e8ee; border-radius: 15px; }
+  .seg .ct {
+    height: 26px;
+    padding: 0 14px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #6b7280;
+    border-radius: 13px;
+  }
+  .seg .ct.on { background: #0e1116; color: #fff; font-weight: 600; }
+  .chart-period { font-size: 12px; color: #9aa1ab; font-variant-numeric: tabular-nums; }
+  .chart-view { display: flex; flex-direction: column; gap: 4px; }
+  .chart-view[hidden] { display: none; }
+  .dc-bars {
+    display: grid;
+    gap: 3px;
+    height: 110px;
+    align-items: end;
+    border-bottom: 1px solid #eef1f4;
+  }
+  .dc-bars.month { grid-template-columns: repeat(28, 1fr); }
+  .dc-bars.year { grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  .dc-bars i {
+    display: block;
+    justify-self: center;
+    width: 2px;
+    min-height: 1px;
+    border-radius: 1px 1px 0 0;
+    background: #9aa1ab;
+  }
+  .dc-bars.year i { width: 6px; border-radius: 2px 2px 0 0; }
+  .dc-bars i.dim { background: #d7dce3; }
+  .dc-bars i.on { background: #eef1f5; position: relative; }
+  .dc-bars i.on b {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    border-radius: 1px 1px 0 0;
+    background: #9aa1ab;
+  }
+  .dc-bars.year i.on b { border-radius: 2px 2px 0 0; }
+  .dc-axis { display: grid; gap: 3px; font-size: 9px; line-height: 10px; color: #9aa1ab; font-variant-numeric: tabular-nums; }
+  .dc-axis.month { grid-template-columns: repeat(28, 1fr); }
+  .dc-axis.year { grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  .dc-axis.month .mid { grid-column: 15; }
+  .dc-axis.month .end { grid-column: 28; }
+  .dc-axis.year .mid { grid-column: 6; }
+  .dc-axis.year .end { grid-column: 10; }
+  .dc-axis .end { justify-self: end; white-space: nowrap; }
+
+  .section-head { font-size: 13px; color: #6b7280; }
+  .hint { padding: 0 16px; font-size: 12px; color: #8a9099; line-height: 1.5; }
+  .hint--c { text-align: center; }
+
+  .list { display: flex; flex-direction: column; }
+  .row {
+    height: 48px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .row + .row { border-top: 1px solid #eef1f4; }
+  .row .k { color: #6b7280; }
+  .row .v { font-variant-numeric: tabular-nums; }
+  .row--danger { color: #dc2626; cursor: pointer; }
+  .alert-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    background: rgba(14, 17, 22, .28);
+  }
+  .alert-mask.on { display: block; }
+  .alert {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 270px;
+    border: 1px solid #dfe3e9;
+    border-radius: 14px;
+    background: #fff;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(14, 17, 22, .16);
+  }
+  .alert-title { padding: 18px 20px 0; font-size: 15px; font-weight: 600; }
+  .alert-msg { padding: 8px 20px 18px; font-size: 12px; line-height: 1.6; color: #6b7280; }
+  .alert-actions { display: flex; border-top: 1px solid #eef1f4; }
+  .ab {
+    flex: 1;
+    height: 44px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 13px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .ab + .ab { border-left: 1px solid #eef1f4; }
+  .ab--danger { color: #dc2626; }
+  .switch {
+    position: relative;
+    flex: none;
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: #0e1116;
+  }
+  .switch i {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .job-head { display: flex; align-items: center; justify-content: space-between; }
+  .job-head-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .job-title { font-size: 16px; font-weight: 600; }
+  .job-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+    padding: 0 7px;
+    border: 1px solid #dfe3e9;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .job-tag .st-ic { width: 10px; height: 10px; }
+  .annot[data-v="3"] .job-tag { display: none; }
+  .job-tail { display: flex; align-items: center; gap: 8px; }
+  .job-tail svg { flex: none; }
+  .job-speed { flex: none; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
+  .job-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .job-state { display: inline-flex; align-items: center; gap: 5px; }
+  .job-state .st-ic { flex: none; }
+  .job-route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 11px;
+    line-height: 13px;
+    color: #9aa1ab;
+  }
+  .job-chart { display: flex; flex-direction: column; gap: 4px; }
+  .job-chart .bars {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 6px;
+    height: 34px;
+    align-items: end;
+    border-bottom: 1px solid #eef1f4;
+  }
+  .job-chart .bars i {
+    display: block;
+    justify-self: center;
+    width: 4px;
+    min-height: 1px;
+    border-radius: 1px 1px 0 0;
+    background: #9aa1ab;
+  }
+  .job-chart .bars i.on { background: #eef1f5; position: relative; }
+  .job-chart .bars i.on b {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    border-radius: 1px 1px 0 0;
+    background: #9aa1ab;
+  }
+  .job-chart .axis {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 6px;
+    font-size: 9px;
+    line-height: 10px;
+    color: #9aa1ab;
+    font-variant-numeric: tabular-nums;
+  }
+  .job-chart .axis .mid { grid-column: 8; }
+  .job-chart .axis .end { grid-column: 14; justify-self: end; white-space: nowrap; }
+  .route { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .route > span:not(.arrow) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .route .arrow { flex: none; }
+
+  .tabbar {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 34px;
+    height: 58px;
+    border: 1px solid #dfe3e9;
+    border-radius: 29px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+  }
+  .tabbar .pill {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    bottom: 4px;
+    width: calc((100% - 8px) / 3);
+    border: 1px solid #0e1116;
+    border-radius: 25px;
+  }
+  .tab {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #8a9099;
+  }
+  .tab.active { color: #0e1116; font-weight: 600; }
+  .nwrap--new .tabbar .pill { transition: transform .28s cubic-bezier(.4, 0, .2, 1); }
+  .nwrap--new .tab { cursor: pointer; }
+
+  .home-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    border-radius: 3px;
+    background: #0e1116;
+  }
+
+  .fsm { width: 860px; max-width: 100%; margin-top: 48px; }
+  .fsm--wide { width: 1075px; }
+  .fsm svg { width: 100%; height: auto; display: block; }
+  .lane { font-size: 11px; fill: #9aa1ab; }
+  .lane-line { fill: none; stroke: #dfe3e9; stroke-width: 1; stroke-dasharray: 4 4; }
+  .box { fill: #fff; stroke: #dfe3e9; }
+  .st { font-size: 13px; fill: #4b5563; text-anchor: middle; }
+  .sub2 { font-size: 11px; fill: #8a9099; text-anchor: middle; }
+  .t { font-size: 11px; fill: #6b7280; }
+  .edge { fill: none; stroke: #b9c0ca; stroke-width: 1.2; }
+  .edge.dash { stroke-dasharray: 4 4; }
+
+  /* 图9 之后的说明模块 */
+  .doc-sec { width: 100%; max-width: 940px; margin: 0 auto; }
+  .doc-kicker { margin-bottom: 6px; font-size: 10px; color: #9aa1ab; letter-spacing: .08em; }
+  .doc-h { margin: 0 0 12px; font-size: 16px; font-weight: 600; line-height: 1.4; }
+  .doc-p { margin: 0; font-size: 12px; line-height: 1.9; color: #4b5563; }
+  .doc-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  .doc-cols--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doc-label { margin-bottom: 4px; font-size: 10px; color: #9aa1ab; letter-spacing: .06em; }
+  .doc-list { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .doc-list li { position: relative; padding-left: 12px; font-size: 12px; line-height: 1.9; color: #4b5563; }
+  .doc-list li::before { content: "—"; position: absolute; left: 0; color: #9aa1ab; }
+  .doc-tbl { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.8; font-variant-numeric: tabular-nums; }
+  .doc-tbl th {
+    padding: 0 18px 6px 0;
+    border-bottom: 1px solid #dfe3e9;
+    color: #9aa1ab;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .doc-tbl td { padding: 8px 18px 8px 0; border-bottom: 1px solid #eef1f5; color: #4b5563; vertical-align: top; }
+  .doc-tbl tr:last-child td { border-bottom: 0; }
+  .doc-tbl th:last-child, .doc-tbl td:last-child { padding-right: 0; }
+  .doc-tbl .nowrap { white-space: nowrap; color: #0e1116; }
+</style>
+<style>
+  body { min-width: 1200px; }
+</style>
+</head>
+<body>
+  <div class="annot" data-v="2">
+    <div class="note note--disk">
+      <table class="ntbl">
+        <thead><tr><th>卡状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</td><td>卡、ssd等插上了</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M4.3 4.3l3.4 3.4M7.7 4.3l-3.4 3.4"/></svg>未连接</td><td>拔了，但是卡信息要留在app中</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <table class="ntbl ntbl--icons">
+        <thead><tr><th>备份状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>有10张待备份</td><td>新拍的、上次没备份成功的、目标盘内备份文件夹被删时，插卡后会显示全量需要备份的数量</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>1,284 / 3,642 张 · 剩余 4 分钟</td><td>正在备份数量 / 目标数量<br>末尾是剩余时间</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>备份完成 · 今天 9:41</td><td>有0张待备份，都在盘上；时间是最后一次备份</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.9 10.6 10.1H1.4Z"/><path d="M6 4.4v2.4"/><circle cx="6" cy="8.3" r=".65" fill="#0e1116" stroke="none"/></svg>目标盘空间不足</td><td>放不下，换盘或清理</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标盘只读</td><td>写不进去，换盘或改格式</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="leader"></div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status">
+      <span class="time">9:41</span>
+      <span class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+          <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+          <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+          <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+          <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+          <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+          <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+          <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="header">
+      <div class="page-title">首页</div>
+      <div class="avatar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="9" r="3.6"/>
+          <path d="M4.8 20c0-3.4 3.2-6 7.2-6s7.2 2.6 7.2 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section section--disks">
+        <div class="disks">
+          <div class="card disk" style="--p:62%">
+            <div class="disk-head">
+              <div class="disk-name">Kocard Go</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+            <div class="disk-meta">
+              <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+            </div>
+          </div>
+          <div class="card disk" style="--p:70%">
+            <div class="disk-head">
+              <div class="disk-name">EOS_DIGITAL</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+            <div class="disk-meta">
+              <div class="disk-state">总 128 GB · 剩余 38 GB</div>
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+            </div>
+          </div>
+          <div class="card disk disk--wide" style="--p:49%">
+            <div class="disk-head">
+              <div class="disk-name">DJI</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
+            <div class="disk-meta">
+              <div class="disk-state">总 512 GB · 剩余 260 GB</div>
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="jobs">
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-head-main">
+                <div class="job-title">相册→Kocard Go</div>
+                <span class="job-tag"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</span>
+              </div>
+              <div class="job-tail">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+              </div>
+            </div>
+            <div class="job-meta">
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>1,284 / 3,642 张 · 剩余 4 分钟</span>
+            </div>
+            <div class="job-chart">
+              <div class="bars">
+                <i style="height:10%"></i>
+                <i style="height:24%"></i>
+                <i style="height:37%"></i>
+                <i style="height:6%"></i>
+                <i style="height:16%"></i>
+                <i style="height:48%"></i>
+                <i style="height:3%"></i>
+                <i style="height:21%"></i>
+                <i style="height:9%"></i>
+                <i style="height:65%"></i>
+                <i style="height:12%"></i>
+                <i style="height:30%"></i>
+                <i style="height:19%"></i>
+                <i class="on" style="height:100%"><b style="height:35%"></b></i>
+              </div>
+              <div class="axis">
+                <span>15</span>
+                <span class="mid">22</span>
+                <span class="end">今天</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-head-main">
+                <div class="job-title">相册→EOS_DIGITAL</div>
+                <span class="job-tag"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</span>
+              </div>
+              <div class="job-tail">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
+              </div>
+            </div>
+            <div class="job-meta">
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>557 / 960 张 · 剩余 1 分钟</span>
+            </div>
+            <div class="job-chart">
+              <div class="bars">
+                <i style="height:10%"></i>
+                <i style="height:25%"></i>
+                <i style="height:46%"></i>
+                <i style="height:7%"></i>
+                <i style="height:18%"></i>
+                <i style="height:100%"></i>
+                <i style="height:15%"></i>
+                <i style="height:21%"></i>
+                <i style="height:9%"></i>
+                <i style="height:39%"></i>
+                <i style="height:13%"></i>
+                <i style="height:31%"></i>
+                <i style="height:20%"></i>
+                <i class="on" style="height:100%"><b style="height:58%"></b></i>
+              </div>
+              <div class="axis">
+                <span>15</span>
+                <span class="mid">22</span>
+                <span class="end">今天</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="add-block">
+            <div class="add-sep"></div>
+            <div class="card h0-row">
+              <div class="h0-ic">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>
+                  <circle cx="13.8" cy="7.6" r="1.2"/>
+                  <path d="M6.5 15.6l3.6-3.4 2.8 2.6 1.9-1.8 2.7 2.5"/>
+                </svg>
+              </div>
+              <div class="h0-tx">
+                <div class="h0-t">新增手机相册备份</div>
+                <div class="h0-s">支持将手机相册中的图片、视频文件自动备份至外接存储设备。</div>
+              </div>
+            </div>
+
+            <div class="card h0-row">
+              <div class="h0-ic">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="7.5" width="5.6" height="13" rx="1.8"/>
+                  <rect x="16.4" y="7.5" width="5.6" height="13" rx="1.8"/>
+                  <path d="M8.2 10.4h7"/>
+                  <path d="M13.4 8.6l1.8 1.8-1.8 1.8"/>
+                  <path d="M15.8 16.4h-7"/>
+                  <path d="M10.6 14.6l-1.8 1.8 1.8 1.8"/>
+                </svg>
+              </div>
+              <div class="h0-tx">
+                <div class="h0-t">新增素材自动拷贝</div>
+                <div class="h0-s">支持将拍摄存储设备中的素材文件自动拷贝至其他存储设备。</div>
+              </div>
+            </div>
+
+            <div class="card h0-row add-ext">
+              <div class="h0-ic">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="8" y="8" width="14" height="14" rx="2"/>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+              </div>
+              <div class="h0-tx">
+                <div class="h0-t">新增外部素材拷贝</div>
+                <div class="h0-s">支持将拍摄素材文件进行拷贝、校验、转码并保存至外接存储设备或上传云端存储</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div class="pill"></div>
+      <div class="tab active">首页</div>
+      <div class="tab">任务</div>
+      <div class="tab">AI</div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+    <div class="vtabs" role="tablist" aria-label="图2 版本（备份）">
+      <button class="vt on" data-v="2" data-fig="图2-2 · 无顶部三张卡，相册有柱形图" role="tab" aria-selected="true">图2-2</button>
+      <button class="vt" data-v="3" data-fig="图2-3 · 顶部三张卡 + 相册柱形图" role="tab">图2-3</button>
+    </div>
+    <div class="fig fig--v">图2-2 · 无顶部三张卡，相册有柱形图</div>
+  </div>
+
+<script>
+    document.querySelectorAll('.vtabs').forEach((group) => {
+      const fig = group.closest('[data-v]');
+      const tabs = [...group.querySelectorAll('.vt')];
+      const cap = fig.querySelector('.fig--v');
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach((t) => {
+            t.classList.toggle('on', t === tab);
+            t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+          });
+          fig.dataset.v = tab.dataset.v;
+          if (cap) cap.textContent = tab.dataset.fig;
+        });
+      });
+    });
+</script>
+</body>
+</html>

@@ -81,7 +81,6 @@
     background: #fff;
   }
 
-  .disks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .disk {
     height: 76px;
     padding: 12px 16px;
@@ -103,12 +102,12 @@
   }
   .disk-fs { flex: none; font-size: 11px; color: #8a9099; }
   .disk-meta { display: flex; flex-direction: column; gap: 2px; }
-  .disk-state { font-size: 11px; color: #8a9099; font-variant-numeric: tabular-nums; }
+  .disk-state { font-size: 12px; color: #8a9099; font-variant-numeric: tabular-nums; }
   .disk-status {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
     color: #0e1116;
   }
@@ -127,9 +126,8 @@
   .disk-status--off { font-weight: 400; color: #9aa1ab; }
   .disk-status--off .st-ic { stroke: #9aa1ab; }
   .ntbl .st-ic { vertical-align: -2px; margin-right: 5px; }
-  .disk--wide { grid-column: 1 / -1; }
 
-  /* 图3 详情页磁盘卡：右上「查看备份文件」，exFAT 移到右下 */
+  /* 图3/图7 详情页磁盘卡：右上查看文件夹，容量前小饼图，右下 exFAT */
   .disk--detail .disk-head { align-items: center; }
   .disk-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
   .disk-open {
@@ -141,6 +139,20 @@
     color: #0e1116;
     cursor: pointer;
   }
+  .disk-files { overflow: hidden; }
+  .disk-files-main { display: flex; flex-direction: column; gap: 16px; padding: 24px 18px 22px; }
+  .disk-files-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .disk-cap { display: flex; align-items: center; gap: 7px; }
+  .disk-pie {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: conic-gradient(#0e1116 0 var(--pie, 64.8%), #e6eaf0 0);
+  }
+  .disk-files-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .hist-list .row { height: 44px; }
+  .fx3 .content { gap: 14px; }
 
   .bar {
     height: 3px;
@@ -258,7 +270,7 @@
   .sep + .fsm { margin-top: 0; }
 
   /* 图3 左侧：备份状态卡单卡展示，后续状态往下追加 */
-  .fx3 { position: relative; margin-top: 40px; }
+  .fx3 { position: relative; margin-top: 40px; padding-bottom: 222px; }
   .fx3-panel {
     position: absolute;
     left: -431px;
@@ -274,17 +286,21 @@
   .fx3-note {
     position: absolute;
     right: -388px;
-    top: 475px;
+    top: 286.5px;
     width: 360px;
     font-size: 11px;
     line-height: 1.9;
     color: #6b7280;
   }
-  .fx3 .fx3-leader { top: 485px; }
+  .fx3 .fx3-leader { top: 297px; }
   .fx3-note--top { top: 66.5px; }
   .fx3 .fx3-leader--page { top: 77px; width: 20px; }
-  .fx3-note--rec { top: 633.5px; }
-  .fx3 .fx3-leader--rec { top: 644px; }
+  .fx3-note--hm { top: 383.8px; }
+  .fx3-note--hm .note-h { margin-bottom: 4px; font-weight: 600; color: #0e1116; }
+  .fx3-note--hm ol { margin: 0; padding-left: 16px; }
+  .fx3-note--hm li { margin: 0 0 4px; }
+  .fx3-note--hm li:last-child { margin-bottom: 0; }
+  .fx3 .fx3-leader--hm { top: 394.3px; }
   /* 图5 左侧：变更磁盘 说明 */
   .fx4 { position: relative; width: 361.8px; }
   .fx4-note {
@@ -313,8 +329,8 @@
   .fx5 { position: relative; margin-top: 40px; }
   .fx5 .note { top: 242px; }
   .fx5 .leader { top: 375.8px; width: 50px; }
-  /* 图7 左侧：素材拷贝状态卡，与图6 状态表逐条对应 */
-  .fx6 { position: relative; padding-bottom: 90px; }
+  /* 图7 左侧：素材拷贝状态卡，与图6 状态表逐条对应；底部留白包住左侧整列卡片 */
+  .fx6 { position: relative; padding-bottom: 292px; }
   .fx6-panel {
     position: absolute;
     left: -431px;
@@ -353,68 +369,14 @@
   .fx7 .fx7-rleader { left: 100%; right: auto; top: 346px; width: 20px; }
   .switch.switch--off { background: #dfe3e9; }
   .switch.switch--off i { left: 3px; right: auto; }
-  .vtabs {
-    width: fit-content;
-    max-width: 100%;
-    margin: 16px auto 0;
-    padding: 3px;
-    display: flex;
-    gap: 4px;
-    border: 1px solid #e4e8ee;
-    border-radius: 17px;
-  }
-  .vt {
-    appearance: none;
-    border: 0;
-    background: none;
-    height: 28px;
-    padding: 0 12px;
-    border-radius: 14px;
-    font: inherit;
-    font-size: 11px;
-    color: #6b7280;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  .vt.on { background: #0e1116; color: #fff; font-weight: 600; }
-  .fig--v { margin-top: 10px; }
-  /* 图3 / 图7 版本切换：图3-1、图7-1 不显示柱形图 */
-  .fx3[data-v="1"] .section:has(.chart-card),
-  .fx6[data-v="1"] .section:has(.chart-card) { display: none; }
-  /* 图3-1 无柱形图：右侧两条说明随内容上移 234.3px */
-  .fx3[data-v="1"] .fx3-note--file { top: 240.3px; }
-  .fx3[data-v="1"] .fx3-leader--file { top: 250.7px; }
-  .fx3[data-v="1"] .fx3-note--rec { top: 399.2px; }
-  .fx3[data-v="1"] .fx3-leader--rec { top: 409.7px; }
-  .annot[data-v="1"] .section--disks,
-  .annot[data-v="2"] .section--disks,
-  .annot[data-v="1"] .job-chart { display: none; }
   /* 各页面统一：小横线下方为新增入口卡组，顺序 手机相册备份 → 素材自动拷贝 → 外部素材拷贝 */
   .add-block { display: flex; flex-direction: column; gap: 10px; }
   .add-sep { width: 32px; height: 1px; margin: 6px auto 0; background: #dfe3e9; }
-  /* 图2-2/图2-3 版面放不下第三张入口卡，只留前两张：手机相册备份、素材自动拷贝 */
-  .annot[data-v="2"] .add-ext,
-  .annot[data-v="3"] .add-ext { display: none; }
-  /* 图7-2 内容已到屏幕底边，记录说明只在 7-1 显示 */
-  .fx6[data-v="2"] .hint--rec { display: none; }
-  .annot[data-v="1"] .job-state { font-size: 15px; gap: 6px; }
-  .annot[data-v="1"] .job-state .st-ic { width: 14px; height: 14px; }
-  .annot[data-v="1"] .job { height: 100px; justify-content: center; }
-  .annot[data-v="1"] .note:not(.note--disk) { top: 60px; }
-  .annot[data-v="2"] .note:not(.note--disk) { top: 58px; }
-  .annot[data-v="1"] .leader { top: 179.3px; }
-  .annot[data-v="2"] .leader { top: 173.5px; }
-  /* 图2-3 内容超过一屏：列表在 tab 栏下方可滚动 */
-  .annot[data-v="3"] .phone { display: flex; flex-direction: column; }
-  .annot[data-v="3"] .content {
-    flex: 1 1 auto;
-    min-height: 0;
-    margin-bottom: 104px;
-    overflow-y: auto;
-    padding-bottom: 56px;
-    scrollbar-width: none;
-  }
-  .annot[data-v="3"] .content::-webkit-scrollbar { display: none; }
+  .annot .job-state { font-size: 15px; gap: 6px; }
+  .annot .job-state .st-ic { width: 14px; height: 14px; }
+  .annot .job { height: 100px; justify-content: center; }
+  .annot .note:not(.note--disk) { top: 60px; }
+  .annot .leader { top: 179.3px; }
   /* 图6 三张任务卡 + 三张入口卡超过一屏：内容可滚动，最后一张滑到 tab 栏下 */
   .fx5 .phone { display: flex; flex-direction: column; }
   .fx5 .status,
@@ -428,6 +390,15 @@
     scrollbar-width: none;
   }
   .fx5 .content::-webkit-scrollbar { display: none; }
+  /* 图7 两张盘卡 + 热力图超过一屏：内容可滚动 */
+  .fx6 .content {
+    gap: 20px;
+    max-height: 730px;
+    overflow-y: auto;
+    padding-bottom: 20px;
+    scrollbar-width: none;
+  }
+  .fx6 .content::-webkit-scrollbar { display: none; }
   .annot .h0-t { font-size: 16px; }
   .home-list .h0-t { font-size: 16px; }
   .home-list .job { height: 100px; justify-content: center; }
@@ -530,16 +501,16 @@
   .back { width: 24px; height: 24px; display: grid; place-items: center; }
 
   .chart-card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
-  .status-card { padding: 16px 18px; }
+  .status-card { padding: 24px 18px; }
   .cs-row { display: flex; align-items: center; gap: 6px; }
   .cs-ic { width: 16px; height: 16px; }
-  .cs-num { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cs-num { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
   .cs-btn {
     margin-left: auto;
-    height: 28px;
+    height: 30px;
     padding: 0 14px;
     border: 1px solid #d7dce3;
-    border-radius: 14px;
+    border-radius: 15px;
     background: #fff;
     font: inherit;
     font-size: 12px;
@@ -547,9 +518,8 @@
     cursor: pointer;
   }
   .cs-btn:active { background: #f4f6f9; }
-  .cs-sub { margin-top: 6px; padding-left: 22px; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
-  .cs-sub--dim { margin-top: 3px; font-size: 11px; color: #9aa1ab; }
-  .chart-head { display: flex; align-items: center; justify-content: space-between; }
+  .cs-sub { margin-top: 11px; padding-left: 22px; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
+  .cs-sub--dim { margin-top: 5px; font-size: 11px; color: #9aa1ab; }  .chart-head { display: flex; align-items: center; justify-content: space-between; }
   .seg { display: inline-flex; padding: 2px; border: 1px solid #e4e8ee; border-radius: 15px; }
   .seg .ct {
     height: 26px;
@@ -621,6 +591,41 @@
   .row .k { color: #6b7280; }
   .row .v { font-variant-numeric: tabular-nums; }
   .row--danger { color: #dc2626; cursor: pointer; }
+
+  /* 图3 历史模块：30 天热力图 + 当天记录 */
+  .hist-card { overflow: hidden; }
+  .hist-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px 0;
+  }
+  .hist-k { font-size: 12px; line-height: 1.4; color: #6b7280; }
+  .hist-v { font-size: 13px; font-weight: 600; line-height: 1.4; font-variant-numeric: tabular-nums; }
+  .hist-v span { margin-left: 2px; font-size: 11px; font-weight: 400; color: #6b7280; }
+  .hm { padding: 12px 18px 10px; }
+  .hm-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+  }
+  .hm-cell {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: #f5f7f9;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .hm-cell.has { background: #cdd4dd; }
+  button.hm-cell { cursor: pointer; }
+  .hm-cell.is-sel { box-shadow: inset 0 0 0 2px #0e1116; }
+  .hist-list { border-top: 1px solid #eef1f4; }
+  .hist-list:empty { display: none; }
   .alert-mask {
     position: absolute;
     inset: 0;
@@ -690,7 +695,6 @@
     white-space: nowrap;
   }
   .job-tag .st-ic { width: 10px; height: 10px; }
-  .annot[data-v="3"] .job-tag { display: none; }
   .job-tail { display: flex; align-items: center; gap: 8px; }
   .job-tail svg { flex: none; }
   .job-speed { flex: none; font-size: 12px; color: #6b7280; font-variant-numeric: tabular-nums; }
@@ -712,44 +716,6 @@
     line-height: 13px;
     color: #9aa1ab;
   }
-  .job-chart { display: flex; flex-direction: column; gap: 4px; }
-  .job-chart .bars {
-    display: grid;
-    grid-template-columns: repeat(14, 1fr);
-    gap: 6px;
-    height: 34px;
-    align-items: end;
-    border-bottom: 1px solid #eef1f4;
-  }
-  .job-chart .bars i {
-    display: block;
-    justify-self: center;
-    width: 4px;
-    min-height: 1px;
-    border-radius: 1px 1px 0 0;
-    background: #9aa1ab;
-  }
-  .job-chart .bars i.on { background: #eef1f5; position: relative; }
-  .job-chart .bars i.on b {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: block;
-    border-radius: 1px 1px 0 0;
-    background: #9aa1ab;
-  }
-  .job-chart .axis {
-    display: grid;
-    grid-template-columns: repeat(14, 1fr);
-    gap: 6px;
-    font-size: 9px;
-    line-height: 10px;
-    color: #9aa1ab;
-    font-variant-numeric: tabular-nums;
-  }
-  .job-chart .axis .mid { grid-column: 8; }
-  .job-chart .axis .end { grid-column: 14; justify-self: end; white-space: nowrap; }
   .route { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .route > span:not(.arrow) {
     overflow: hidden;
@@ -845,18 +811,14 @@
   <div class="cover">
     <div class="cover-title">iOS端首页动态化及新增AI tab</div>
     <div class="doc-sec">
-      <div class="doc-cols">
+      <div class="doc-cols doc-cols--2">
         <div>
           <div class="doc-label">做什么</div>
           <p class="doc-p">首页由固定入口改为任务卡 + 入口卡；新增 AI tab，承接 AI 推荐与 AI 修图及未来的AI功能，相册备份、素材自动拷贝子页面新增记录</p>
         </div>
         <div>
           <div class="doc-label">不做什么</div>
-          <p class="doc-p">不改三种任务的创建流程；任务 tab 只保留导航栏；AI 推荐、AI 修图功能不变；不新增磁盘格式与云存储能力。</p>
-        </div>
-        <div>
-          <div class="doc-label">怎么算完成</div>
-          <p class="doc-p">三种任务的状态均可从首页读出；三处入口均可新建任务；AI tab 内容与线上首页一致。</p>
+          <p class="doc-p">不改三种任务的创建流程；AI 推荐、AI 修图功能不变；任务tab内的任务列表不变</p>
         </div>
       </div>
     </div>
@@ -1159,7 +1121,7 @@
 
   <div class="sep"></div>
 
-  <div class="annot" data-v="1">
+  <div class="annot">
     <div class="note note--disk">
       <table class="ntbl">
         <thead><tr><th>卡状态</th><th>说明</th></tr></thead>
@@ -1175,6 +1137,7 @@
         <tbody>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>有10张待备份</td><td>新拍的、上次没备份成功的、目标盘内备份文件夹被删时，插卡后会显示全量需要备份的数量</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>1,284 / 3,642 张 · 剩余 4 分钟</td><td>正在备份数量 / 目标数量<br>末尾是剩余时间</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>等待中</td><td>目标磁盘有其他任务正在写入，完成后自动开始</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>备份完成 · 今天 9:41</td><td>有0张待备份，都在盘上；时间是最后一次备份</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.9 10.6 10.1H1.4Z"/><path d="M6 4.4v2.4"/><circle cx="6" cy="8.3" r=".65" fill="#0e1116" stroke="none"/></svg>目标盘空间不足</td><td>放不下，换盘或清理</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标盘只读</td><td>写不进去，换盘或改格式</td></tr>
@@ -1217,41 +1180,6 @@
     </div>
 
     <div class="content">
-      <div class="section section--disks">
-        <div class="disks">
-          <div class="card disk" style="--p:62%">
-            <div class="disk-head">
-              <div class="disk-name">Kocard Go</div>
-              <div class="disk-fs">exFAT</div>
-            </div>
-            <div class="disk-meta">
-              <div class="disk-state">总 512 GB · 剩余 180 GB</div>
-              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
-            </div>
-          </div>
-          <div class="card disk" style="--p:70%">
-            <div class="disk-head">
-              <div class="disk-name">EOS_DIGITAL</div>
-              <div class="disk-fs">exFAT</div>
-            </div>
-            <div class="disk-meta">
-              <div class="disk-state">总 128 GB · 剩余 38 GB</div>
-              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
-            </div>
-          </div>
-          <div class="card disk disk--wide" style="--p:49%">
-            <div class="disk-head">
-              <div class="disk-name">DJI</div>
-              <div class="disk-fs">exFAT</div>
-            </div>
-            <div class="disk-meta">
-              <div class="disk-state">总 512 GB · 剩余 260 GB</div>
-              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="section">
         <div class="jobs">
           <div class="card job">
@@ -1267,29 +1195,6 @@
             <div class="job-meta">
               <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>1,284 / 3,642 张 · 剩余 4 分钟</span>
             </div>
-            <div class="job-chart">
-              <div class="bars">
-                <i style="height:10%"></i>
-                <i style="height:24%"></i>
-                <i style="height:37%"></i>
-                <i style="height:6%"></i>
-                <i style="height:16%"></i>
-                <i style="height:48%"></i>
-                <i style="height:3%"></i>
-                <i style="height:21%"></i>
-                <i style="height:9%"></i>
-                <i style="height:65%"></i>
-                <i style="height:12%"></i>
-                <i style="height:30%"></i>
-                <i style="height:19%"></i>
-                <i class="on" style="height:100%"><b style="height:35%"></b></i>
-              </div>
-              <div class="axis">
-                <span>15</span>
-                <span class="mid">22</span>
-                <span class="end">今天</span>
-              </div>
-            </div>
           </div>
 
           <div class="card job">
@@ -1303,30 +1208,7 @@
               </div>
             </div>
             <div class="job-meta">
-              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>557 / 960 张 · 剩余 1 分钟</span>
-            </div>
-            <div class="job-chart">
-              <div class="bars">
-                <i style="height:10%"></i>
-                <i style="height:25%"></i>
-                <i style="height:46%"></i>
-                <i style="height:7%"></i>
-                <i style="height:18%"></i>
-                <i style="height:100%"></i>
-                <i style="height:15%"></i>
-                <i style="height:21%"></i>
-                <i style="height:9%"></i>
-                <i style="height:39%"></i>
-                <i style="height:13%"></i>
-                <i style="height:31%"></i>
-                <i style="height:20%"></i>
-                <i class="on" style="height:100%"><b style="height:58%"></b></i>
-              </div>
-              <div class="axis">
-                <span>15</span>
-                <span class="mid">22</span>
-                <span class="end">今天</span>
-              </div>
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>等待中</span>
             </div>
           </div>
 
@@ -1363,7 +1245,7 @@
               </div>
             </div>
 
-            <div class="card h0-row add-ext">
+            <div class="card h0-row">
               <div class="h0-ic">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="8" y="8" width="14" height="14" rx="2"/>
@@ -1388,17 +1270,12 @@
     </div>
     <div class="home-indicator"></div>
   </div>
-    <div class="vtabs" role="tablist" aria-label="图2 版本">
-      <button class="vt on" data-v="1" data-fig="图2-1 · 无顶部三张卡，相册无柱形图" role="tab" aria-selected="true">图2-1</button>
-      <button class="vt" data-v="2" data-fig="图2-2 · 无顶部三张卡，相册有柱形图" role="tab">图2-2</button>
-      <button class="vt" data-v="3" data-fig="图2-3 · 顶部三张卡 + 相册柱形图" role="tab">图2-3</button>
-    </div>
-    <div class="fig fig--v">图2-1 · 无顶部三张卡，相册无柱形图</div>
+    <div class="fig">图2 · 首页有两个相册备份任务，一个备份中、一个等待中</div>
   </div>
 
   <div class="sep"></div>
 
-  <div class="fx3" data-v="1">
+  <div class="fx3">
     <div class="fx3-panel">
       <div class="fx3-title">备份状态卡</div>
 
@@ -1438,6 +1315,17 @@
           </div>
           <div class="cs-sub">共 46 MB</div>
           <div class="cs-sub cs-sub--dim">上次备份 2 小时前</div>
+        </div>
+      </div>
+
+      <div class="fx3-state">
+        <div class="fx3-label">等待中</div>
+        <div class="card status-card">
+          <div class="cs-row">
+            <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>
+            <span class="cs-num">等待中</span>
+          </div>
+          <div class="cs-sub">目标磁盘有其他任务正在写入，完成后自动开始</div>
         </div>
       </div>
 
@@ -1484,8 +1372,17 @@
     <div class="leader leader--right fx3-leader fx3-leader--page"></div>
     <div class="fx3-note fx3-note--file">与线上 v1.4.0 版本的「查看文件」功能一样，直接打开相册备份的文件夹</div>
     <div class="leader leader--right fx3-leader fx3-leader--file"></div>
-    <div class="fx3-note fx3-note--rec">每次备份完成生成一条记录，只显示时间与张数；不可点开、不可删除</div>
-    <div class="leader leader--right fx3-leader fx3-leader--rec"></div>
+    <div class="fx3-note fx3-note--hm">
+      <div class="note-h">热力图与记录</div>
+      <ol>
+        <li>一个格子一天，共 30 个，从早到晚依次排，最后一格固定是今天；格子里不写日期，没备份的日子浅色空着，不补 0。</li>
+        <li>有备份的格子填成同一种颜色，不按张数分深浅；进行中的任务不上色，完成后按整次的张数计入当天。</li>
+        <li>默认选中最近一个有完成备份的那天（今天没完成就往前找），卡片底部按次列出当天记录，一天跑了多次就多行；点别的有备份的格子切换。</li>
+        <li>记录只写时间与张数，不可点开、不可删除。</li>
+        <li>卡头累计单独存、不拿格子加总（格子只覆盖最近 30 天）；只算完成的任务，进行中的已拷张数只在页面上方的任务卡里显示。</li>
+      </ol>
+    </div>
+    <div class="leader leader--right fx3-leader fx3-leader--hm"></div>
 
     <div class="fx3-screen">
   <div class="phone">
@@ -1524,75 +1421,6 @@
 
     <div class="content">
       <div class="section">
-        <div class="card chart-card">
-          <div class="chart-head">
-            <div class="seg">
-              <span class="ct on" data-view="month">月</span>
-              <span class="ct" data-view="year">年</span>
-            </div>
-            <span class="chart-period">2026年10月</span>
-          </div>
-          <div class="chart-view" data-view="month">
-            <div class="dc-bars month">
-              <i style="height:1%"></i>
-              <i style="height:3%"></i>
-              <i style="height:7%"></i>
-              <i style="height:1%"></i>
-              <i style="height:5%"></i>
-              <i style="height:9%"></i>
-              <i style="height:1%"></i>
-              <i style="height:2%"></i>
-              <i style="height:6%"></i>
-              <i style="height:2%"></i>
-              <i style="height:4%"></i>
-              <i style="height:1%"></i>
-              <i style="height:3%"></i>
-              <i style="height:14%"></i>
-              <i style="height:10%"></i>
-              <i style="height:24%"></i>
-              <i style="height:37%"></i>
-              <i style="height:6%"></i>
-              <i style="height:16%"></i>
-              <i style="height:48%"></i>
-              <i style="height:3%"></i>
-              <i style="height:21%"></i>
-              <i style="height:9%"></i>
-              <i style="height:65%"></i>
-              <i style="height:12%"></i>
-              <i style="height:30%"></i>
-              <i style="height:19%"></i>
-              <i class="on" style="height:100%"><b style="height:35%"></b></i>
-            </div>
-            <div class="dc-axis month">
-              <span>1</span>
-              <span class="mid">15</span>
-              <span class="end">今天</span>
-            </div>
-          </div>
-          <div class="chart-view" data-view="year" hidden>
-            <div class="dc-bars year">
-              <i style="height:38%"></i>
-              <i style="height:30%"></i>
-              <i style="height:56%"></i>
-              <i style="height:41%"></i>
-              <i style="height:63%"></i>
-              <i style="height:49%"></i>
-              <i style="height:34%"></i>
-              <i style="height:78%"></i>
-              <i style="height:100%"></i>
-              <i class="dim" style="height:92%"></i>
-            </div>
-            <div class="dc-axis year">
-              <span>1月</span>
-              <span class="mid">6月</span>
-              <span class="end">10月</span>
-            </div>
-          </div>
-        </div>
-        <div class="hint hint--c" id="chart-note">仅展示最近一个月</div>
-      </div>
-
-      <div class="section">
         <div class="card status-card">
           <div class="cs-row">
             <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>
@@ -1605,52 +1433,83 @@
       </div>
 
       <div class="section">
-        <div class="card disk disk--detail" style="--p:62%">
-          <div class="disk-head">
-            <div class="disk-name">Kocard Go</div>
-            <span class="disk-open">查看备份文件<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
-          </div>
-          <div class="disk-foot">
-            <div class="disk-meta">
-              <div class="disk-state">总 512 GB · 剩余 180 GB</div>
-              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+        <div class="card disk-files">
+          <div class="disk-files-main">
+            <div class="disk-files-head">
+              <div class="disk-name">Kocard Go</div>
+              <span class="disk-open">查看备份文件<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
             </div>
-            <div class="disk-fs">exFAT</div>
+            <div class="disk-cap">
+              <span class="disk-pie" role="img" aria-label="已用 65%"></span>
+              <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+            </div>
+            <div class="disk-files-foot">
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <div class="card list">
-          <div class="row">
-            <span class="k">今天 15:20</span>
-            <span class="v">3,642 张</span>
+        <div class="card hist-card">
+          <div class="hist-head">
+            <div class="hist-k">累计已备份</div>
+            <div class="hist-v">2,222<span>张</span></div>
           </div>
-          <div class="row">
-            <span class="k">昨天 21:04</span>
-            <span class="v">692 张</span>
+          <div class="hm">
+            <div class="hm-grid" role="group" aria-label="最近30天备份热力图">
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <button type="button" class="hm-cell has" data-d="2026-10-25" aria-label="10月25日，备份 437 张"></button>
+              <button type="button" class="hm-cell has" data-d="2026-10-26" aria-label="10月26日，备份 1,093 张"></button>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <button type="button" class="hm-cell has is-sel" data-d="2026-10-29" aria-label="10月29日，备份 692 张"></button>
+              <span class="hm-cell"></span>
+            </div>
           </div>
-          <div class="row">
-            <span class="k">10月26日 09:12</span>
-            <span class="v">1,093 张</span>
-          </div>
-          <div class="row">
-            <span class="k">10月25日 20:36</span>
-            <span class="v">437 张</span>
+          <div class="hist-list" id="hmDetail" aria-live="polite">
+            <div class="row">
+              <span class="k">10月29日 09:12</span>
+              <span class="v">412 张</span>
+            </div>
+            <div class="row">
+              <span class="k">10月29日 21:04</span>
+              <span class="v">280 张</span>
+            </div>
           </div>
         </div>
-        <div class="hint hint--c">仅展示最近30天</div>
+        <div class="hint hint--c">仅展示最近30天 · 点有备份的格子查看记录</div>
       </div>
 
     </div>
 
     <div class="home-indicator"></div>
   </div>
-    <div class="vtabs" role="tablist" aria-label="图3 版本">
-      <button class="vt on" data-v="1" data-fig="图3-1 · 相册备份子页面，无柱形图" role="tab" aria-selected="true">图3-1</button>
-      <button class="vt" data-v="2" data-fig="图3-2 · 相册备份子页面，有柱形图" role="tab">图3-2</button>
-    </div>
-  <div class="fig fig--v">图3-1 · 相册备份子页面，无柱形图</div>
+  <div class="fig">图3 · 相册备份子页面</div>
   </div>
   </div>
 
@@ -1681,6 +1540,9 @@
       <rect class="box" x="90" y="190" width="150" height="56" rx="14"/>
       <text class="st" x="165" y="222">有 100 张待备份</text>
 
+      <rect class="box" x="300" y="190" width="150" height="56" rx="14"/>
+      <text class="st" x="375" y="222">等待中</text>
+
       <rect class="box" x="505" y="190" width="150" height="56" rx="14"/>
       <text class="st" x="580" y="222">63 / 100 张</text>
       <text class="sub2" x="580" y="264">备份中</text>
@@ -1688,8 +1550,11 @@
       <rect class="box" x="710" y="190" width="150" height="56" rx="14"/>
       <text class="st" x="785" y="222">100 张 · 今天 9:41</text>
 
-      <path class="edge" d="M240,218 H499" marker-end="url(#ar)"/>
-      <text class="t" x="400" y="210" text-anchor="middle">自动开始</text>
+      <path class="edge" d="M240,218 H294" marker-end="url(#ar)"/>
+      <text class="t" x="267" y="210" text-anchor="middle">自动开始</text>
+
+      <path class="edge" d="M450,218 H499" marker-end="url(#ar)"/>
+      <text class="t" x="475" y="210" text-anchor="middle">轮到</text>
 
       <path class="edge" d="M655,218 H704" marker-end="url(#ar)"/>
       <text class="t" x="680" y="210" text-anchor="middle">完成</text>
@@ -1706,11 +1571,11 @@
       <rect class="box" x="710" y="330" width="150" height="56" rx="14"/>
       <text class="st" x="785" y="362">已暂停</text>
 
-      <path class="edge" d="M339,218 V324" marker-end="url(#ar)"/>
-      <text class="t" x="331" y="285" text-anchor="end">空间不够</text>
+      <path class="edge" d="M165,246 V290 H375 V324" marker-end="url(#ar)"/>
+      <text class="t" x="367" y="312" text-anchor="end">空间不够</text>
 
-      <path class="edge" d="M460,218 V358 H499" marker-end="url(#ar)"/>
-      <text class="t" x="468" y="290" text-anchor="start">盘只读</text>
+      <path class="edge" d="M375,290 H580 V324" marker-end="url(#ar)"/>
+      <text class="t" x="588" y="312" text-anchor="start">盘只读</text>
 
       <path class="edge" d="M661,234 H679 Q687,234 687,242 V292 Q687,300 695,300 H777 Q785,300 785,308 V324" marker-start="url(#ar)" marker-end="url(#ar)"/>
       <text class="t" x="736" y="292" text-anchor="middle">暂停 / 继续</text>
@@ -1833,7 +1698,7 @@
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><rect x="4.2" y="3.6" width="1.4" height="4.8" rx="0.7" fill="#0e1116" stroke="none"/><rect x="6.4" y="3.6" width="1.4" height="4.8" rx="0.7" fill="#0e1116" stroke="none"/></svg>557 / 960 个文件 · 已暂停</td><td>两张盘都连接，用户暂停了任务</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>自动拷贝完成 · 今天 9:41</td><td>两张盘都连接，且任务已完成，无文件需要拷贝</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M4.3 4.3l3.4 3.4M7.7 4.3l-3.4 3.4"/></svg>SD卡或备份磁盘未连接</td><td>源盘未连接，目标盘已连接<br>源盘已连接，目标盘未连接<br>两张盘都未连接</td></tr>
-          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>排队中</td><td>目标盘或源盘有其他任务在进行</td></tr>
+          <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>等待中</td><td>目标磁盘有其他任务正在写入，完成后自动开始</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.9 10.6 10.1H1.4Z"/><path d="M6 4.4v2.4"/><circle cx="6" cy="8.3" r=".65" fill="#0e1116" stroke="none"/></svg>目标盘空间不足</td><td>放不下，换盘或清理</td></tr>
           <tr><td><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标盘无法写入</td><td>写不进去，换盘或改格式</td></tr>
         </tbody>
@@ -1985,7 +1850,7 @@
 
   <div class="sep"></div>
 
-  <div class="fx6" data-v="1">
+  <div class="fx6">
     <div class="fx6-panel">
       <div class="fx6-title">素材拷贝状态卡</div>
 
@@ -2049,13 +1914,13 @@
       </div>
 
       <div class="fx6-state">
-        <div class="fx6-label">排队中</div>
+        <div class="fx6-label">等待中</div>
         <div class="card status-card">
           <div class="cs-row">
             <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>
-            <span class="cs-num">排队中</span>
+            <span class="cs-num">等待中</span>
           </div>
-          <div class="cs-sub">有任务正在拷贝，完成后自动开始</div>
+          <div class="cs-sub">目标磁盘有其他任务正在写入，完成后自动开始</div>
         </div>
       </div>
 
@@ -2120,75 +1985,6 @@
 
     <div class="content">
       <div class="section">
-        <div class="card chart-card">
-          <div class="chart-head">
-            <div class="seg">
-              <span class="ct on" data-view="month">月</span>
-              <span class="ct" data-view="year">年</span>
-            </div>
-            <span class="chart-period">2026年10月</span>
-          </div>
-          <div class="chart-view" data-view="month">
-            <div class="dc-bars month">
-              <i style="height:1%"></i>
-              <i style="height:3%"></i>
-              <i style="height:7%"></i>
-              <i style="height:1%"></i>
-              <i style="height:5%"></i>
-              <i style="height:9%"></i>
-              <i style="height:1%"></i>
-              <i style="height:2%"></i>
-              <i style="height:6%"></i>
-              <i style="height:2%"></i>
-              <i style="height:4%"></i>
-              <i style="height:1%"></i>
-              <i style="height:3%"></i>
-              <i style="height:14%"></i>
-              <i style="height:10%"></i>
-              <i style="height:24%"></i>
-              <i style="height:37%"></i>
-              <i style="height:6%"></i>
-              <i style="height:16%"></i>
-              <i style="height:48%"></i>
-              <i style="height:3%"></i>
-              <i style="height:21%"></i>
-              <i style="height:9%"></i>
-              <i style="height:65%"></i>
-              <i style="height:12%"></i>
-              <i style="height:30%"></i>
-              <i style="height:19%"></i>
-              <i class="on" style="height:100%"><b style="height:27%"></b></i>
-            </div>
-            <div class="dc-axis month">
-              <span>1</span>
-              <span class="mid">15</span>
-              <span class="end">今天</span>
-            </div>
-          </div>
-          <div class="chart-view" data-view="year" hidden>
-            <div class="dc-bars year">
-              <i style="height:38%"></i>
-              <i style="height:30%"></i>
-              <i style="height:56%"></i>
-              <i style="height:41%"></i>
-              <i style="height:63%"></i>
-              <i style="height:49%"></i>
-              <i style="height:34%"></i>
-              <i style="height:78%"></i>
-              <i style="height:100%"></i>
-              <i class="dim" style="height:92%"></i>
-            </div>
-            <div class="dc-axis year">
-              <span>1月</span>
-              <span class="mid">6月</span>
-              <span class="end">10月</span>
-            </div>
-          </div>
-        </div>
-        <div class="hint hint--c">仅展示最近一个月</div>
-      </div>
-
-      <div class="section">
         <div class="card status-card">
           <div class="cs-row">
             <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>
@@ -2201,30 +1997,18 @@
       </div>
 
       <div class="section">
-        <div class="card disk-module">
-          <div class="disk disk--detail" style="--p:70%">
-            <div class="disk-head">
+        <div class="card disk-files">
+          <div class="disk-files-main">
+            <div class="disk-files-head">
               <div class="disk-name">EOS_DIGITAL</div>
               <span class="disk-open">查看源文件夹<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
             </div>
-            <div class="disk-foot">
-              <div class="disk-meta">
-                <div class="disk-state">总 128 GB · 剩余 38 GB</div>
-                <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
-              </div>
-              <div class="disk-fs">exFAT</div>
+            <div class="disk-cap">
+              <span class="disk-pie" style="--pie:70.3%" role="img" aria-label="已用 70%"></span>
+              <div class="disk-state">总 128 GB · 剩余 38 GB</div>
             </div>
-          </div>
-          <div class="disk disk--detail" style="--p:62%">
-            <div class="disk-head">
-              <div class="disk-name">Kocard Go</div>
-              <span class="disk-open">查看目标文件夹<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
-            </div>
-            <div class="disk-foot">
-              <div class="disk-meta">
-                <div class="disk-state">总 512 GB · 剩余 180 GB</div>
-                <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
-              </div>
+            <div class="disk-files-foot">
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
               <div class="disk-fs">exFAT</div>
             </div>
           </div>
@@ -2232,31 +2016,78 @@
       </div>
 
       <div class="section">
-        <div class="card list">
-          <div class="row">
-            <span class="k">昨天 21:04</span>
-            <span class="v">229 个文件</span>
-          </div>
-          <div class="row">
-            <span class="k">10月26日 09:12</span>
-            <span class="v">361 个文件</span>
-          </div>
-          <div class="row">
-            <span class="k">10月25日 20:36</span>
-            <span class="v">144 个文件</span>
+        <div class="card disk-files">
+          <div class="disk-files-main">
+            <div class="disk-files-head">
+              <div class="disk-name">Kocard Go</div>
+              <span class="disk-open">查看目标文件夹<svg width="5" height="8" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg></span>
+            </div>
+            <div class="disk-cap">
+              <span class="disk-pie" role="img" aria-label="已用 65%"></span>
+              <div class="disk-state">总 512 GB · 剩余 180 GB</div>
+            </div>
+            <div class="disk-files-foot">
+              <div class="disk-status"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</div>
+              <div class="disk-fs">exFAT</div>
+            </div>
           </div>
         </div>
-        <div class="hint hint--c hint--rec">仅展示最近30天</div>
+      </div>
+
+      <div class="section">
+        <div class="card hist-card">
+          <div class="hist-head">
+            <div class="hist-k">累计已拷贝</div>
+            <div class="hist-v">734<span>个文件</span></div>
+          </div>
+          <div class="hm">
+            <div class="hm-grid" role="group" aria-label="最近30天拷贝热力图">
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <button type="button" class="hm-cell has" data-d="2026-10-25" aria-label="10月25日，拷贝 144 个文件"></button>
+              <button type="button" class="hm-cell has" data-d="2026-10-26" aria-label="10月26日，拷贝 361 个文件"></button>
+              <span class="hm-cell"></span>
+              <span class="hm-cell"></span>
+              <button type="button" class="hm-cell has is-sel" data-d="2026-10-29" aria-label="10月29日，拷贝 229 个文件"></button>
+              <span class="hm-cell"></span>
+            </div>
+          </div>
+          <div class="hist-list" id="hmDetail7" aria-live="polite">
+            <div class="row">
+              <span class="k">10月29日 21:04</span>
+              <span class="v">229 个文件</span>
+            </div>
+          </div>
+        </div>
+        <div class="hint hint--c">仅展示最近30天 · 点有拷贝的格子查看记录</div>
       </div>
     </div>
 
     <div class="home-indicator"></div>
   </div>
-    <div class="vtabs" role="tablist" aria-label="图7 版本">
-      <button class="vt on" data-v="1" data-fig="图7-1 · 素材自动拷贝子页面，无柱形图" role="tab" aria-selected="true">图7-1</button>
-      <button class="vt" data-v="2" data-fig="图7-2 · 素材自动拷贝子页面，有柱形图" role="tab">图7-2</button>
-    </div>
-  <div class="fig fig--v">图7-1 · 素材自动拷贝子页面，无柱形图</div>
+  <div class="fig">图7 · 素材自动拷贝子页面</div>
   </div>
 
   <div class="sep"></div>
@@ -2377,7 +2208,7 @@
       <text class="st" x="375" y="222">待开始</text>
 
       <rect class="box" x="520" y="190" width="150" height="56" rx="14"/>
-      <text class="st" x="595" y="222">排队中</text>
+      <text class="st" x="595" y="222">等待中</text>
 
       <rect class="box" x="725" y="190" width="150" height="56" rx="14"/>
       <text class="st" x="800" y="222">557 / 960 个文件</text>
@@ -2406,11 +2237,11 @@
       <rect class="box" x="925" y="330" width="150" height="56" rx="14"/>
       <text class="st" x="1000" y="362">已暂停</text>
 
-      <path class="edge" d="M595,246 V324" marker-end="url(#ar9)"/>
-      <text class="t" x="587" y="290" text-anchor="end">空间不够</text>
+      <path class="edge" d="M375,246 V290 H595 V324" marker-end="url(#ar9)"/>
+      <text class="t" x="587" y="312" text-anchor="end">空间不够</text>
 
-      <path class="edge" d="M840,246 V324" marker-end="url(#ar9)"/>
-      <text class="t" x="850" y="290" text-anchor="start">无法写入</text>
+      <path class="edge" d="M595,290 H800 V324" marker-end="url(#ar9)"/>
+      <text class="t" x="808" y="312" text-anchor="start">无法写入</text>
 
       <path class="edge" d="M876,234 H894 Q902,234 902,242 V292 Q902,300 910,300 H992 Q1000,300 1000,308 V324" marker-start="url(#ar9)" marker-end="url(#ar9)"/>
       <text class="t" x="951" y="292" text-anchor="middle">暂停 / 继续</text>
@@ -2422,70 +2253,6 @@
 
   <div class="doc-sec">
     <div class="doc-kicker">说明 01</div>
-    <div class="doc-h">现状与问题</div>
-    <ul class="doc-list">
-      <li>首页仅有三行固定入口与两张 AI 卡，任务进度需进入二级页查看。</li>
-      <li>相册备份与素材拷贝的进度、暂停与异常状态在首页没有出口。</li>
-      <li>AI 推荐、AI 修图位于首页，没有独立 tab。</li>
-    </ul>
-  </div>
-
-  <div class="sep"></div>
-
-  <div class="doc-sec">
-    <div class="doc-kicker">说明 02</div>
-    <div class="doc-h">本期范围</div>
-    <div class="doc-cols doc-cols--2">
-      <div>
-        <div class="doc-label">目标</div>
-        <ul class="doc-list">
-          <li>首页按任务实例显示：进行中、已暂停、已完成、未连接、排队中、空间不足、无法写入。</li>
-          <li>三种新建入口位于任务卡之后，顺序为手机相册备份、素材自动拷贝、外部素材拷贝。</li>
-          <li>任务卡超出一屏时页面滚动，入口卡随内容下移。</li>
-          <li>新增 AI tab，tab 顺序为首页、任务、AI，默认选中首页。</li>
-        </ul>
-      </div>
-      <div>
-        <div class="doc-label">非目标</div>
-        <ul class="doc-list">
-          <li>不改造任务 tab 内容。</li>
-          <li>不改变三种任务的创建流程与设置项。</li>
-          <li>不改 AI 推荐、AI 修图的功能、流程与会员限制。</li>
-          <li>不新增磁盘格式、协议与云存储能力。</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="sep"></div>
-
-  <div class="doc-sec">
-    <div class="doc-kicker">说明 03</div>
-    <div class="doc-h">AI tab</div>
-    <div class="doc-cols doc-cols--2">
-      <div>
-        <div class="doc-label">位置与顺序</div>
-        <p class="doc-p">底部第三个 tab，位于任务之后；默认选中首页。</p>
-      </div>
-      <div>
-        <div class="doc-label">内容</div>
-        <p class="doc-p">AI 推荐、AI 修图两张卡，图标、文案与线上首页一致。</p>
-      </div>
-      <div>
-        <div class="doc-label">保持不变</div>
-        <p class="doc-p">点击后的流程、会员与积分规则。</p>
-      </div>
-      <div>
-        <div class="doc-label">本期不做</div>
-        <p class="doc-p">不新增 AI 能力，不调整 AI 推荐、AI 修图的内部页面。</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="sep"></div>
-
-  <div class="doc-sec">
-    <div class="doc-kicker">说明 04</div>
     <div class="doc-h">功能需求</div>
     <table class="doc-tbl">
       <thead><tr><th>编号</th><th>需求</th><th>验收标准</th></tr></thead>
@@ -2497,8 +2264,8 @@
         </tr>
         <tr>
           <td class="nowrap">R-02</td>
-          <td>任务状态与动作：进行中显示暂停，已暂停显示继续，自动拷贝未执行时显示开始。</td>
-          <td>三种状态下状态词与按钮对应正确。</td>
+          <td>任务状态与动作：进行中显示暂停，已暂停显示继续，等待中不显示按钮（目标磁盘上的任务完成后自动开始），自动拷贝未执行时显示开始。</td>
+          <td>各状态下状态词与按钮对应正确。</td>
         </tr>
         <tr>
           <td class="nowrap">R-03</td>
@@ -2522,8 +2289,8 @@
         </tr>
         <tr>
           <td class="nowrap">R-07</td>
-          <td>素材自动拷贝子页：显示进度卡、源盘与目标盘、拷贝记录 3 条，记录仅展示最近 30 天。</td>
-          <td>各元素齐全，记录说明可见。</td>
+          <td>素材自动拷贝子页：显示进度卡、源盘卡与目标盘卡，下方为 30 天拷贝热力图，点有拷贝的日期看当天记录。</td>
+          <td>各元素齐全；默认选中最近一次有完成拷贝的那天。</td>
         </tr>
       </tbody>
     </table>
@@ -2532,22 +2299,22 @@
   <div class="sep"></div>
 
   <div class="doc-sec">
-    <div class="doc-kicker">说明 05</div>
+    <div class="doc-kicker">说明 02</div>
     <div class="doc-h">状态与异常</div>
     <table class="doc-tbl">
       <thead><tr><th>状态</th><th>触发条件</th><th>用户看到</th><th>如何处理</th></tr></thead>
       <tbody>
         <tr>
-          <td class="nowrap">两类任务并行</td>
-          <td>相册备份与素材拷贝同时存在。</td>
+          <td class="nowrap">目标磁盘不同</td>
+          <td>两个任务写入不同的目标磁盘。</td>
           <td>各自显示进行中。</td>
-          <td>两者不互斥，不排队。</td>
+          <td>并行执行。</td>
         </tr>
         <tr>
-          <td class="nowrap">素材拷贝排队</td>
-          <td>已有素材拷贝占用执行。</td>
-          <td>排队中，提示前序完成后自动开始。</td>
-          <td>按顺序执行，不并发。</td>
+          <td class="nowrap">目标磁盘排队</td>
+          <td>目标磁盘上已有任务在写入。</td>
+          <td>等待中，磁盘被占用，完成后自动开始。</td>
+          <td>目标磁盘上的任务按顺序执行，不并发。</td>
         </tr>
         <tr>
           <td class="nowrap">盘未连接</td>
@@ -2580,7 +2347,7 @@
   <div class="sep"></div>
 
   <div class="doc-sec">
-    <div class="doc-kicker">说明 06</div>
+    <div class="doc-kicker">说明 03</div>
     <div class="doc-h">验收清单</div>
     <table class="doc-tbl">
       <thead><tr><th>编号</th><th>前置条件</th><th>操作</th><th>预期结果</th></tr></thead>
@@ -2605,30 +2372,36 @@
         </tr>
         <tr>
           <td class="nowrap">AC-04</td>
+          <td>两个相册备份任务，目标磁盘相同。</td>
+          <td>打开首页。</td>
+          <td>一个显示备份中，另一个显示等待中；前一个完成后，后一个自动开始。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-05</td>
           <td>一个相册备份与两个素材拷贝。</td>
           <td>打开首页。</td>
           <td>显示 3 张任务卡；入口卡位于任务卡下方；超出部分可滚动。</td>
         </tr>
         <tr>
-          <td class="nowrap">AC-05</td>
+          <td class="nowrap">AC-06</td>
           <td>素材拷贝进行中。</td>
           <td>拔出目标盘。</td>
           <td>卡片显示未连接，盘信息保留；重新接入后恢复。</td>
         </tr>
         <tr>
-          <td class="nowrap">AC-06</td>
+          <td class="nowrap">AC-07</td>
           <td>目标盘空间不足或为只读格式。</td>
           <td>开始任务。</td>
           <td>显示缺口或无法写入，任务不启动。</td>
         </tr>
         <tr>
-          <td class="nowrap">AC-07</td>
+          <td class="nowrap">AC-08</td>
           <td>相册备份设置。</td>
           <td>点击删除并确认。</td>
           <td>返回首页，任务移除，已备份文件保留。</td>
         </tr>
         <tr>
-          <td class="nowrap">AC-08</td>
+          <td class="nowrap">AC-09</td>
           <td>首页。</td>
           <td>切换到 AI tab。</td>
           <td>标题为 AI，显示 AI 推荐、AI 修图两张卡。</td>
@@ -2651,22 +2424,6 @@
           });
           period.textContent = tab.dataset.view === 'month' ? '2026年10月' : '2026年';
           if (note) note.textContent = tab.dataset.view === 'month' ? '仅展示最近一个月' : '仅展示最近一年';
-        });
-      });
-    });
-
-    document.querySelectorAll('.vtabs').forEach((group) => {
-      const fig = group.closest('[data-v]');
-      const tabs = [...group.querySelectorAll('.vt')];
-      const cap = fig.querySelector('.fig--v');
-      tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          tabs.forEach((t) => {
-            t.classList.toggle('on', t === tab);
-            t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-          });
-          fig.dataset.v = tab.dataset.v;
-          if (cap) cap.textContent = tab.dataset.fig;
         });
       });
     });
@@ -2694,6 +2451,42 @@
       row.addEventListener('click', () => mask.classList.add('on'));
       mask.querySelectorAll('.ab').forEach((btn) => {
         btn.addEventListener('click', () => mask.classList.remove('on'));
+      });
+    });
+
+    const hmRecords = {
+      hmDetail: {
+        '2026-10-25': [['10月25日 20:36', '437 张']],
+        '2026-10-26': [['10月26日 09:12', '1,093 张']],
+        '2026-10-29': [['10月29日 09:12', '412 张'], ['10月29日 21:04', '280 张']],
+      },
+      hmDetail7: {
+        '2026-10-25': [['10月25日 20:36', '144 个文件']],
+        '2026-10-26': [['10月26日 09:12', '361 个文件']],
+        '2026-10-29': [['10月29日 21:04', '229 个文件']],
+      },
+    };
+    document.querySelectorAll('.hist-card').forEach((card) => {
+      const detail = card.querySelector('.hist-list');
+      const cells = [...card.querySelectorAll('.hm-cell[data-d]')];
+      const records = hmRecords[detail.id] || {};
+      cells.forEach((cell) => {
+        cell.addEventListener('click', () => {
+          cells.forEach((c) => c.classList.toggle('is-sel', c === cell));
+          const rows = (records[cell.dataset.d] || []).map(([k, v]) => {
+            const row = document.createElement('div');
+            row.className = 'row';
+            const key = document.createElement('span');
+            key.className = 'k';
+            key.textContent = k;
+            const val = document.createElement('span');
+            val.className = 'v';
+            val.textContent = v;
+            row.append(key, val);
+            return row;
+          });
+          detail.replaceChildren(...rows);
+        });
       });
     });
   </script>
