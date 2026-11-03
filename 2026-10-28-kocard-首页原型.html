@@ -288,6 +288,7 @@
   .fx3-state { margin-top: 12px; }
   .fx3-label { margin-bottom: 4px; font-size: 11px; line-height: 1.4; color: #6b7280; }
   .fx3-hint { margin-top: 10px; font-size: 11px; line-height: 1.7; color: #6b7280; }
+  .fx3-hint--top { margin-top: 4px; }
   /* 图3 右侧：查看备份文件 说明 */
   .fx3-note {
     position: absolute;
@@ -456,6 +457,9 @@
     margin: 0;
   }
   .note--disk { left: auto; right: -388px; top: 103.6px; }
+  /* 图2 右侧：任务卡左划删除，引线指向任务卡右边缘 */
+  .note--swipe { left: auto; right: -388px; top: 240.3px; font-size: 11px; line-height: 1.9; color: #6b7280; }
+  .annot .annot-leader--swipe { top: 250.8px; width: 40px; }
   .leader {
     position: absolute;
     left: -20px;
@@ -1147,7 +1151,8 @@
       </table>
     </div>
     <div class="fx3-panel">
-      <div class="fx3-title">首页任务卡</div>
+      <div class="fx3-title">卡片状态</div>
+      <div class="fx3-hint fx3-hint--top">按钮按任务状态出现：待备份且卡或磁盘已连接「开始」，备份中「暂停」，已暂停「继续」；自动备份开关不影响按钮是否显示。</div>
 
       <div class="fx3-state">
         <div class="fx3-label">备份中</div>
@@ -1263,8 +1268,6 @@
           </div>
         </div>
       </div>
-
-      <div class="fx3-hint">按钮按任务状态出现：待备份且卡或磁盘已连接「开始」，备份中「暂停」，已暂停「继续」；自动开关不影响按钮是否显示。手机相册备份、素材自动备份的任务卡都支持左划，显示「删除」按钮。</div>
     </div>
   <div class="phone">
     <div class="island"></div>
@@ -1387,6 +1390,8 @@
     </div>
     <div class="home-indicator"></div>
   </div>
+    <div class="note note--swipe">手机相册备份、素材自动备份的任务卡都支持左划，显示「删除」按钮。</div>
+    <div class="leader leader--right annot-leader--swipe"></div>
     <div class="fig">图2 · 首页有两个相册备份任务，一个备份中、一个未连接</div>
   </div>
 
@@ -1394,7 +1399,7 @@
 
   <div class="fx3">
     <div class="fx3-panel">
-      <div class="fx3-title">备份状态卡</div>
+      <div class="fx3-title">卡片状态</div>
 
       <div class="fx3-state">
         <div class="fx3-label">备份中</div>
@@ -1447,7 +1452,7 @@
       </div>
 
       <div class="fx3-state">
-        <div class="fx3-label">备份完成 · 今天 9:41</div>
+        <div class="fx3-label">备份完成</div>
         <div class="card status-card">
           <div class="cs-row">
             <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>
@@ -1474,13 +1479,11 @@
         <div class="card status-card">
           <div class="cs-row">
             <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>
-            <span class="cs-num">无法写入</span>
+            <span class="cs-num">只读</span>
           </div>
           <div class="cs-sub">Kocard Go 为只读格式</div>
         </div>
       </div>
-
-      <div class="fx3-hint">「开始」按钮取代线上 v1.4.0 版本 tab 上方的「开始同步」按钮</div>
     </div>
 
     <div class="fx3-note fx3-note--top">相册备份子页面从 sheet 改为全屏页面；左上角返回、右侧设置优先使用原生 Liquid Glass 按钮</div>
@@ -1490,9 +1493,9 @@
     <div class="fx3-note fx3-note--hm">
       <div class="note-h">备份记录</div>
       <ol>
-        <li>按时间倒序列出最近 30 天的备份记录，一条记录一行；一天备份多次就多行。</li>
+        <li>按时间倒序列出最近30天的备份记录，一次备份一行；一天备份多次就多行。</li>
         <li>每条只写时间与张数，不可点开、不可删除。</li>
-        <li>只算完成的任务，进行中的已备份张数只在页面上方的任务卡里显示。</li>
+        <li>只算完成的任务，备份中的已备份张数只在页面上方的任务卡里显示。</li>
       </ol>
     </div>
     <div class="leader leader--right fx3-leader fx3-leader--hm"></div>
@@ -1546,7 +1549,7 @@
         <div class="back">
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
         </div>
-        <div class="page-title">相册 <span class="title-arrow">→</span> Kocard Go</div>
+        <div class="page-title">相册<span class="title-arrow">→</span>Kocard Go</div>
       </div>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </div>
@@ -1734,7 +1737,7 @@
         <div class="back">
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
         </div>
-        <div class="page-title">相册备份设置</div>
+        <div class="page-title">手机相册备份设置</div>
       </div>
     </div>
 
@@ -1743,7 +1746,7 @@
         <div class="card list">
           <div class="row row--name">
             <span class="k">任务名称</span>
-            <span class="v">相册 → Kocard Go</span>
+            <span class="v">相册→Kocard Go</span>
             <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
           </div>
           <div class="row">
@@ -1800,7 +1803,7 @@
       </div>
     </div>
   </div>
-  <div class="fig">图5 · 相册备份设置</div>
+  <div class="fig">图5 · 手机相册备份设置</div>
   <div class="fx4-rnote">点击「删除」后二次弹窗<br>弹窗：「此操作无法恢复，已备份的照片和视频不会被删除」<br>删除后进入首页</div>
   <div class="leader leader--right fx4-rleader"></div>
   </div>
@@ -1809,7 +1812,8 @@
 
   <div class="fx5">
     <div class="fx5-left">
-      <div class="fx3-title">任务状态</div>
+      <div class="fx3-title">卡片状态</div>
+      <div class="fx3-hint fx3-hint--top">按钮按任务状态出现：待备份且卡或磁盘已连接「开始」，备份中「暂停」，已暂停「继续」；自动备份开关不影响按钮是否显示。</div>
 
       <div class="fx3-state">
         <div class="fx3-label">已暂停</div>
@@ -1894,7 +1898,7 @@
       </div>
 
       <div class="fx3-state">
-        <div class="fx3-label">目标卡或磁盘无法写入</div>
+        <div class="fx3-label">目标卡或磁盘只读</div>
         <div class="card job">
           <div class="job-head">
             <div class="job-head-main">
@@ -1904,12 +1908,10 @@
           </div>
           <div class="job-nums">960 个文件 · 4.8 GB</div>
           <div class="job-meta">
-            <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标卡或磁盘无法写入</span>
+            <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>目标卡或磁盘只读</span>
           </div>
         </div>
       </div>
-
-      <div class="fx3-hint">按钮按任务状态出现：待备份且卡或磁盘已连接「开始」，备份中「暂停」，已暂停「继续」；自动开关不影响按钮是否显示。手机相册备份、素材自动备份的任务卡都支持左划，显示「删除」按钮。</div>
     </div>
   <div class="phone home-list">
     <div class="island"></div>
@@ -2047,7 +2049,7 @@
   </div>
 
   <div class="fx5-panel">
-    <div class="fx3-title">连接状态</div>
+    <div class="fx3-title">卡或磁盘状态</div>
 
     <div class="fx3-state">
       <div class="fx3-label">两张卡或磁盘都连接</div>
@@ -2124,7 +2126,7 @@
 
   <div class="fx6">
     <div class="fx6-panel">
-      <div class="fx6-title">素材备份状态卡</div>
+      <div class="fx6-title">卡片状态</div>
 
       <div class="fx6-state">
         <div class="fx6-label">备份中</div>
@@ -2150,7 +2152,6 @@
           <div class="cs-meta"><span>待备份</span></div>
           <button class="cs-btn" type="button">开始</button>
         </div>
-        <div class="fx6-hint">自动备份任务没有自动执行的时候，显示这个卡片，代替 tab 上面的「开始同步」按钮</div>
       </div>
 
       <div class="fx6-state">
@@ -2212,11 +2213,11 @@
       </div>
 
       <div class="fx6-state">
-        <div class="fx6-label">目标卡或磁盘无法写入</div>
+        <div class="fx6-label">目标卡或磁盘只读</div>
         <div class="card status-card">
           <div class="cs-row">
             <svg class="st-ic cs-ic" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><rect x="3" y="5" width="6" height="5" rx="1"/><path d="M4.2 5V3.8a1.8 1.8 0 0 1 3.6 0V5"/></svg>
-            <span class="cs-num">无法写入</span>
+            <span class="cs-num">只读</span>
           </div>
           <div class="cs-sub">Kocard Go 为只读格式</div>
         </div>
@@ -2290,7 +2291,7 @@
         <div class="back">
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
         </div>
-        <div class="page-title">EOS_DIGITAL <span class="title-arrow">→</span> Kocard Go</div>
+        <div class="page-title">EOS_DIGITAL<span class="title-arrow">→</span>Kocard Go</div>
       </div>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </div>
@@ -2410,7 +2411,7 @@
         <div class="back">
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
         </div>
-        <div class="page-title">自动备份设置</div>
+        <div class="page-title">素材自动备份设置</div>
       </div>
     </div>
 
@@ -2419,7 +2420,7 @@
         <div class="card list">
           <div class="row row--name">
             <span class="k">任务名称</span>
-            <span class="v">EOS_DIGITAL → Kocard Go</span>
+            <span class="v">EOS_DIGITAL→Kocard Go</span>
             <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="#9aa1ab" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4-4 4"/></svg>
           </div>
         </div>
@@ -2487,7 +2488,7 @@
       </defs>
       <text class="lane" x="90" y="18">卡或磁盘没接齐</text>
       <text class="lane" x="300" y="18">卡或磁盘接齐</text>
-      <text class="lane" x="0" y="96">连接状态</text>
+      <text class="lane" x="0" y="96">卡或磁盘状态</text>
       <text class="lane" x="0" y="222">备份状态</text>
       <path class="lane-line" d="M270,40 V424"/>
 
@@ -2537,7 +2538,7 @@
       <text class="sub2" x="595" y="404">剩余空间不够</text>
 
       <rect class="box" x="725" y="330" width="150" height="56" rx="14"/>
-      <text class="st" x="800" y="362">目标卡或磁盘无法写入</text>
+      <text class="st" x="800" y="362">目标卡或磁盘只读</text>
       <text class="sub2" x="800" y="404">只读格式</text>
 
       <rect class="box" x="925" y="330" width="150" height="56" rx="14"/>
@@ -2548,7 +2549,7 @@
       <text class="t" x="587" y="312" text-anchor="end">空间不够</text>
 
       <path class="edge" d="M595,290 H800 V324" marker-end="url(#ar9)"/>
-      <text class="t" x="808" y="312" text-anchor="start">无法写入</text>
+      <text class="t" x="808" y="312" text-anchor="start">卡或磁盘只读</text>
 
       <path class="edge" d="M876,234 H894 Q902,234 902,242 V292 Q902,300 910,300 H992 Q1000,300 1000,308 V324" marker-start="url(#ar9)" marker-end="url(#ar9)"/>
       <text class="t" x="951" y="292" text-anchor="middle">暂停 / 继续</text>
@@ -2562,42 +2563,67 @@
     <div class="doc-kicker">说明 01</div>
     <div class="doc-h">功能需求</div>
     <table class="doc-tbl">
-      <thead><tr><th>编号</th><th>需求</th><th>验收标准</th></tr></thead>
+      <thead><tr><th>编号</th><th>需求</th><th>验收</th></tr></thead>
       <tbody>
         <tr>
           <td class="nowrap">R-01</td>
-          <td>首页任务卡：按任务实例显示，含任务名、连接状态、数量与大小、状态或剩余时间。</td>
-          <td>创建一个相册备份与两个素材备份后，首页出现 3 张任务卡。</td>
+          <td>首页任务卡：按任务显示任务名、卡或磁盘状态、数量与大小、任务状态或剩余时间；卡或磁盘状态只说缺哪一侧，不写盘名。任务卡支持左划，显示「删除」。</td>
+          <td class="nowrap">AC-02、AC-11、AC-15</td>
         </tr>
         <tr>
           <td class="nowrap">R-02</td>
-          <td>任务状态与动作：待备份且卡或磁盘已连接时显示开始，进行中显示暂停，已暂停显示继续，等待中不显示按钮（目标卡或磁盘上的任务完成后自动开始）。</td>
-          <td>各状态下状态词与按钮对应正确。</td>
+          <td>任务状态与动作：待备份且卡或磁盘已连接时显示「开始」，备份中显示「暂停」，已暂停显示「继续」；等待中、备份完成、空间不足、只读时不显示按钮。自动备份开关不影响按钮显隐。</td>
+          <td class="nowrap">AC-03、AC-12、AC-13、AC-14</td>
         </tr>
         <tr>
           <td class="nowrap">R-03</td>
-          <td>新建入口卡：三张，位于任务卡下方、小横线之下，顺序为手机相册备份、素材自动备份、外部素材拷贝；已有任务时前两张并排，外部素材拷贝占整行。</td>
-          <td>各页面顺序一致；无任务时直接显示入口卡；已有任务时前两张左右并排。</td>
+          <td>自动备份开关：关闭时任务停在待备份；开启且卡或磁盘已连接时自动开始。</td>
+          <td class="nowrap">AC-04</td>
         </tr>
         <tr>
           <td class="nowrap">R-04</td>
-          <td>AI tab：底部第三个 tab，内容为 AI 推荐、AI 修图。</td>
-          <td>切换后标题为 AI，卡片与线上首页一致。</td>
+          <td>新增入口卡：三张，位于任务卡下方、小横线之下，顺序为手机相册备份、素材自动备份、外部素材拷贝；已有任务时前两张并排，外部素材拷贝占整行；超出屏幕可滚动。</td>
+          <td class="nowrap">AC-01、AC-17</td>
         </tr>
         <tr>
           <td class="nowrap">R-05</td>
-          <td>相册备份设置：任务名默认为「相册 → 卡或磁盘名」，支持重命名；删除任务需二次确认；确认后回首页，已备份文件保留。</td>
-          <td>默认名符合「相册 → 卡或磁盘名」；任务名可修改；弹窗文案为「此操作无法恢复，已备份的照片和视频不会被删除」。</td>
+          <td>三 tab：底部依次为首页、任务、AI，默认选中首页；AI 推荐、AI 修图从首页移到 AI tab，首页不再显示；任务 tab 除导航外与线上一致；首页头像与设置入口保持原效果。</td>
+          <td class="nowrap">AC-01、AC-16</td>
         </tr>
         <tr>
           <td class="nowrap">R-06</td>
-          <td>自动备份设置：任务名默认为「源卡或磁盘名 → 目标卡或磁盘名」，支持重命名；提供「自动备份」开关；删除需二次确认；确认后回首页。</td>
-          <td>默认名符合「源卡或磁盘名 → 目标卡或磁盘名」；任务名可修改；自动备份可开关；弹窗文案为「此操作无法恢复，文件不会被删除」。</td>
+          <td>手机相册备份子页：进度卡显示张数、大小、剩余时间与暂停；备份盘卡显示剩余与总容量、格式、已连接、「查看备份文件」；备份盘拔出时只保留盘名与「未连接」。</td>
+          <td class="nowrap">AC-05、AC-11</td>
         </tr>
         <tr>
           <td class="nowrap">R-07</td>
-          <td>素材自动备份子页：显示进度卡、源与目标两张卡或磁盘卡，下方为最近 30 天的备份记录。</td>
-          <td>各元素齐全；记录按时间倒序显示。</td>
+          <td>素材自动备份子页：进度卡显示文件数、大小、剩余时间与暂停；源、目标卡或磁盘卡显示剩余与总容量、格式、已连接、「查看源文件夹」「查看目标文件夹」；任一个拔出时，该卡收起容量、格式与文件夹入口。</td>
+          <td class="nowrap">AC-06、AC-11</td>
+        </tr>
+        <tr>
+          <td class="nowrap">R-08</td>
+          <td>备份记录：两个子页通用。按时间倒序列出最近30天的记录，一次备份一行，一天多次就多行；只算完成的任务，每行只写时间与数量；不可点开、不可删除。</td>
+          <td class="nowrap">AC-07</td>
+        </tr>
+        <tr>
+          <td class="nowrap">R-09</td>
+          <td>设置页通用：任务名称点开为输入框，可重命名；显示备份路径；提供自动备份开关；删除需二次确认，确认后回首页。</td>
+          <td class="nowrap">AC-04、AC-08、AC-09、AC-10</td>
+        </tr>
+        <tr>
+          <td class="nowrap">R-10</td>
+          <td>手机相册备份设置：默认名为「相册→卡或磁盘名」；显示备份盘；提供照片、视频两个开关。</td>
+          <td class="nowrap">AC-02、AC-09</td>
+        </tr>
+        <tr>
+          <td class="nowrap">R-11</td>
+          <td>素材自动备份设置：默认名为「源卡或磁盘名→目标卡或磁盘名」；提供「文件校验」开关，改动即时保存；没有照片、视频筛选。</td>
+          <td class="nowrap">AC-02、AC-10</td>
+        </tr>
+        <tr>
+          <td class="nowrap">R-12</td>
+          <td>页面导航：子页标题显示任务名；点任务卡进入对应子页，子页右上设置进入设置页，左上返回上一页。</td>
+          <td class="nowrap">AC-18</td>
         </tr>
       </tbody>
     </table>
@@ -2609,49 +2635,61 @@
     <div class="doc-kicker">说明 02</div>
     <div class="doc-h">状态与异常</div>
     <table class="doc-tbl">
-      <thead><tr><th>状态</th><th>触发条件</th><th>用户看到</th><th>如何处理</th></tr></thead>
+      <thead><tr><th>状态 / 情况</th><th>触发条件</th><th>用户看到</th><th>如何处理</th></tr></thead>
       <tbody>
         <tr>
           <td class="nowrap">待备份</td>
           <td>任务已创建，自动备份没有执行。</td>
-          <td>卡片显示数量与大小，状态为「待备份」；卡或磁盘已连接时显示「开始」。</td>
-          <td>接上卡或磁盘，点「开始」。</td>
+          <td>首页卡片显示数量与大小，状态「待备份」；卡或磁盘已连接时显示「开始」。</td>
+          <td>点「开始」。</td>
         </tr>
         <tr>
           <td class="nowrap">目标卡或磁盘不同</td>
           <td>两个任务写入不同的目标卡或磁盘。</td>
-          <td>各自显示进行中。</td>
-          <td>并行执行。</td>
+          <td>两个任务同时备份，各自显示状态与剩余时间。</td>
+          <td>无需处理。</td>
         </tr>
         <tr>
           <td class="nowrap">目标卡或磁盘排队</td>
           <td>目标卡或磁盘上已有任务在写入。</td>
-          <td>等待中，卡或磁盘被占用，完成后自动开始。</td>
-          <td>目标卡或磁盘上的任务按顺序执行，不并发。</td>
+          <td>状态「等待中」，不显示按钮，前一个任务完成后自动开始。</td>
+          <td>无需处理。</td>
         </tr>
         <tr>
-          <td class="nowrap">卡或磁盘未连接</td>
-          <td>源卡或磁盘、目标卡或磁盘拔出。</td>
-          <td>卡片显示未连接，任务不可继续。</td>
-          <td>卡或磁盘信息保留，重新接入后恢复。</td>
+          <td class="nowrap">备份中</td>
+          <td>任务正在写入。</td>
+          <td>首页卡片显示数量与大小、剩余时间，按钮「暂停」。</td>
+          <td>需要时点「暂停」。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">已暂停</td>
+          <td>备份中点「暂停」。</td>
+          <td>状态「已暂停」，不显示剩余时间，按钮「继续」。</td>
+          <td>点「继续」。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">备份完成</td>
+          <td>任务备份结束。</td>
+          <td>手机相册备份显示「备份完成 · 今天 9:41」，素材自动备份显示「自动备份完成 · 今天 9:41」，不显示按钮。</td>
+          <td>无需处理。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">未连接</td>
+          <td>手机相册备份的备份盘拔出；素材自动备份的源、目标卡或磁盘拔出。</td>
+          <td>手机相册备份显示「未连接」，状态「待备份」；素材自动备份按拔出的一侧显示「源卡或磁盘未连接」「目标卡或磁盘未连接」「未连接」，第二行「连接后备份」；均不显示按钮。</td>
+          <td>重新接入后恢复。</td>
         </tr>
         <tr>
           <td class="nowrap">空间不足</td>
           <td>目标卡或磁盘剩余空间小于待写入文件。</td>
-          <td>显示缺口大小与剩余空间。</td>
+          <td>首页状态「目标卡或磁盘空间不足」；子页显示还差多少与剩余空间；不显示按钮。</td>
           <td>清理空间或更换卡或磁盘后重新开始。</td>
         </tr>
         <tr>
-          <td class="nowrap">无法写入</td>
+          <td class="nowrap">只读</td>
           <td>目标卡或磁盘为只读格式。</td>
-          <td>显示无法写入。</td>
-          <td>改格式或更换卡或磁盘。</td>
-        </tr>
-        <tr>
-          <td class="nowrap">删除任务</td>
-          <td>设置页删除，或任务卡左划显示「删除」。</td>
-          <td>弹窗提示文件不删除。</td>
-          <td>任务移除，返回首页，已备份文件保留。</td>
+          <td>首页状态「目标卡或磁盘只读」；子页显示「只读」与盘名；不显示按钮。</td>
+          <td>更换或改格式。</td>
         </tr>
       </tbody>
     </table>
@@ -2663,61 +2701,115 @@
     <div class="doc-kicker">说明 03</div>
     <div class="doc-h">验收清单</div>
     <table class="doc-tbl">
-      <thead><tr><th>编号</th><th>前置条件</th><th>操作</th><th>预期结果</th></tr></thead>
+      <thead><tr><th>编号</th><th style="width: 200px">前置条件</th><th style="width: 240px">操作</th><th>预期结果</th></tr></thead>
       <tbody>
         <tr>
           <td class="nowrap">AC-01</td>
-          <td>未配置任何任务。</td>
-          <td>打开首页。</td>
-          <td>显示三张入口卡与 AI tab；不显示任务卡。</td>
+          <td>未创建任何任务。</td>
+          <td>打开 App。</td>
+          <td>首页依次显示手机相册备份、素材自动备份、外部素材拷贝三张入口卡，不显示任务卡；底部依次为首页、任务、AI 三个 tab，默认选中首页。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-02</td>
-          <td>首页。</td>
-          <td>点击新增手机相册备份并完成设置。</td>
-          <td>首页出现相册任务卡，显示进度与剩余时间。</td>
+          <td>自动备份开关开启，卡或磁盘已连接。</td>
+          <td>分别新增手机相册备份和素材自动备份，并完成设置。</td>
+          <td>两张任务卡均显示任务名、卡或磁盘状态「已连接」、数量与大小、任务状态或剩余时间；默认名分别为「相册→卡或磁盘名」和「源卡或磁盘名→目标卡或磁盘名」。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-03</td>
-          <td>相册备份进行中。</td>
-          <td>点击暂停，再点击继续。</td>
-          <td>卡片依次显示已暂停、备份中，进度保留。</td>
+          <td>任务备份中。</td>
+          <td>点「暂停」，再点「继续」。</td>
+          <td>先显示「已暂停」，不显示剩余时间，按钮变为「继续」；再回到「备份中」，进度保留。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-04</td>
-          <td>两个相册备份任务，目标卡或磁盘相同。</td>
-          <td>打开首页。</td>
-          <td>一个显示备份中，另一个显示等待中；前一个完成后，后一个自动开始。</td>
+          <td>两类任务各一个，卡或磁盘已连接。</td>
+          <td>在任一任务设置页关闭自动备份开关并返回首页，再打开自动备份开关并返回。</td>
+          <td>关闭后任务停在「待备份」，按钮为「开始」；打开后自动开始，显示「备份中」。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-05</td>
-          <td>一个相册备份与两个素材备份。</td>
-          <td>打开首页。</td>
-          <td>显示 3 张任务卡；入口卡位于任务卡下方；超出部分可滚动。</td>
+          <td>手机相册备份任务备份中。</td>
+          <td>点任务卡进入子页。</td>
+          <td>进度卡显示张数、大小、剩余时间与「暂停」；备份盘卡显示剩余与总容量、格式、已连接、「查看备份文件」。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-06</td>
-          <td>素材备份进行中。</td>
-          <td>拔出目标卡或磁盘。</td>
-          <td>卡片显示未连接，卡或磁盘信息保留；重新接入后恢复。</td>
+          <td>素材自动备份任务备份中。</td>
+          <td>点任务卡进入子页。</td>
+          <td>进度卡显示文件数、大小、剩余时间与「暂停」；源、目标卡或磁盘卡均显示剩余与总容量、格式、已连接，以及「查看源文件夹」「查看目标文件夹」。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-07</td>
-          <td>目标卡或磁盘空间不足或为只读格式。</td>
-          <td>开始任务。</td>
-          <td>显示缺口或无法写入，任务不启动。</td>
+          <td>两个子页都有备份记录。</td>
+          <td>打开子页查看备份记录。</td>
+          <td>按时间倒序，只列最近30天；一次备份一行，一天多次就多行；每行只写时间与数量；备份中不进入记录；记录不可点开、不可删除。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-08</td>
-          <td>相册备份设置。</td>
-          <td>点击删除并确认。</td>
-          <td>返回首页，任务移除，已备份文件保留。</td>
+          <td>任一任务。</td>
+          <td>在设置页点任务名称改为新名称，返回首页后再进入设置页删除并确认。</td>
+          <td>首页任务卡与子页标题均为新名称；删除弹窗二次确认后返回首页，任务移除，已备份文件保留。</td>
         </tr>
         <tr>
           <td class="nowrap">AC-09</td>
+          <td>手机相册备份设置。</td>
+          <td>切换照片、视频开关；返回后再进入。</td>
+          <td>显示备份盘与备份路径；照片、视频两个开关可分别控制，返回再进入后状态保持。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-10</td>
+          <td>素材自动备份设置。</td>
+          <td>切换「文件校验」开关；返回后再进入。</td>
+          <td>显示备份路径与「文件校验」开关；切换后立即保存，返回再进入后状态保持；没有照片、视频筛选。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-11</td>
+          <td>素材自动备份任务备份中，源、目标卡或磁盘均已连接。</td>
+          <td>依次拔出目标卡或磁盘、源卡或磁盘、两个都拔出，再全部插回；之后拔出手机相册备份的备份盘。</td>
+          <td>素材任务依次显示「目标卡或磁盘未连接」「源卡或磁盘未连接」「未连接」，第二行「连接后备份」，不写盘名，均不显示按钮；插回后恢复。<br>手机相册备份显示「未连接」，备份盘卡只保留盘名与「未连接」，状态「待备份」。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-12</td>
+          <td>同一目标卡或磁盘上两个任务；另备不同目标卡或磁盘的两个任务。</td>
+          <td>打开首页。</td>
+          <td>同一目标卡或磁盘：一个「备份中」，另一个「等待中」且无按钮，前者完成后自动开始；不同目标卡或磁盘：两个同时「备份中」。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-13</td>
+          <td>任务备份结束。</td>
+          <td>打开首页。</td>
+          <td>手机相册备份显示「备份完成 · 今天 9:41」，素材自动备份显示「自动备份完成 · 今天 9:41」，均不显示按钮。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-14</td>
+          <td>自动备份关闭，任务「待备份」，卡或磁盘已连接。</td>
+          <td>目标卡或磁盘空间不足时点「开始」；换一个只读格式的卡或磁盘后再点「开始」。</td>
+          <td>空间不足时显示「目标卡或磁盘空间不足」，子页显示还差多少与剩余空间；只读时显示「目标卡或磁盘只读」，子页显示「只读」与盘名；两次任务均不启动。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-15</td>
+          <td>首页有任务卡。</td>
+          <td>左划任务卡，点「删除」并确认。</td>
+          <td>任务卡显示「删除」；确认后任务移除，已备份文件保留。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-16</td>
           <td>首页。</td>
-          <td>切换到 AI tab。</td>
-          <td>标题为 AI，显示 AI 推荐、AI 修图两张卡。</td>
+          <td>依次切到任务 tab、AI tab，再点头像与设置入口。</td>
+          <td>AI 页面标题为 AI，显示 AI 推荐、AI 修图，首页不再显示；任务 tab 除导航外与线上一致；头像与设置的行为与线上一致。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-17</td>
+          <td>首页有 3 个及以上任务。</td>
+          <td>打开首页并向下滚动。</td>
+          <td>三张入口卡位于任务卡下方、小横线之下；前两张并排，外部素材拷贝占整行；可滚动看到全部任务卡与入口卡。</td>
+        </tr>
+        <tr>
+          <td class="nowrap">AC-18</td>
+          <td>首页。</td>
+          <td>点任务卡进子页；点右上设置；<br>连续返回。</td>
+          <td>子页标题为任务名；右上进入设置页；返回依次回到子页、首页。</td>
         </tr>
       </tbody>
     </table>
