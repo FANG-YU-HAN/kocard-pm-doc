@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const USAGE = '用法: node plugins/kocard-prd/scripts/new-prd.mjs "文档标题" [--date YYYY-MM-DD]';
@@ -87,7 +87,9 @@ const slug = slugify(title);
 if (!slug) fail('标题无法生成合法文件名。');
 
 const fileName = `${date}-${slug}.html`;
-const outputPath = path.join(root, fileName);
+const docDir = path.join(root, 'doc');
+mkdirSync(docDir, { recursive: true });
+const outputPath = path.join(docDir, fileName);
 const safeTitle = escapeHtml(title);
 
 html = html.replace(/<title>[\s\S]*?<\/title>/, () => `<title>${safeTitle} · PRD</title>`);

@@ -40,7 +40,7 @@ description: 在 kocard-pm-work 仓库写产品需求文档（PRD、需求文档
 4. 交付前在仓库根目录运行：
 
    ```bash
-   node plugins/kocard-prd/scripts/check-prd.mjs "生成的文件.html" --strict
+   node plugins/kocard-prd/scripts/check-prd.mjs "doc/生成的文件.html" --strict
    ```
 
    有错误就修，有警告也修完再交付。检查会对比模板的样式块，改过样式一定不过。

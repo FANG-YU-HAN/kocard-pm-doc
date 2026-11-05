@@ -20,7 +20,7 @@
 
 ```bash
 node plugins/kocard-prd/scripts/new-prd.mjs "桌面端订阅支付"
-node plugins/kocard-prd/scripts/check-prd.mjs "2026-10-26-桌面端订阅支付.html" --strict
+node plugins/kocard-prd/scripts/check-prd.mjs "doc/2026-10-26-桌面端订阅支付.html" --strict
 ```
 
 `new-prd.mjs` 会复制模板、填标题和日期、按 `YYYY-MM-DD-标题.html` 命名；文件已存在时拒绝覆盖。

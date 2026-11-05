@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kocard 中文官网线框图</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: #0e1116;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 52px 24px 72px;
+  }
+
+  /* ---------- 文档头 ---------- */
+  .doc { width: 874px; max-width: 100%; margin-bottom: 44px; }
+  .doc h1 { margin: 0 0 8px; font-size: 17px; font-weight: 600; letter-spacing: .01em; }
+  .doc p { margin: 0; max-width: 820px; font-size: 12px; line-height: 1.8; color: #6b7280; }
+  .doc .meta { margin-top: 8px; font-size: 11px; color: #9aa1ab; }
+
+  /* ---------- 浏览器框与组件板 ---------- */
+  .fig-block { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 13px; margin: 0; }
+  .browser {
+    width: 1120px;
+    flex: none;
+    zoom: .78;
+    border: 1px solid #d7dce3;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .board {
+    width: 1120px;
+    flex: none;
+    zoom: .78;
+    border: 1px solid #d7dce3;
+    border-radius: 12px;
+    background: #fff;
+    padding: 30px 48px 40px;
+  }
+  .chrome {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 13px;
+    background: #fafbfc;
+    border-bottom: 1px solid #e6eaf0;
+  }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 8px; height: 8px; border: 1px solid #d7dce3; border-radius: 50%; background: #eef1f5; }
+  .url {
+    position: absolute;
+    left: 50%;
+    top: 7px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 330px;
+    height: 20px;
+    border: 1px solid #e6eaf0;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 10px;
+    color: #9aa1ab;
+    letter-spacing: .02em;
+  }
+  .url svg { color: #b9c0c9; }
+
+  .page { background: #fff; }
+  .fig { margin: 0; font-size: 12px; color: #9aa1ab; text-align: center; letter-spacing: .04em; }
+  .footnote { margin: 0; max-width: 690px; font-size: 11.5px; line-height: 1.9; color: #6b7280; text-align: center; }
+  .sep { flex: none; width: 874px; max-width: 100%; height: 1px; margin: 46px 0; background: #e6eaf0; }
+
+  /* ---------- 通用 ---------- */
+  .media {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: #f5f7fa;
+    border: 1px dashed #d7dce3;
+    color: #8a9099;
+    font-size: 12px;
+    letter-spacing: .02em;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .media .tag { position: absolute; top: 12px; right: 14px; font-size: 10px; color: #9aa1ab; letter-spacing: .02em; }
+  .media .sub { font-size: 10.5px; color: #9aa1ab; }
+  .play {
+    width: 38px; height: 38px; flex: none;
+    border: 1px solid #b9c0c9; border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .play i { width: 0; height: 0; border-left: 9px solid #6b7280; border-top: 6px solid transparent; border-bottom: 6px solid transparent; margin-left: 3px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 36px;
+    min-width: 132px;
+    padding: 0 18px;
+    border: 1px solid #d7dce3;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px;
+    color: #0e1116;
+    white-space: nowrap;
+  }
+  .btn.solid { background: #eef1f5; border-color: #c9ced6; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 11px;
+    border: 1px solid #d7dce3;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 11px;
+    color: #3f4650;
+    white-space: nowrap;
+  }
+  .si { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .icobox {
+    width: 34px; height: 34px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #d7dce3; border-radius: 9px;
+    background: #fff; color: #3f4650;
+  }
+
+  .sec { padding: 52px 48px; }
+  .sec + .sec, .band + .band { border-top: 1px solid #eef1f5; }
+  .sec-head { text-align: center; margin-bottom: 30px; }
+  h2.h2 { margin: 0; font-size: 30px; line-height: 1.25; font-weight: 700; letter-spacing: -.01em; }
+  .h2.c { text-align: center; }
+  .sub { margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: #3f4650; }
+  .desc { margin: 12px 0 0; font-size: 13px; line-height: 1.85; color: #6b7280; }
+  .desc.c { text-align: center; max-width: 760px; margin-left: auto; margin-right: auto; }
+  .kicker { font-size: 13px; font-weight: 600; color: #6b7280; letter-spacing: .06em; }
+
+  /* ---------- 导航 ---------- */
+  .navwrap { position: relative; padding: 24px 48px 0; }
+  .navpill {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 72px;
+    padding: 0 24px;
+    border: 1px solid #d7dce3;
+    border-radius: 12px;
+    background: #fff;
+  }
+  .navlogo { font-size: 18px; font-weight: 700; letter-spacing: .06em; }
+  .navlinks { margin-left: auto; display: flex; align-items: center; gap: 34px; font-size: 13px; color: #8a9099; }
+  .navlinks .on { color: #0e1116; font-weight: 600; }
+  .navlinks .ditlink { position: relative; padding-right: 7px; }
+  .navlinks .ditlink i { position: absolute; top: -1px; right: 0; width: 4px; height: 4px; border-radius: 50%; background: #6b7280; }
+  .dropdown {
+    position: absolute;
+    left: 50%;
+    top: 46px;
+    transform: translateX(-50%);
+    width: 300px;
+    border: 1px solid #d7dce3;
+    border-radius: 10px;
+    background: #fff;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    z-index: 3;
+  }
+  .ddlogo {
+    position: relative;
+    width: 44px; height: 44px; flex: none;
+    border: 1px solid #d7dce3; border-radius: 12px;
+    background: #f5f7fa;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
+  }
+  .ddlogo i {
+    position: absolute; top: -5px; right: -11px;
+    font-style: normal; font-size: 8px; color: #6b7280;
+    border: 1px solid #d7dce3; border-radius: 8px;
+    background: #fff; padding: 1px 4px;
+  }
+  .ddtitle { font-size: 13.5px; font-weight: 600; }
+  .dddesc { margin-top: 4px; font-size: 11px; color: #8a9099; line-height: 1.5; }
+
+  /* ---------- 页脚 ---------- */
+  .footer { width: 1024px; border-top: 1px solid #e6eaf0; padding-top: 28px; }
+  .fmain { display: flex; justify-content: space-between; gap: 60px; }
+  .fleft { width: 380px; }
+  .flogo { font-size: 16px; font-weight: 700; letter-spacing: .06em; }
+  .fnote { margin-top: 10px; font-size: 11.5px; line-height: 1.7; color: #6b7280; }
+  .qrs { display: flex; gap: 16px; margin-top: 18px; }
+  .qr { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .qrbox { width: 84px; height: 84px; border: 1px dashed #d7dce3; background: #f5f7fa; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #9aa1ab; }
+  .qr span { font-size: 10px; color: #9aa1ab; }
+  .fcols { display: flex; gap: 76px; }
+  .fcol h4 { margin: 0 0 11px; font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+  .fcol a { display: block; margin-bottom: 8px; font-size: 11.5px; color: #6b7280; text-decoration: none; }
+  .fbottom {
+    margin-top: 26px; padding-top: 14px;
+    border-top: 1px solid #eef1f5;
+    display: flex; justify-content: space-between; gap: 20px;
+    font-size: 10.5px; color: #9aa1ab;
+  }
+  .comp-label { margin: 0 0 12px; font-size: 11px; color: #9aa1ab; letter-spacing: .04em; }
+  .comp-label + .navpill { margin-bottom: 54px; }
+  .comp-label + .navpill.hasdd { margin-bottom: 104px; }
+  .board .footer { margin-top: 4px; }
+
+  /* ---------- 页面首屏 ---------- */
+  .phero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 40px 48px 56px;
+    min-height: 430px;
+  }
+  .phero .copy { max-width: 570px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .brandline { font-size: 26px; font-weight: 700; letter-spacing: .08em; }
+  .herotitle { margin: 8px 0 0; font-size: 44px; line-height: 1.22; font-weight: 700; letter-spacing: -.01em; }
+  .herodesc { margin: 12px 0 0; font-size: 14px; line-height: 1.8; color: #6b7280; }
+  .herobtns { display: flex; gap: 12px; margin-top: 26px; }
+  .heroart { width: 410px; height: 320px; flex: none; }
+
+  /* ---------- 首页 ---------- */
+  .videoband { padding: 0 48px 52px; }
+  .video { height: 430px; }
+  .twocards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .bigcard { border: 1px solid #e6eaf0; border-radius: 12px; overflow: hidden; background: #fff; }
+  .bigcard .media { height: 290px; border: 0; border-bottom: 1px dashed #d7dce3; }
+  .bigcard .pad { padding: 20px 22px 22px; }
+  .bigcard h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+  .bigcard p { margin: 0; font-size: 12.5px; line-height: 1.75; color: #6b7280; }
+  .more { display: inline-flex; align-items: center; gap: 5px; margin-top: 14px; font-size: 12px; color: #3f4650; }
+  .orbit { height: 350px; margin-top: 26px; }
+  .fgrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 16px; }
+  .fcard {
+    position: relative;
+    grid-column: span 2;
+    min-height: 150px;
+    border: 1px dashed #d7dce3;
+    border-radius: 10px;
+    background: #f8f9fb;
+    padding: 16px;
+  }
+  .fcard::after { content: "图片"; position: absolute; right: 14px; bottom: 10px; font-size: 10px; color: #b6bcc5; letter-spacing: .04em; }
+  .fcard.w { grid-column: span 3; }
+  .fcard h3 { margin: 0 0 5px; font-size: 14px; font-weight: 600; }
+  .fcard p { margin: 0; font-size: 11.5px; line-height: 1.7; color: #6b7280; }
+  .multi { display: flex; gap: 46px; margin-top: 28px; }
+  .tabs { width: 220px; flex: none; display: flex; flex-direction: column; gap: 20px; padding-top: 10px; }
+  .tab { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #9aa1ab; }
+  .tab i { width: 6px; height: 6px; border-radius: 50%; background: #d7dce3; }
+  .tab.on { color: #0e1116; font-weight: 600; }
+  .tab.on i { background: #0e1116; }
+  .flow { flex: 1; min-width: 0; }
+  .flow .media { height: 300px; }
+  .steps { display: flex; align-items: flex-start; margin-top: 18px; }
+  .step { width: 138px; flex: none; text-align: center; font-size: 11px; line-height: 1.55; color: #6b7280; }
+  .step b {
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; margin: 0 auto 8px;
+    border: 1px solid #b9c0c9; border-radius: 50%;
+    font-size: 11px; font-weight: 600; color: #0e1116;
+  }
+  .stepline { flex: 1; height: 1px; margin-top: 12px; background: #e0e4ea; }
+  .split { display: flex; align-items: center; gap: 56px; padding: 52px 48px; }
+  .split .copy { flex: 1; }
+  .split .visual { width: 470px; flex: none; }
+  .composite { position: relative; height: 360px; border: 1px solid #e6eaf0; border-radius: 16px; background: #fafbfc; padding: 26px; }
+  .mini { width: 300px; border: 1px solid #d7dce3; border-radius: 10px; background: #fff; padding: 16px; }
+  .mini + .mini { margin-top: 112px; margin-left: auto; }
+  .mini h4 { margin: 0 0 5px; font-size: 14px; font-weight: 600; }
+  .mini p { margin: 0; font-size: 11px; line-height: 1.6; color: #6b7280; }
+  .mini .thumb { height: 46px; margin-top: 10px; border: 1px dashed #e0e4ea; background: #fafbfc; }
+  .workvisual { height: 300px; }
+  .reasons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .reason {
+    position: relative;
+    height: 230px;
+    border: 1px dashed #d7dce3;
+    background: #f5f7fa;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+  }
+  .reason .label { font-size: 14px; font-weight: 600; line-height: 1.45; white-space: pre-line; }
+  .reason .plus {
+    position: absolute; right: 14px; bottom: 14px;
+    width: 28px; height: 28px;
+    border: 1px solid #b9c0c9; border-radius: 50%;
+    background: #fff; color: #6b7280;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .cobrand-banner {
+    position: relative;
+    height: 270px;
+    border: 1px dashed #d7dce3;
+    background: #f5f7fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 80px;
+    text-align: center;
+  }
+  .cobrand-banner .tag { position: absolute; top: 12px; right: 14px; font-size: 10px; color: #9aa1ab; }
+  .cobrand-banner h2 { margin: 0 0 12px; font-size: 30px; font-weight: 700; }
+  .cobrand-banner p { margin: 0; max-width: 780px; font-size: 12.5px; line-height: 1.8; color: #3f4650; }
+  .iconrow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 26px; }
+  .ic { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 11.5px; line-height: 1.5; color: #3f4650; text-align: center; }
+  .ic .icobox { border-radius: 8px; }
+  .brandrow {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 40px;
+    margin-top: 26px; padding: 24px 40px;
+    border-top: 1px solid #eef1f5; border-bottom: 1px solid #eef1f5;
+  }
+  .brandrow span { font-size: 12.5px; color: #9aa1ab; text-align: center; letter-spacing: .02em; }
+  .center-btn { display: flex; justify-content: center; margin-top: 24px; }
+
+  /* ---------- 手机端 ---------- */
+  .phone {
+    position: relative;
+    width: 190px; height: 390px;
+    padding: 9px;
+    border: 1px solid #b9c0c9;
+    border-radius: 28px;
+    background: #fff;
+  }
+  .phone .notch { position: absolute; left: 50%; top: 15px; transform: translateX(-50%); width: 52px; height: 7px; border-radius: 4px; background: #e6eaf0; z-index: 2; }
+  .phone .screen {
+    height: 100%;
+    border: 1px dashed #d7dce3;
+    border-radius: 20px;
+    background: #f8f9fb;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 16px;
+    font-size: 10px; line-height: 1.6; color: #9aa1ab; text-align: center;
+  }
+  .phone .screen b { font-size: 11px; font-weight: 500; color: #6b7280; }
+  .mrow { display: flex; align-items: center; gap: 64px; padding: 42px 48px; }
+  .mrow.rev { flex-direction: row-reverse; }
+  .mrow .copy { flex: 1; }
+  .mrow .visual { width: 400px; flex: none; }
+  .mrow h3 { margin: 0 0 8px; font-size: 24px; font-weight: 600; }
+  .mrow p { margin: 0; font-size: 13px; line-height: 1.85; color: #6b7280; }
+  .aihead { padding: 50px 48px 0; text-align: center; }
+  .aiedit { padding: 28px 48px 0; }
+  .aistage {
+    position: relative;
+    height: 450px;
+    margin-top: 20px;
+    border: 1px solid #eef1f5;
+    border-radius: 14px;
+    background: #fafbfc;
+  }
+  .aistage .phone { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); width: 224px; height: 404px; }
+  .aistage .phone .screen { justify-content: flex-start; padding-top: 34px; }
+  .aistage .phone .screen b { font-size: 12px; color: #3f4650; }
+  .shot {
+    position: absolute;
+    width: 146px; height: 96px;
+    border: 1px dashed #d7dce3;
+    background: #f5f7fa;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 7px;
+    font-size: 10.5px; color: #6b7280;
+  }
+  .shot.s1 { left: 34px; top: 34px; }
+  .shot.s2 { left: 20px; bottom: 40px; }
+  .shot.s3 { right: 34px; top: 34px; }
+  .shot.s4 { right: 20px; bottom: 40px; }
+  .promptbar {
+    position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+    width: 330px; height: 38px;
+    border: 1px solid #d7dce3; border-radius: 19px;
+    background: #fff;
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 14px;
+    font-size: 11px; color: #9aa1ab;
+  }
+  .promptbar .send { margin-left: auto; width: 22px; height: 22px; border: 1px solid #d7dce3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6b7280; }
+  .ai4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px 48px 46px; }
+  .ai4 .ic b { font-size: 13px; font-weight: 600; color: #0e1116; }
+  .widevisual { height: 300px; margin-top: 24px; }
+  .api {
+    display: flex; align-items: center; justify-content: space-between; gap: 40px;
+    margin: 0 48px 46px; padding: 32px 36px;
+    border: 1px solid #e6eaf0; border-radius: 12px;
+    background: #fafbfc;
+  }
+  .api h3 { margin: 0 0 8px; font-size: 22px; font-weight: 600; }
+  .api p { margin: 0; font-size: 12px; line-height: 1.7; color: #6b7280; }
+  .cloudicons { display: flex; gap: 9px; flex: none; }
+  .cloudicons span { width: 38px; height: 38px; border: 1px solid #d7dce3; border-radius: 9px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #9aa1ab; }
+  .final { display: flex; align-items: center; justify-content: space-between; gap: 56px; padding: 40px 48px 46px; }
+  .final .copy { flex: 1; }
+  .final .brandline { font-size: 30px; }
+  .final .phones { display: flex; gap: 0; width: 430px; flex: none; align-items: flex-end; }
+  .final .phones .phone { width: 200px; height: 410px; }
+  .final .phones .phone + .phone { margin-left: -46px; margin-bottom: -18px; width: 176px; height: 360px; }
+  .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 48px 56px; }
+  .plan { border: 1px solid #e6eaf0; border-radius: 12px; padding: 18px 18px 14px; background: #fff; }
+  .plan.featured { border-color: #c9ced6; background: #fafbfc; }
+  .tier { text-align: center; font-size: 12px; color: #6b7280; }
+  .price { margin: 10px 0 3px; text-align: center; font-size: 24px; font-weight: 700; letter-spacing: -.01em; }
+  .price small { font-size: 11px; font-weight: 400; color: #6b7280; }
+  .pnote { min-height: 15px; text-align: center; font-size: 10.5px; color: #9aa1ab; }
+  .credits { min-height: 20px; margin-top: 4px; text-align: center; font-size: 11px; color: #6b7280; }
+  .prow { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid #eef1f5; padding: 8px 2px; font-size: 11.5px; line-height: 1.4; }
+  .prow .name { color: #3f4650; }
+  .prow .yes { color: #0e1116; }
+  .prow .no { color: #c9ced6; }
+  .prow .soon, .prow .pay { color: #9aa1ab; font-size: 10.5px; }
+
+  /* ---------- DIT版 ---------- */
+  .dithead { display: flex; align-items: center; justify-content: space-between; padding: 22px 48px 12px; }
+  .ditlogo { font-size: 14px; font-weight: 700; letter-spacing: .1em; }
+  .ditlinks { display: flex; gap: 8px; }
+  .ditlinks span { border: 1px solid #d7dce3; border-radius: 999px; padding: 6px 14px; font-size: 11px; color: #3f4650; }
+  .dithero { display: flex; flex-direction: column; align-items: center; padding: 22px 48px 36px; text-align: center; }
+  .kbadge {
+    position: relative;
+    width: 58px; height: 58px;
+    border: 1px solid #b9c0c9; border-radius: 15px;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 27px; font-weight: 700;
+  }
+  .kbadge i { position: absolute; top: -6px; right: -13px; font-style: normal; font-size: 8px; color: #6b7280; border: 1px solid #d7dce3; border-radius: 8px; padding: 1px 5px; background: #fff; }
+  .dithero h1 { margin: 16px 0 7px; font-size: 32px; font-weight: 700; letter-spacing: -.01em; }
+  .dithero .sub { font-size: 13px; }
+  .ditbtns { display: flex; gap: 10px; margin-top: 18px; }
+  .ditvideo { position: relative; height: 420px; margin: 0 48px; }
+  .dband { display: flex; align-items: center; gap: 56px; padding: 46px 48px; }
+  .dband.rev { flex-direction: row-reverse; }
+  .dband .copy { flex: 1; }
+  .dband .visual { width: 430px; flex: none; height: 300px; }
+  .dband h3 { margin: 12px 0 7px; font-size: 24px; font-weight: 600; }
+  .dband p { margin: 0; max-width: 400px; font-size: 12.5px; line-height: 1.8; color: #6b7280; }
+  .dband .icobox { width: 40px; height: 40px; border-radius: 50%; }
+  .talk { position: relative; height: 320px; margin: 8px 48px 0; border: 1px dashed #d7dce3; background: #f5f7fa; }
+  .talk .media-label { position: absolute; left: 36px; bottom: 30px; text-align: left; color: #0e1116; z-index: 2; }
+  .talk .media-label b { display: block; font-size: 22px; font-weight: 700; letter-spacing: .02em; }
+  .talk .media-label span { display: block; margin-top: 4px; font-size: 12px; color: #6b7280; }
+  .talk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 2; }
+  .talk .tag { position: absolute; top: 14px; right: 16px; font-size: 10px; color: #9aa1ab; }
+  .ditfoot { margin-top: 42px; border-top: 1px solid #e6eaf0; padding: 28px 48px 26px; }
+  .dfmain { display: flex; justify-content: space-between; gap: 60px; }
+  .dfleft { width: 560px; }
+  .dfleft .flogo { font-size: 14px; letter-spacing: .1em; }
+  .dfleft p { margin: 12px 0 0; font-size: 11px; line-height: 1.9; color: #6b7280; }
+  .dfright { width: 250px; font-size: 11px; line-height: 2; color: #6b7280; }
+  .dfbottom { margin-top: 24px; padding-top: 14px; border-top: 1px solid #eef1f5; display: flex; justify-content: space-between; gap: 20px; font-size: 10.5px; color: #9aa1ab; }
+
+  /* ---------- 设备 ---------- */
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 205px; gap: 12px; }
+  .btile { position: relative; border: 1px dashed #d7dce3; background: #f8f9fb; padding: 15px; overflow: hidden; }
+  .btile h4 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
+  .btile p { margin: 0; font-size: 10.5px; line-height: 1.6; color: #6b7280; }
+  .btile .mini-media { position: absolute; left: 15px; right: 15px; bottom: 12px; height: 78px; border: 1px dashed #e0e4ea; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 9.5px; color: #9aa1ab; }
+  .btile.tall { grid-row: span 2; }
+  .btile.tall .mini-media { height: 210px; }
+  .btile.tall2 { grid-row: span 2; }
+  .btile.tall2 .mini-media { height: 210px; }
+  .compare { width: 100%; border-collapse: collapse; border-top: 1px solid #e6eaf0; }
+  .compare th, .compare td { border-bottom: 1px solid #eef1f5; padding: 11px 14px; text-align: left; vertical-align: top; font-size: 11.5px; line-height: 1.6; }
+  .compare th { font-weight: 600; color: #3f4650; background: #fafbfc; }
+  .compare td:first-child, .compare th:first-child { width: 150px; color: #6b7280; font-weight: 400; }
+  .compare .col { width: 37%; }
+  .compare .pill { display: inline-block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #0e1116; }
+  .compare .prodimg { width: 90px; height: 62px; border: 1px dashed #d7dce3; background: #f5f7fa; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #9aa1ab; margin-bottom: 8px; }
+  .compare .muted { color: #6b7280; }
+  .speed { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+  .speedcard { border: 1px solid #e6eaf0; border-radius: 10px; padding: 16px; background: #fff; }
+  .speedcard .meta { display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
+  .speedcard .meta b { color: #0e1116; font-weight: 600; }
+  .bar { position: relative; height: 46px; margin-top: 10px; background: #f5f7fa; border: 1px dashed #e0e4ea; }
+  .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: #e6eaf0; }
+  .bar span { position: absolute; left: 10px; bottom: 6px; font-size: 10px; color: #3f4650; }
+  .localicons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+  .pack { display: flex; align-items: center; gap: 48px; }
+  .packlist { width: 330px; flex: none; }
+  .packlist h3 { margin: 0 0 16px; font-size: 22px; font-weight: 600; }
+  .packlist li { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-size: 12px; color: #3f4650; list-style: none; }
+  .packlist ul { margin: 0; padding: 0; }
+  .packlist li i { width: 5px; height: 5px; border-radius: 50%; background: #9aa1ab; flex: none; }
+  .pack .media { flex: 1; height: 300px; }
+  .dim {
+    position: relative;
+    height: 230px;
+    margin-top: 20px;
+    border: 1px dashed #d7dce3;
+    background: #f8f9fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 34px;
+  }
+  .devfront { width: 240px; height: 128px; border: 1px solid #b9c0c9; border-radius: 14px; background: #fff; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; font-size: 11px; color: #6b7280; letter-spacing: .08em; }
+  .devside { width: 8px; height: 128px; border: 1px solid #b9c0c9; border-radius: 4px; background: #fff; }
+  .dim span { position: absolute; font-size: 10px; color: #6b7280; }
+  .dim .dimw { left: 50%; transform: translateX(-50%); bottom: 26px; }
+  .dim .dimh { left: 50%; transform: translateX(-50%); top: 26px; }
+  .dim .dimd { right: 180px; bottom: 50%; }
+  .specs { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 18px; border-top: 1px solid #e6eaf0; border-left: 1px solid #e6eaf0; }
+  .spec { border-right: 1px solid #e6eaf0; border-bottom: 1px solid #e6eaf0; padding: 12px 14px; min-height: 62px; }
+  .spec .k { margin-bottom: 4px; font-size: 10px; color: #9aa1ab; }
+  .spec .v { font-size: 11.5px; line-height: 1.55; color: #3f4650; }
+
+  /* ---------- 下载 ---------- */
+  .dlp { padding: 54px 48px 64px; text-align: center; }
+  .dlcards { display: flex; justify-content: center; gap: 18px; margin-top: 32px; }
+  .dlcard { width: 220px; height: 186px; border: 1px solid #d7dce3; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: #fff; }
+  .dlcard .os { font-size: 15px; font-weight: 600; }
+  .dlcard .go { font-size: 11px; color: #9aa1ab; }
+  .dlcard .dl { margin-top: 4px; width: 30px; height: 30px; border: 1px solid #d7dce3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #3f4650; }
+
+  /* ---------- 关于 ---------- */
+  .aboutcards { display: grid; grid-template-columns: 1fr 1fr 1.15fr; gap: 14px; padding: 0 48px 48px; }
+  .acard { border: 1px solid #e6eaf0; border-radius: 12px; overflow: hidden; min-height: 380px; background: #fff; }
+  .acard .media { height: 100%; border: 0; }
+  .acard .topmedia { height: 196px; border: 0; border-bottom: 1px dashed #d7dce3; }
+  .apad { padding: 22px; }
+  .apad h3 { margin: 0 0 10px; font-size: 18px; font-weight: 600; line-height: 1.4; }
+  .apad p { margin: 0; font-size: 11.5px; line-height: 1.9; color: #6b7280; }
+  .aboutwhy {
+    margin: 0 48px 50px;
+    padding: 40px 64px;
+    border: 1px solid #e6eaf0;
+    border-radius: 12px;
+    background: #fafbfc;
+    text-align: center;
+  }
+  .aboutwhy h3 { margin: 0 0 8px; font-size: 24px; font-weight: 600; }
+  .aboutwhy .sub { font-size: 13px; }
+  .aboutwhy p { max-width: 720px; margin: 14px auto 0; font-size: 12px; line-height: 1.9; color: #6b7280; }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 940px) { .browser, .board { zoom: .68; } }
+  @media (max-width: 780px) { .browser, .board { zoom: .56; } }
+  @media (max-width: 640px) { .browser, .board { zoom: .46; } }
+  @media (max-width: 520px) { .browser, .board { zoom: .38; } }
+  @media (max-width: 440px) { body { padding: 36px 16px 56px; } .browser, .board { zoom: .3; } }
+  @media (max-width: 380px) { .browser, .board { zoom: .26; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-photo" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 17l5-5 4 4 3-3 4 4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.4c0 4.3-2.8 7.4-7 9.3-4.2-1.9-7-5-7-9.3V5.8z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l2.6-2.6a4 4 0 0 0-5.7-5.7L11.4 7"/><path d="M14 10a4 4 0 0 0-5.7 0L5.7 12.6a4 4 0 0 0 5.7 5.7L12.6 17"/></symbol>
+  <symbol id="i-transcode" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5l4.5 2.5-4.5 2.5z"/><path d="M7 2.8v2M17 2.8v2"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.4-9A6 6 0 0 1 18 9.6 4.2 4.2 0 0 1 17.5 18z"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><path d="M6 4h9l4 4v12H6z"/><path d="M15 4v4h4"/><rect x="9" y="11" width="6" height="4" rx="1"/></symbol>
+  <symbol id="i-hdd" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12" rx="2.5"/><path d="M3.5 14h17"/><circle cx="17" cy="16.4" r=".7"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M7 6.5a7.5 7.5 0 1 0 10 0"/></symbol>
+  <symbol id="i-magnet" viewBox="0 0 24 24"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"/><path d="M6 8h4M14 8h4"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="12" rx="3"/><path d="M9 12h2M13 12h2M12 6V3M12 21v-3"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="2.5"/><path d="M15 10.5l6-3v9l-6-3z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.4l5.8 3.6-5.8 3.6z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 19.5h15"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5h3l1.5-2h8l1.5 2h3v10h-17z"/><circle cx="12" cy="13" r="3.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol>
+</svg>
+
+<div class="doc">
+  <h1>Kocard 中文官网线框图</h1>
+  <p>按 kocard.net 线上页面绘制，覆盖 首页 / 手机端 / DIT版 / 设备 / 下载 / 关于 六个页面。页面顺序、导航与文案按 2026-11-02 线上现状整理；图片、视频、截图用虚线块占位，不表现配色。</p>
+  <p>图1 是全站共用的导航与页脚；图2–图7 每图一个页面，页内不再重复页脚。手机上按屏幕宽度整体缩放。</p>
+  <div class="meta">2026-11-02 · 来源：kocard.net 线上页面</div>
+</div>
+
+<!-- 图1 · 全站导航与页脚 -->
+<figure class="fig-block">
+  <div class="board">
+    <div class="comp-label">全站导航（悬浮胶囊，滚动后固定在顶部）</div>
+    <div class="navpill">
+      <div class="navlogo">KOCARD</div>
+      <div class="navlinks">
+        <span class="on">首页</span>
+        <span>APP</span>
+        <span class="ditlink">DIT版<i></i></span>
+        <span>设备</span>
+        <span>下载</span>
+        <span>关于</span>
+      </div>
+    </div>
+
+    <div class="comp-label">DIT版 悬停下拉</div>
+    <div class="navpill hasdd">
+      <div class="navlogo">KOCARD</div>
+      <div class="navlinks">
+        <span>首页</span>
+        <span>APP</span>
+        <span class="ditlink on">DIT版<i></i>
+          <span class="dropdown">
+            <span class="ddlogo">K<i>DIT</i></span>
+            <span>
+              <span class="ddtitle" style="display:block">KOCARD DIT（原电脑版）</span>
+              <span class="dddesc" style="display:block">点击进入了解产品及下载使用</span>
+            </span>
+          </span>
+        </span>
+        <span>设备</span>
+        <span>下载</span>
+        <span>关于</span>
+      </div>
+    </div>
+
+    <div class="comp-label">全站页脚（首页 / 手机端 / 设备 / 下载 / 关于）</div>
+    <div class="footer">
+      <div class="fmain">
+        <div class="fleft">
+          <div class="flogo">KOCARD</div>
+          <div class="fnote">立即下载体验kocard 移动助手，开启高效创作之旅</div>
+          <div class="qrs">
+            <div class="qr"><div class="qrbox">二维码</div><span>iOS</span></div>
+            <div class="qr"><div class="qrbox">二维码</div><span>Android</span></div>
+          </div>
+        </div>
+        <div class="fcols">
+          <div class="fcol">
+            <h4>支持</h4>
+            <a href="#">下载中心</a>
+            <a href="#">关于我们</a>
+          </div>
+          <div class="fcol">
+            <h4>政策与条款</h4>
+            <a href="#">隐私政策</a>
+            <a href="#">服务条款</a>
+          </div>
+          <div class="fcol">
+            <h4>联系我们</h4>
+            <a href="#">service@kocard.net</a>
+          </div>
+        </div>
+      </div>
+      <div class="fbottom">
+        <span>© Copyright Yueliu All right reserved.</span>
+        <span>沪ICP备17033998号-5</span>
+      </div>
+    </div>
+  </div>
+  <figcaption class="fig">图1 · 全站导航与页脚</figcaption>
+  <p class="footnote">导航为悬浮胶囊，页面滚动后固定在顶部；APP 直接进入手机端，DIT版 在新标签打开并带悬停下拉。页脚在除 DIT版 外的五个页面统一；DIT版 使用独立页脚，见图4。</p>
+</figure>
+
+<div class="sep"></div>
+
+<!-- 图2 · 首页 -->
+<figure class="fig-block">
+  <div class="browser">
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg width="9" height="11" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6"/></svg>kocard.net</span>
+    </div>
+    <div class="page">
+      <div class="navwrap">
+        <div class="navpill">
+          <div class="navlogo">KOCARD</div>
+          <div class="navlinks">
+            <span class="on">首页</span>
+            <span>APP</span>
+            <span class="ditlink">DIT版<i></i></span>
+            <span>设备</span>
+            <span>下载</span>
+            <span>关于</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="phero">
+        <div class="copy">
+          <div class="chips">
+            <span class="chip">相册同步</span>
+            <span class="chip">一键备份</span>
+            <span class="chip">智能转码</span>
+            <span class="chip">AI修图选图</span>
+            <span class="chip">云端协作</span>
+          </div>
+          <div class="brandline">KOCARD</div>
+          <h1 class="herotitle">移动智能存储解决方案</h1>
+          <div class="herobtns">
+            <span class="btn solid">iOS 下载</span>
+            <span class="btn">Android 下载</span>
+          </div>
+        </div>
+        <div class="media heroart"><span class="tag">首屏主视觉</span>产品、手机与 App 界面</div>
+      </section>
+
+      <section class="videoband">
+        <div class="media video">
+          <span class="tag">视频 16:9</span>
+          <span class="play"><i></i></span>
+          品牌视频
+          <span class="sub">画面内嵌英文字幕：For the solo creator, it's a game-changer</span>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head">
+          <h2 class="h2">KOCARD软件与硬件</h2>
+          <p class="sub">多合一智能存储与处理中心</p>
+        </div>
+        <div class="twocards">
+          <div class="bigcard">
+            <div class="media"><span class="tag">图片</span>App 界面与手机</div>
+            <div class="pad">
+              <h3>应用程序</h3>
+              <p>素材备份，转码，协同与AI智能处理全搞定</p>
+              <span class="more">了解更多 <svg class="si" style="width:13px;height:13px"><use href="#i-arrow"/></svg></span>
+            </div>
+          </div>
+          <div class="bigcard">
+            <div class="media"><span class="tag">图片</span>KOCARD GO 产品图</div>
+            <div class="pad">
+              <h3>硬件设备</h3>
+              <p>搭载专业级双SD/TF 4.0卡槽与高性能SSD，体验极速备份</p>
+              <span class="more">了解更多 <svg class="si" style="width:13px;height:13px"><use href="#i-arrow"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head">
+          <h2 class="h2">KOCARD应用程序</h2>
+          <p class="desc c">为影像用户在移动场景下打造的一款智能数据管理应用，从数据备份，安全、传输与智能处理等多方面提升影像数据管理效率，为创作提效赋能</p>
+        </div>
+        <div class="media orbit"><span class="tag">图片</span>App 主界面与环绕的功能标签</div>
+        <div class="fgrid">
+          <div class="fcard">
+            <h3>多云端一键上传</h3>
+            <p>支持 Google Drive、Dropbox、NAS等</p>
+          </div>
+          <div class="fcard">
+            <h3>智能相册同步</h3>
+            <p>自动备份照片和视频</p>
+          </div>
+          <div class="fcard">
+            <h3>AI图片修复</h3>
+            <p>智能甄选您的最佳镜头与视频集锦</p>
+          </div>
+          <div class="fcard w">
+            <h3>智能转码</h3>
+            <p>转为 10-bit HEVC 格式，上传更极速</p>
+          </div>
+          <div class="fcard w">
+            <h3>智能去重</h3>
+            <p>智能过滤重复拍摄画面</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head">
+          <h2 class="h2">多端链接，智能协同</h2>
+          <p class="desc c">支持直接绑定您的三方产品，包括 NAS ，服务器，云盘，剪辑软件等，让您可以实时自动实时同步数据，建立便捷协同。</p>
+        </div>
+        <div class="multi">
+          <div class="tabs">
+            <span class="tab on"><i></i>智能相册同步</span>
+            <span class="tab"><i></i>多云上传</span>
+            <span class="tab"><i></i>智能转码</span>
+            <span class="tab"><i></i>智能推荐</span>
+          </div>
+          <div class="flow">
+            <div class="media"><span class="tag">三步流程动画</span><span class="play" style="width:32px;height:32px"><i></i></span>选择硬盘、设置同步、完成备份</div>
+            <div class="steps">
+              <div class="step"><b>1</b>选择外部硬盘</div>
+              <div class="stepline"></div>
+              <div class="step"><b>2</b>设置自动备份<br>并选择同步选项</div>
+              <div class="stepline"></div>
+              <div class="step"><b>3</b>备份完成</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="split">
+        <div class="copy">
+          <div class="kicker">在AI时代下，为移动场景专属打造的</div>
+          <h2 class="h2" style="margin-top:8px">数据存储管理解决方案</h2>
+          <p class="desc">完整的软硬一体生态，为您的创作强势赋能。结合高速 SSD 与智能 App，无需电脑，即可实现媒体素材的即时备份、转码与整理</p>
+        </div>
+        <div class="visual">
+          <div class="composite">
+            <div class="mini">
+              <h4>智能APP</h4>
+              <p>素材秒导入<br>转码整理一步到位</p>
+              <div class="thumb"></div>
+            </div>
+            <div class="mini">
+              <h4>便携扩展坞</h4>
+              <p>高速 SSD、双卡槽、PD 快充</p>
+              <div class="thumb"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="split" style="border-top:1px solid #eef1f5">
+        <div class="visual">
+          <div class="media workvisual"><span class="tag">图片</span>数据源与素材管理界面</div>
+        </div>
+        <div class="copy">
+          <h2 class="h2">影像创意工作者的<br>全新工作流福音</h2>
+          <p class="desc">一体化解决方案<br>打造您的一站式创作流</p>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head"><h2 class="h2">选择 KOCARD 的理由</h2></div>
+        <div class="reasons">
+          <div class="reason"><span class="label">户外
+移动备份</span><span class="plus">+</span></div>
+          <div class="reason"><span class="label">告别
+存储焦虑</span><span class="plus">+</span></div>
+          <div class="reason"><span class="label">告别
+设备凌乱</span><span class="plus">+</span></div>
+          <div class="reason"><span class="label">智能AI
+处理</span><span class="plus">+</span></div>
+        </div>
+      </section>
+
+      <section class="sec" style="padding-top:0">
+        <div class="cobrand-banner">
+          <span class="tag">图片</span>
+          <h2>CO-Branding</h2>
+          <p>KOCARD 发挥内部专业影像制作优势，为合作品牌链接优质影像创作者、社媒资源、以及提供影像解决方案，进行多层次的内容共创联动;助力合作伙伴拓宽潜在用户圈层、拉升双方品牌影响力。</p>
+        </div>
+        <h3 style="margin:30px 0 0;font-size:18px;font-weight:600">多形式内容共创的品牌联动：</h3>
+        <div class="iconrow">
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-video"/></svg></span>视频内容共创</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-card"/></svg></span>产品共创</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-camera"/></svg></span>电影节/训练营</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-spark"/></svg></span>爆品组销</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-play"/></svg></span>品牌联合直播间</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-ai"/></svg></span>软件定制开发</div>
+        </div>
+        <div class="brandrow">
+          <span>SmallRig</span><span>dji</span><span>剪映</span><span>Lexar</span>
+          <span>EXASCEND</span><span>UGREEN 绿联</span><span>阅流</span><span>百度网盘</span>
+        </div>
+        <div class="center-btn"><span class="btn solid">合作咨询</span></div>
+      </section>
+    </div>
+  </div>
+  <figcaption class="fig">图2 · 首页</figcaption>
+  <p class="footnote">首页从上到下：首屏、品牌视频、软件与硬件两张入口卡、应用程序介绍与五张功能卡、多端链接三步流程、AI 数据存储方案、工作流、选择理由四张卡、CO-Branding。页脚见图1。</p>
+</figure>
+
+<div class="sep"></div>
+
+<!-- 图3 · 手机端 -->
+<figure class="fig-block">
+  <div class="browser">
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg width="9" height="11" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6"/></svg>kocard.net/software/mobile</span>
+    </div>
+    <div class="page">
+      <div class="navwrap">
+        <div class="navpill">
+          <div class="navlogo">KOCARD</div>
+          <div class="navlinks">
+            <span>首页</span>
+            <span class="on">APP</span>
+            <span class="ditlink">DIT版<i></i></span>
+            <span>设备</span>
+            <span>下载</span>
+            <span>关于</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="phero">
+        <div class="copy">
+          <h1 class="herotitle">您的智能移动数据<br>管理助手</h1>
+          <p class="herodesc">相册同步，一键备份，智能转码，AI修图选图，云端协作</p>
+          <div class="herobtns">
+            <span class="btn solid">iOS 下载</span>
+            <span class="btn">Android 下载</span>
+          </div>
+        </div>
+        <div class="media heroart" style="height:360px"><span class="tag">图片</span>手机与 KOCARD App</div>
+      </section>
+
+      <section class="mrow">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-photo"/></svg></span>
+          <h3 style="margin-top:14px">智能相册同步</h3>
+          <p>通过智能自动同步，轻松备份您的手机相册。支持自定义筛选照片或视频，实时查看备份进度，确保每一份珍贵记忆都安全无虞。</p>
+        </div>
+        <div class="visual">
+          <div class="phone"><span class="notch"></span><div class="screen"><b>相册备份设置</b>选择相册 · 自动备份开关 · 进度</div></div>
+        </div>
+      </section>
+
+      <section class="mrow rev" style="border-top:1px solid #eef1f5">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-hdd"/></svg></span>
+          <h3 style="margin-top:14px">本地备份</h3>
+          <p>无需电脑或网络，直接将数据安全备份至 SSD。支持稳定的后台传输、断点续传与自动校验。无论是保存原片还是转码文件，都能时刻保障数据安全。</p>
+        </div>
+        <div class="visual">
+          <div class="phone"><span class="notch"></span><div class="screen"><b>备份任务</b>源：相册 122 个文件<br>目标：KOCARD<br>断点续传 · 自动校验</div></div>
+        </div>
+      </section>
+
+      <section class="mrow">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-link"/></svg></span>
+          <h3 style="margin-top:14px">支持多端直链</h3>
+          <p>支持直接绑定您的三方产品，包括 NAS ，服务器，云盘，剪辑软件等，让您可以实时自动实时同步数据，建立便捷协同。</p>
+        </div>
+        <div class="visual">
+          <div class="phone"><span class="notch"></span><div class="screen"><b>选择要连接的设备</b>NAS<br>云盘<br>剪辑软件</div></div>
+        </div>
+      </section>
+
+      <section class="mrow rev" style="border-top:1px solid #eef1f5">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-transcode"/></svg></span>
+          <h3 style="margin-top:14px">智能转码</h3>
+          <p>上传方式由您做主。既可选择保留原始细节的原片，也可自动转码为 HEVC 10-bit 实现极速同步。在最大化利用存储空间的同时，确保画质分毫毕现。</p>
+        </div>
+        <div class="visual">
+          <div class="phone"><span class="notch"></span><div class="screen"><b>任务设置</b>源：相册 122 个文件<br>原始文件 106 GB<br>优化后 102 GB</div></div>
+        </div>
+      </section>
+
+      <section class="aihead" style="border-top:1px solid #eef1f5">
+        <h2 class="h2">AI 创意工作室</h2>
+      </section>
+
+      <section class="mrow" style="padding-top:36px">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-spark"/></svg></span>
+          <h3 style="margin-top:14px">AI 智能推荐</h3>
+          <p>自动策划您的最佳照片并精准定位视频亮点。由 Google Gemini 提供支持，我们的先进 AI 处理繁重的筛选和选择工作，为您节省数小时的审查时间。</p>
+        </div>
+        <div class="visual">
+          <div class="phone"><span class="notch"></span><div class="screen"><b>AI 推荐</b>最佳照片<br>视频亮点<br>自动筛选</div></div>
+        </div>
+      </section>
+
+      <section class="aiedit">
+        <div class="sec-head">
+          <h2 class="h2">AI 智能修图</h2>
+          <p class="desc c">只需上传照片并输入画面描述，剩下的交给 AI。让您的文字指令瞬间转化为惊艳的视觉大片。</p>
+        </div>
+        <div class="aistage">
+          <div class="shot s1">一键调整场景</div>
+          <div class="shot s2">一键换装</div>
+          <div class="shot s3">清除人物</div>
+          <div class="shot s4">一键换天</div>
+          <div class="phone">
+            <span class="notch"></span>
+            <div class="screen">
+              <b>AI 修图</b>
+              <span style="color:#3f4650">Hi～</span>
+              <span style="color:#3f4650">我是您的修图智能助手</span>
+              <span>上传一张图片，告诉我您想如何修改吧！</span>
+            </div>
+          </div>
+          <div class="promptbar">请输入您的修图要求<span class="send"><svg class="si" style="width:12px;height:12px"><use href="#i-arrow"/></svg></span></div>
+        </div>
+        <div class="ai4">
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-photo"/></svg></span><b>AI 选图</b>筛选并推荐您可能喜欢的图片</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-spark"/></svg></span><b>AI 修图</b>Agent 修图，一句话帮您精致美颜</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-video"/></svg></span><b>AI 高光</b>敬请期待</div>
+          <div class="ic"><span class="icobox"><svg class="si"><use href="#i-camera"/></svg></span><b>AI 成片</b>敬请期待</div>
+        </div>
+      </section>
+
+      <section class="sec" style="border-top:1px solid #eef1f5;padding-top:44px">
+        <div class="sec-head">
+          <h2 class="h2">打造AI 驱动的全新创作流中枢</h2>
+          <p class="desc c">瞬间将原始视频素材转化为创意资产。我们的先进AI引擎自动处理、组织和优化您的媒体。让AI处理技术细节，让您保持创作灵感。</p>
+        </div>
+        <div class="media widevisual"><span class="tag">图片</span>素材进入 AI 处理再输出成片的流程示意</div>
+      </section>
+
+      <div class="api">
+        <div>
+          <h3>接入我们的 API</h3>
+          <p>将您的产品接入 KOCARD 云生态。<br>联系我们　service@kocard.net</p>
+        </div>
+        <div class="cloudicons">
+          <span>Drive</span><span>Dropbox</span><span>iCloud</span><span>NAS</span><span>云盘</span>
+        </div>
+      </div>
+
+      <section class="final" style="border-top:1px solid #eef1f5">
+        <div class="copy">
+          <div class="brandline">KOCARD</div>
+          <h2 class="h2" style="margin:6px 0 12px">移动智能存储解决方案</h2>
+          <div class="chips" style="margin-bottom:0">
+            <span class="chip">相册同步</span><span class="chip">一键备份</span><span class="chip">智能转码</span><span class="chip">AI修图选图</span><span class="chip">云端协作</span>
+          </div>
+          <div class="herobtns"><span class="btn solid">立即下载体验</span></div>
+        </div>
+        <div class="phones">
+          <div class="phone"><span class="notch"></span><div class="screen"><b>任务</b>备份进度</div></div>
+          <div class="phone"><span class="notch"></span><div class="screen"><b>首页</b>App 功能入口</div></div>
+        </div>
+      </section>
+
+      <section class="pricing" style="border-top:1px solid #eef1f5;padding-top:44px">
+        <div class="plan">
+          <div class="tier">基础版</div>
+          <div class="price">免费</div>
+          <div class="pnote"></div>
+          <div class="credits"></div>
+          <div class="prow"><span class="name">相册备份</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件拷贝</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">任务统计</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件校验</span><span class="no">—</span></div>
+          <div class="prow"><span class="name">文件上传</span><span class="no">—</span></div>
+          <div class="prow"><span class="name">转码优化</span><span class="no">—</span></div>
+          <div class="prow"><span class="name">AI 选图</span><span class="no">—</span></div>
+          <div class="prow"><span class="name">高光时刻</span><span class="no">—</span></div>
+          <div class="prow"><span class="name">一键成片</span><span class="no">—</span></div>
+          <div class="prow"><span class="name">AI 修图</span><span class="pay">充值可用</span></div>
+        </div>
+        <div class="plan featured">
+          <div class="tier">高级版套餐</div>
+          <div class="price">¥429 <small>/ 年</small></div>
+          <div class="pnote">1年高级版会员</div>
+          <div class="credits">20000 AI积分</div>
+          <div class="prow"><span class="name">相册备份</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件拷贝</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">任务统计</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件校验</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件上传</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">转码优化</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">AI 选图</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">高光时刻</span><span class="soon">敬请期待</span></div>
+          <div class="prow"><span class="name">一键成片</span><span class="soon">敬请期待</span></div>
+          <div class="prow"><span class="name">AI 修图</span><span class="pay">充值可用</span></div>
+        </div>
+        <div class="plan">
+          <div class="tier">高级会员</div>
+          <div class="price">¥36 <small>/ 月</small></div>
+          <div class="pnote">¥369/年</div>
+          <div class="credits"></div>
+          <div class="prow"><span class="name">相册备份</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件拷贝</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">任务统计</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件校验</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">文件上传</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">转码优化</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">AI 选图</span><span class="yes">✓</span></div>
+          <div class="prow"><span class="name">高光时刻</span><span class="soon">敬请期待</span></div>
+          <div class="prow"><span class="name">一键成片</span><span class="soon">敬请期待</span></div>
+          <div class="prow"><span class="name">AI 修图</span><span class="pay">充值可用</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <figcaption class="fig">图3 · 手机端</figcaption>
+  <p class="footnote">手机端是 App 的产品页：首屏、四个功能段落（相册同步 / 本地备份 / 多端直链 / 智能转码）、AI 创意工作室（AI 推荐、AI 修图、四个 AI 能力）、创作流中枢、API、下载收尾和三档价格表。价格在页面末尾，不在下载页。</p>
+</figure>
+
+<div class="sep"></div>
+
+<!-- 图4 · DIT版 -->
+<figure class="fig-block">
+  <div class="browser">
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg width="9" height="11" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6"/></svg>kocard.net/kocardDit</span>
+    </div>
+    <div class="page">
+      <div class="dithead">
+        <div class="ditlogo">KOCARD DIT</div>
+        <div class="ditlinks"><span>用户协议</span><span>隐私政策</span><span>定价方案</span></div>
+      </div>
+
+      <section class="dithero">
+        <div class="kbadge">K<i>DIT</i></div>
+        <h1>KOCARD DIT 素材备份管理软件</h1>
+        <p class="sub">安全拷贝，便捷转码，高效素材管理</p>
+        <div class="ditbtns">
+          <span class="btn solid">Intel芯片版下载</span>
+          <span class="btn">Apple芯片版下载</span>
+          <span class="btn">Windows版下载</span>
+        </div>
+      </section>
+
+      <div class="media ditvideo">
+        <span class="tag">视频 16:9</span>
+        <span class="play"><i></i></span>
+        产品演示视频
+      </div>
+
+      <section class="dband">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-card"/></svg></span>
+          <h3>多路径备份</h3>
+          <p>支持单卡同时向多个磁盘路径进行拷贝和备份</p>
+        </div>
+        <div class="media visual"><span class="tag">截图</span>新建拷卡任务：素材卡、拷贝目的地、目的地文件夹名称</div>
+      </section>
+
+      <section class="dband rev" style="border-top:1px solid #eef1f5">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-transcode"/></svg></span>
+          <h3>自定义转码</h3>
+          <p>支持代理制作、存档备份、分发预览三大场景的转码需求</p>
+        </div>
+        <div class="media visual"><span class="tag">截图</span>新建转码任务：素材卡、转码目的地、规格</div>
+      </section>
+
+      <section class="dband">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-check"/></svg></span>
+          <h3>文件校验</h3>
+          <p>支持哈希函数校验，保证拷贝完整无误</p>
+        </div>
+        <div class="media visual"><span class="tag">截图</span>任务列表与校验结果</div>
+      </section>
+
+      <section class="dband rev" style="border-top:1px solid #eef1f5">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-download"/></svg></span>
+          <h3>导出报告</h3>
+          <p>支持单任务及多任务拷卡报告快速筛选并导出</p>
+        </div>
+        <div class="media visual"><span class="tag">截图</span>拷卡报告与导出按钮</div>
+      </section>
+
+      <section class="dband">
+        <div class="copy">
+          <span class="icobox"><svg class="si"><use href="#i-ai"/></svg></span>
+          <h3>通知推送</h3>
+          <p>拷贝报告实时推送至手机、邮箱</p>
+        </div>
+        <div class="media visual"><span class="tag">截图</span>通知设置与手机推送</div>
+      </section>
+
+      <div class="talk">
+        <span class="tag">视频占位</span>
+        <span class="play"><i></i></span>
+        <div class="media-label">
+          <b>KOCARD</b>
+          <span>TECH TALK：为什么要使用拷卡软件？　0:30</span>
+        </div>
+      </div>
+
+      <div class="center-btn" style="margin:28px 0 8px">
+        <span class="btn solid">Intel芯片版下载</span>
+        <span class="btn" style="margin-left:10px">Apple芯片版下载</span>
+        <span class="btn" style="margin-left:10px">Windows版下载</span>
+      </div>
+
+      <div class="ditfoot">
+        <div class="dfmain">
+          <div class="dfleft">
+            <div class="flogo">KOCARD DIT</div>
+            <p>KOCARD是上海阅竞网络科技公司旗下产品，阅竞公司致力于为广大影视创作者提供优异的互联网硬件、互联网软件及云端存储服务等产品，有志于成为国内优秀的音视频服务云平台</p>
+          </div>
+          <div class="dfright">
+            公司地址：上海市静安区西藏北路525号<br>
+            公司邮箱：service@yueliu.io<br>
+            联系电话：17721387135
+          </div>
+        </div>
+        <div class="dfbottom">
+          <span>© Copyright Yueliu All right reserved.　沪ICP备17033998号-5</span>
+          <span>问题反馈　|　用户协议　|　隐私协议</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption class="fig">图4 · DIT版</figcaption>
+  <p class="footnote">DIT版 是独立落地页，从导航 DIT版 新标签打开，页面不用主站导航和页脚。首屏三个下载入口（Intel / Apple / Windows），中间五个功能段，末尾一段 TECH TALK 视频再重复下载。页脚邮箱是 service@yueliu.io，和主站不同。</p>
+</figure>
+
+<div class="sep"></div>
+
+<!-- 图5 · 设备 -->
+<figure class="fig-block">
+  <div class="browser">
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg width="9" height="11" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6"/></svg>kocard.net/devices</span>
+    </div>
+    <div class="page">
+      <div class="navwrap">
+        <div class="navpill">
+          <div class="navlogo">KOCARD</div>
+          <div class="navlinks">
+            <span>首页</span>
+            <span>APP</span>
+            <span class="ditlink">DIT版<i></i></span>
+            <span class="on">设备</span>
+            <span>下载</span>
+            <span>关于</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="phero" style="min-height:390px">
+        <div class="copy">
+          <div class="brandline">KOCARD</div>
+          <h1 class="herotitle" style="margin-top:6px">多功能移动固态硬盘</h1>
+          <div class="herobtns"><span class="btn solid">意向购买</span></div>
+        </div>
+        <div class="media heroart" style="height:300px"><span class="tag">产品图</span>KOCARD GO 与手机磁吸</div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head">
+          <h2 class="h2">重新定义您的数据拷贝体验</h2>
+          <p class="sub">全新产品设计，大空间存储，极速传输性能，多合一功能，极致的数据安全。</p>
+        </div>
+        <div class="bento">
+          <div class="btile" style="grid-column:1;grid-row:1">
+            <h4>内置SSD + 双卡槽</h4>
+            <p>即时备份，无需额外设备。</p>
+            <div class="mini-media">产品与卡槽</div>
+          </div>
+          <div class="btile" style="grid-column:2;grid-row:1">
+            <h4>1TB / 2TB</h4>
+            <p>海量存储空间</p>
+            <div class="mini-media">容量示意</div>
+          </div>
+          <div class="btile" style="grid-column:3;grid-row:1">
+            <h4>SD 4.0 UHS-II</h4>
+            <p>高速读卡规格</p>
+            <div class="mini-media">SD / TF 卡</div>
+          </div>
+          <div class="btile tall" style="grid-column:4;grid-row:1 / span 2">
+            <h4>磁吸快拆设计</h4>
+            <p>一贴即合，即刻开工</p>
+            <div class="mini-media">吸附在手机背面</div>
+          </div>
+          <div class="btile" style="grid-column:1;grid-row:2">
+            <h4>1秒传 1G</h4>
+            <p>1000MB/s 稳态传输<br>兼容手机 / 电脑 / iPad</p>
+            <div class="mini-media">传输进度界面</div>
+          </div>
+          <div class="btile" style="grid-column:2;grid-row:2">
+            <h4>智能转码技术</h4>
+            <p>转为 10-bit HEVC，上传更极速</p>
+            <div class="mini-media">原始 1000MB → 优化 200MB</div>
+          </div>
+          <div class="btile" style="grid-column:3;grid-row:2">
+            <h4>PD 供电接口</h4>
+            <p>&lt;5W 低功耗运行，为手机持续供电<br>传输更稳定</p>
+            <div class="mini-media">PD 接口</div>
+          </div>
+          <div class="btile" style="grid-column:1;grid-row:3">
+            <h4>无需电脑备份</h4>
+            <p>手机直连即可备份</p>
+            <div class="mini-media">手机与硬盘</div>
+          </div>
+          <div class="btile" style="grid-column:2;grid-row:3">
+            <h4>智能相册同步</h4>
+            <p>照片和视频的自动备份</p>
+            <div class="mini-media">相册备份</div>
+          </div>
+          <div class="btile" style="grid-column:3;grid-row:3">
+            <h4>多云端一键上传</h4>
+            <p>Google Drive、Dropbox、NAS等</p>
+            <div class="mini-media">云盘图标</div>
+          </div>
+          <div class="btile tall2" style="grid-column:4;grid-row:2 / span 2">
+            <h4>AI美学模型</h4>
+            <p>智能甄选最佳镜头与视频集锦</p>
+            <div class="mini-media">AI 视觉</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" style="padding-top:44px">
+        <div class="sec-head">
+          <h2 class="h2">为什么选择 KOCARD？</h2>
+          <p class="sub">多合一功能于一身，为影像用户打造的专属移动存储产品</p>
+        </div>
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>特点</th>
+              <th class="col"><div class="prodimg">KOCARD 产品图</div><span class="pill">KOCARD</span></th>
+              <th class="col"><div class="prodimg">扩展坞 / 硬盘 / 读卡器</div><span class="pill">传统扩展坞 / 移动硬盘 / 读卡器</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>读卡性能</td><td>一体化设计：内置 SSD + 双 SD 4.0 卡槽</td><td class="muted">仅支持 SD 3.0，且需外接读卡器与硬盘。</td></tr>
+            <tr><td>传输速度与稳定性</td><td>1000MB/S (SSD理论速度)+ 312MB/S (SD/TF) 持续高速稳态传输，不掉速。</td><td class="muted">传输速度极不稳定。频繁掉速，无法维持高速传输。</td></tr>
+            <tr><td>低功耗</td><td>低功耗设计，整机功耗&lt;5W，确保移动端使用。</td><td class="muted">无功耗标定，移动端无法使用。</td></tr>
+            <tr><td>长时间录制</td><td>针对Prores Raw HQ等格式进行外录优化，确保录制顺利进行。</td><td class="muted">无特殊优化，录制会存在丢帧/中断等风险。</td></tr>
+            <tr><td>移动兼容性</td><td>磁吸无缝贴合，告别转接线与适配器。</td><td class="muted">连接繁琐。常需额外供电与转接头，体验不佳。</td></tr>
+            <tr><td>智能转码</td><td>支持RAW原片与 HEVC 格式双模存储。</td><td class="muted">仅基础支持，存在画质损失风险。</td></tr>
+            <tr><td>AI 智能筛选</td><td>AI 智能甄选，自动识别最佳镜头与高光时刻。</td><td class="muted">纯手动整理，无 AI 功能。</td></tr>
+            <tr><td>备份灵活性</td><td>脱机备份。无需电脑/网络即可本地复制，亦支持云端上传。</td><td class="muted">依赖网络，不支持直接本地脱机备份。</td></tr>
+            <tr><td>智能相册同步</td><td>自动筛选并整理照片/视频，井井有条。</td><td class="muted">繁琐的手动拖拽，文件杂乱无章。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="sec" style="padding-top:20px">
+        <div class="sec-head">
+          <div class="brandline">KOCARD</div>
+          <p class="sub" style="margin-top:6px">极速传输，极速创作，无限可能</p>
+        </div>
+
+        <div class="split" style="padding:0 0 36px;gap:48px">
+          <div class="media" style="width:470px;flex:none;height:300px"><span class="tag">图片</span>双卡槽与 SSD 结构</div>
+          <div class="copy">
+            <h3 style="margin:0 0 8px;font-size:24px;font-weight:600">2合1 双卡槽设计</h3>
+            <p class="desc" style="margin-top:0">配备 SD/TF 双卡槽与内置 SSD，无需额外设备，即可从手机、相机或无人机传输文件。让工作流保持顺畅，告别线缆杂乱，轻松管理数据。支持 SD 4.0 与 TF 4.0 (UHS-II) 规格。</p>
+          </div>
+        </div>
+
+        <div class="split" style="padding:0;gap:48px">
+          <div class="copy">
+            <h3 style="margin:0 0 8px;font-size:24px;font-weight:600">持续高速传输</h3>
+            <p class="desc" style="margin-top:0">1000MB/s 的 SSD 稳态高速传输，让工作流游刃有余。SD 4.0 与 TF 4.0 双卡槽可同时提供 312MB/s 的顶尖读写性能。</p>
+          </div>
+          <div class="media" style="width:470px;flex:none;height:300px"><span class="tag">图片</span>手机磁吸与传输</div>
+        </div>
+
+        <div style="margin-top:40px">
+          <h3 style="margin:0;font-size:20px;font-weight:600;text-align:center">与传统硬盘相比，速度更快且全程稳态</h3>
+          <p style="margin:6px 0 0;font-size:10.5px;color:#9aa1ab;text-align:center">*实验室测试数据。实际性能可能因设备、环境及使用条件而异。</p>
+          <div class="speed">
+            <div class="speedcard">
+              <div class="meta"><span>KOCARD</span><b>已备份386个项目 · 96%完成</b></div>
+              <div class="bar"><i style="width:96%"></i><span>速度：950MB/s</span></div>
+            </div>
+            <div class="speedcard">
+              <div class="meta"><span>普通硬盘</span><b>已备份386个项目 · 46%完成</b></div>
+              <div class="bar"><i style="width:46%"></i><span>速度：294MB/s</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" style="border-top:1px solid #eef1f5">
+        <div class="split" style="padding:0 0 40px;gap:48px">
+          <div class="copy">
+            <h3 style="margin:0 0 8px;font-size:24px;font-weight:600">超低功耗设计</h3>
+            <p class="desc" style="margin-top:0">低功耗 (&lt;5W)。支持 PD 透传充电（边充边用），即使手机电量低，也能确保录制与数据传输不中断。</p>
+          </div>
+          <div class="media" style="width:470px;flex:none;height:280px"><span class="tag">图片</span>PD 供电与低功耗</div>
+        </div>
+        <div class="split" style="padding:0 0 40px;gap:48px">
+          <div class="media" style="width:470px;flex:none;height:280px"><span class="tag">图片</span>磁吸在手机背面</div>
+          <div class="copy">
+            <h3 style="margin:0 0 8px;font-size:24px;font-weight:600">磁吸快拆设计</h3>
+            <p class="desc" style="margin-top:0">一贴即合，无缝吸附于手机、笔记本或平板电脑。磁吸设计简化了您的工作流程，无需任何额外夹具或卡扣。</p>
+          </div>
+        </div>
+
+        <div class="split" style="padding:0;gap:48px">
+          <div class="copy">
+            <h3 style="margin:0 0 8px;font-size:26px;font-weight:600;line-height:1.4">100%本地。<br>数据掌握在您手中。</h3>
+            <p class="desc" style="margin-top:0">您的硬件，由您做主。KOCARD 是为您创作素材打造的离线保险箱。从转码到备份，所有过程均在高性能 SSD 上本地完成。拒绝隐形上传，拒绝数据挖掘——只有您和您的数据。</p>
+            <p style="margin:10px 0 0;font-size:10.5px;line-height:1.7;color:#9aa1ab">*所有数据存储与传输均在 KOCARD 硬件端本地进行。我们无法访问存储在内置 SSD 中的任何文件。</p>
+            <div class="localicons" style="grid-template-columns:repeat(4,1fr);margin-top:22px">
+              <div class="ic"><span class="icobox"><svg class="si"><use href="#i-shield"/></svg></span>无数据收集</div>
+              <div class="ic"><span class="icobox"><svg class="si"><use href="#i-transcode"/></svg></span>本地转码</div>
+              <div class="ic"><span class="icobox"><svg class="si"><use href="#i-link"/></svg></span>私人同步</div>
+              <div class="ic"><span class="icobox"><svg class="si"><use href="#i-hdd"/></svg></span>硬件加密</div>
+            </div>
+          </div>
+          <div class="media" style="width:400px;flex:none;height:340px"><span class="tag">图片</span>手机、硬盘与安全盾</div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="pack">
+          <div class="packlist">
+            <h3>包装清单</h3>
+            <ul>
+              <li><i></i>移动固态硬盘 x 1</li>
+              <li><i></i>磁吸贴片 x 1</li>
+              <li><i></i>数据连接线 x 1</li>
+              <li><i></i>用户说明书 x 1</li>
+            </ul>
+          </div>
+          <div class="media"><span class="tag">图片</span>包装盒、硬盘、贴片、数据线与说明书</div>
+        </div>
+      </section>
+
+      <section class="sec" style="border-top:1px solid #eef1f5">
+        <div class="sec-head"><h2 class="h2">规格参数</h2></div>
+        <div class="dim">
+          <span class="dimh">66 mm</span>
+          <div class="devfront">KOCARD</div>
+          <div class="devside"></div>
+          <span class="dimw">102 mm</span>
+          <span class="dimd">9.4 mm</span>
+        </div>
+        <div class="specs">
+          <div class="spec"><div class="k">产品名称</div><div class="v">KOCARD 便携式固态磁吸移动硬盘</div></div>
+          <div class="spec"><div class="k">容量</div><div class="v">1TB / 2TB</div></div>
+          <div class="spec"><div class="k">尺寸</div><div class="v">102*66*9.4 mm</div></div>
+          <div class="spec"><div class="k">重量</div><div class="v">99g (3.5 oz)</div></div>
+          <div class="spec"><div class="k">保修</div><div class="v">2年有限保修</div></div>
+          <div class="spec"><div class="k">材料</div><div class="v">硅胶, 铝合金</div></div>
+          <div class="spec"><div class="k">卡槽</div><div class="v">双 SD 4.0 &amp; TF 4.0 (UHS-II)</div></div>
+          <div class="spec"><div class="k">接口</div><div class="v">Type-c 10Gbps、Type-C PD</div></div>
+          <div class="spec"><div class="k">设备兼容性</div><div class="v">智能手机, 电脑, iPad</div></div>
+          <div class="spec"><div class="k">SSD传输速度</div><div class="v">1000MB/S (理论速度)</div></div>
+          <div class="spec"><div class="k">控制器</div><div class="v">SuperCruise™ 控制器</div></div>
+          <div class="spec"><div class="k">功耗</div><div class="v">超低功耗 &lt;5W (支持 PD 透传)</div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <figcaption class="fig">图5 · 设备</figcaption>
+  <p class="footnote">设备页只有「意向购买」，没有直接下单。结构是首屏、九宫格卖点、KOCARD 与传统扩展坞的九行对比表、双卡槽与高速传输、低功耗与磁吸、100% 本地、包装清单、规格参数。</p>
+</figure>
+
+<div class="sep"></div>
+
+<!-- 图6 · 下载 -->
+<figure class="fig-block">
+  <div class="browser">
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg width="9" height="11" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6"/></svg>kocard.net/download</span>
+    </div>
+    <div class="page">
+      <div class="navwrap">
+        <div class="navpill">
+          <div class="navlogo">KOCARD</div>
+          <div class="navlinks">
+            <span>首页</span>
+            <span>APP</span>
+            <span class="ditlink">DIT版<i></i></span>
+            <span>设备</span>
+            <span class="on">下载</span>
+            <span>关于</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="dlp">
+        <h2 class="h2">下载中心</h2>
+        <p class="sub">下载 KOCARD App，即刻体验</p>
+        <div class="dlcards">
+          <div class="dlcard">
+            <svg class="si" style="width:30px;height:30px"><use href="#i-download"/></svg>
+            <div class="os">iOS</div>
+            <div class="go">下载</div>
+          </div>
+          <div class="dlcard">
+            <svg class="si" style="width:30px;height:30px"><use href="#i-download"/></svg>
+            <div class="os">Android</div>
+            <div class="go">下载</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <figcaption class="fig">图6 · 下载</figcaption>
+  <p class="footnote">下载页只有 iOS 和 Android 两张下载卡，没有 DIT 的安装包；DIT 的三个版本在 DIT版 页面（图4）。页脚见图1。</p>
+</figure>
+
+<div class="sep"></div>
+
+<!-- 图7 · 关于 -->
+<figure class="fig-block">
+  <div class="browser">
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg width="9" height="11" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6"/></svg>kocard.net/about</span>
+    </div>
+    <div class="page">
+      <div class="navwrap">
+        <div class="navpill">
+          <div class="navlogo">KOCARD</div>
+          <div class="navlinks">
+            <span>首页</span>
+            <span>APP</span>
+            <span class="ditlink">DIT版<i></i></span>
+            <span>设备</span>
+            <span>下载</span>
+            <span class="on">关于</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="phero" style="min-height:380px;justify-content:center;text-align:center">
+        <div class="copy" style="max-width:760px">
+          <h1 class="herotitle">关于KOCARD</h1>
+          <p class="herodesc">打造全新的智能数据存储管理解决方案，赋能影像创作</p>
+        </div>
+      </section>
+
+      <div class="aboutcards">
+        <div class="acard">
+          <div class="media"><span class="tag">图片</span>KOCARD 品牌视觉</div>
+        </div>
+        <div class="acard">
+          <div class="media topmedia"><span class="tag">图片</span>团队工作照</div>
+          <div class="apad">
+            <h3>深耕影像行业的产品技术团队</h3>
+          </div>
+        </div>
+        <div class="acard apad">
+          <h3>关于我们</h3>
+          <p>kocard专注于为影像用户提供专业的数据拷贝，存储，备份，管理，处理服务，其中kocard DIT专业版已经服务了数十万专业影像用户，kocard作为阅竞网络旗下数据存管产品，与阅流，阅流拍摄等创意管理协作产品共同打造完整的创意服务生态产品体系。</p>
+        </div>
+      </div>
+
+      <div class="aboutwhy">
+        <h3>为什么选择KOCARD?</h3>
+        <p class="sub">重新定义您的创意数据存储管理流程</p>
+        <p>KOCARD 重新定义了数据管理。专为创作者而生，我们通过软硬一体的完整生态，将单纯的备份升级为自动化的智能工作流。从手机极速互传到 AI 智能整理，我们将繁琐的工作一肩挑起，让您心无旁骛，专注于创作本身。</p>
+      </div>
+    </div>
+  </div>
+  <figcaption class="fig">图7 · 关于</figcaption>
+  <p class="footnote">关于页是品牌与团队介绍：首屏、三张并排卡（品牌视觉 / 团队 / 关于我们）、为什么选择 KOCARD。页脚见图1。</p>
+</figure>
+
+<div class="sep"></div>
+
+<div class="doc" style="margin-bottom:0">
+  <p>注：六个页面线上均为深色底，本线框图只保留结构与文案，不表现配色、图片和动效。DIT版 的页面结构与主站不同，按独立落地页绘制。</p>
+</div>
+
+</body>
+</html>

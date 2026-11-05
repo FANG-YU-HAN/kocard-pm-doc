@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kocard 交互原型</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: #0e1116;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 24px 40px;
+  }
+  button { font-family: inherit; }
+  .phone {
+    position: relative;
+    width: 402px;
+    height: 874px;
+    zoom: .9;
+    flex: none;
+    border: 1px solid #d7dce3;
+    border-radius: 52px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 122px;
+    height: 35px;
+    border: 1px solid #d7dce3;
+    border-radius: 18px;
+    background: #fff;
+    z-index: 81;
+  }
+  .status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 40px;
+    background: #fff;
+    pointer-events: none;
+  }
+  .time { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .screens { position: absolute; inset: 0; overflow: hidden; }
+  .screen {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    padding-top: 54px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    transform: translateX(100%);
+    transition: transform .32s cubic-bezier(.4, 0, .2, 1);
+    pointer-events: none;
+  }
+  .screen.on { transform: none; pointer-events: auto; }
+  .screen.root {
+    z-index: 1;
+    transform: none;
+    opacity: 0;
+    transition: opacity .18s;
+    pointer-events: none;
+  }
+  .screen.root.on { opacity: 1; pointer-events: auto; }
+  .header {
+    flex: none;
+    height: 52px;
+    margin-top: 6px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .nav { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+  .back { width: 24px; height: 24px; flex: none; display: grid; place-items: center; cursor: pointer; }
+  .page-title {
+    min-width: 0;
+    font-size: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .title-arrow { color: #9aa1ab; font-weight: 400; }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border: 1px solid #d7dce3;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .avatar svg { width: 18px; height: 18px; }
+  .gear { width: 24px; height: 24px; flex: none; display: grid; place-items: center; cursor: pointer; }
+  .content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 20px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+  .content.root-content { padding-bottom: 132px; }
+  .section { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .card { border: 1px solid #dfe3e9; border-radius: 16px; background: #fff; }
+  .st-ic {
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .st-ic.lg { stroke-width: 1.4; }
+
+  /* 首页 */
+  .jobs { display: flex; flex-direction: column; gap: 10px; }
+  .job {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .job:active { border-color: #c9ced6; }
+  .job-head { display: flex; align-items: center; }
+  .job-head-main { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+  .job-title {
+    min-width: 0;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .job-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+    padding: 0 7px;
+    flex: none;
+    border: 1px solid #dfe3e9;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .job-tag.off { color: #9aa1ab; }
+  .job-tag .st-ic { width: 10px; height: 10px; }
+  .job-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 30px;
+    font-size: 12px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .job-state { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+  .job-state > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .job-state .st-ic { width: 12px; height: 12px; }
+  .cs-btn {
+    height: 30px;
+    padding: 0 14px;
+    flex: none;
+    border: 1px solid #d7dce3;
+    border-radius: 15px;
+    background: #fff;
+    font-size: 12px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .cs-btn:active { background: #f4f6f9; }
+  .add-block { display: flex; flex-direction: column; gap: 10px; }
+  .add-sep { width: 32px; height: 1px; margin: 6px auto 0; background: #dfe3e9; }
+  .add-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .add-mini { padding: 15px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; }
+  .add-mini .h0-ic { width: 28px; height: 28px; }
+  .add-mini .h0-ic svg { width: 26px; height: 26px; }
+  .add-mini .h0-t { font-size: 16px; }
+  .h0-row {
+    height: 100px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+  }
+  .h0-ic { flex: none; width: 42px; height: 42px; display: grid; place-items: center; }
+  .h0-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .h0-t { font-size: 18px; font-weight: 600; line-height: 1.25; }
+  .h0-row .h0-t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* 详情状态卡 */
+  .status-card { padding: 22px 18px; }
+  .status-card.noact { padding-top: 40px; padding-bottom: 40px; }
+  .cs-row { display: flex; align-items: center; gap: 6px; min-height: 24px; }
+  .cs-ic { width: 16px; height: 16px; }
+  .cs-num { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; }
+  .cs-num .v { font-size: 20px; }
+  .cs-num .u { font-size: 13px; font-weight: 400; color: #6b7280; }
+  .cs-size { margin-left: auto; font-size: 13px; color: #6b7280; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .cs-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 11px;
+    padding-left: 22px;
+    font-size: 13px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .cs-sub { margin-top: 11px; padding-left: 22px; font-size: 12px; line-height: 1.5; color: #6b7280; }
+  .status-card .cs-btn {
+    display: block;
+    width: 100%;
+    height: 44px;
+    margin: 14px 0 0;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* 磁盘卡 */
+  .disk-files { overflow: hidden; }
+  .disk-files-main { display: flex; flex-direction: column; gap: 16px; padding: 22px 18px; }
+  .disk-files-main.slim { gap: 14px; }
+  .disk-files-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .disk-name { min-width: 0; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .disk-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 12px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .disk-cap { display: flex; flex-direction: column; gap: 10px; }
+  .disk-bar { height: 4px; border-radius: 2px; background: #eef1f4; overflow: hidden; }
+  .disk-bar > i { display: block; height: 100%; border-radius: 2px; background: #9aa1ab; }
+  .disk-cap-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .disk-state { font-size: 12px; color: #8a9099; font-variant-numeric: tabular-nums; }
+  .disk-files-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .disk-status { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; }
+  .disk-status .st-ic { width: 12px; height: 12px; }
+  .disk-status.off { color: #9aa1ab; font-weight: 400; }
+  .disk-fs { font-size: 11px; color: #8a9099; }
+
+  /* 记录 */
+  .hist-card { overflow: hidden; }
+  .hist-list .row { height: 44px; }
+
+  /* 设置列表 */
+  .list { display: flex; flex-direction: column; }
+  .row {
+    height: 48px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .row + .row { border-top: 1px solid #eef1f4; }
+  .row .k { color: #6b7280; flex: none; }
+  .row .v {
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row .v + .st-ic { color: #9aa1ab; }
+  .row--name .v { margin-left: auto; }
+  .row--link { cursor: pointer; }
+  .row--link:active { background: #fafbfc; }
+  .row--danger { color: #dc2626; cursor: pointer; }
+  .hint { padding: 0 16px; font-size: 12px; line-height: 1.5; color: #8a9099; }
+  .hint--c { padding: 0; text-align: center; }
+  .switch {
+    position: relative;
+    flex: none;
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: #0e1116;
+    cursor: pointer;
+    transition: background .18s;
+  }
+  .switch i {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left .18s, right .18s;
+  }
+  .switch.off { background: #dfe3e9; }
+  .switch.off i { left: 3px; right: auto; }
+
+  /* 底部按钮 */
+  .foot {
+    flex: none;
+    padding: 10px 24px 34px;
+    display: flex;
+    gap: 10px;
+    background: #fff;
+  }
+  .btn {
+    flex: 1;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid #0e1116;
+    border-radius: 12px;
+    background: #fff;
+    color: #0e1116;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn.primary { background: #0e1116; color: #fff; }
+  .btn:disabled { opacity: .35; pointer-events: none; }
+  .btn:active { opacity: .75; }
+
+  /* 页签 */
+  .tabbar {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 34px;
+    height: 58px;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    border: 1px solid #dfe3e9;
+    border-radius: 29px;
+    background: #fff;
+    transition: opacity .18s, transform .18s;
+  }
+  .tabbar.hide { opacity: 0; transform: translateY(10px); pointer-events: none; }
+  .tabbar .pill {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    bottom: 4px;
+    width: calc((100% - 8px) / 3);
+    border: 1px solid #0e1116;
+    border-radius: 25px;
+    transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+  }
+  .tab {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    height: 100%;
+    line-height: 56px;
+    text-align: center;
+    font-size: 12px;
+    color: #8a9099;
+    cursor: pointer;
+  }
+  .tab.active { color: #0e1116; font-weight: 600; }
+  .home-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    border-radius: 3px;
+    background: #0e1116;
+    z-index: 100;
+  }
+
+  /* 任务页 */
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    cursor: pointer;
+  }
+  .task-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .task-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task-meta {
+    font-size: 11.5px;
+    color: #8a9099;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chip {
+    flex: none;
+    padding: 0 7px;
+    font-size: 10px;
+    line-height: 18px;
+    border: 1px solid #dfe3e9;
+    border-radius: 9px;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  .chip.on { color: #0e1116; border-color: #c9ced6; }
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 110px 0 60px;
+    color: #9aa1ab;
+    font-size: 13px;
+    text-align: center;
+  }
+  .empty svg { width: 40px; height: 40px; opacity: .55; }
+  .phase-card { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .phase-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
+  .phase-head .pct { color: #6b7280; font-variant-numeric: tabular-nums; }
+  .phase-bar { height: 4px; border-radius: 2px; background: #eef1f4; overflow: hidden; }
+  .phase-bar > i { display: block; height: 100%; border-radius: 2px; background: #0e1116; }
+  .phase-state { font-size: 11.5px; color: #8a9099; }
+
+  /* AI tab */
+  .ask {
+    height: 140px;
+    padding: 16px 12px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #dfe3e9;
+    border-radius: 16px;
+    background: #fff;
+  }
+  .ask input {
+    width: 100%;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    color: #0e1116;
+  }
+  .ask input::placeholder { color: #9aa1ab; }
+  .ask-foot { display: flex; align-items: center; justify-content: space-between; }
+  .ask-tools { display: flex; align-items: center; gap: 8px; }
+  .ask-attach {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #dfe3e9;
+    border-radius: 50%;
+    background: none;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .ask-model {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid #dfe3e9;
+    border-radius: 14px;
+    background: none;
+    font-size: 12px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .ask-send {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f3f6;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .h0-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .h0-small {
+    height: 180px;
+    padding: 24px 30px 0 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    cursor: pointer;
+  }
+  .h0-small .h0-ic { width: 32px; height: 32px; }
+  .h0-small .h0-tx { gap: 12px; }
+  .h0-small .h0-t { font-size: 16px; }
+  .h0-small .h0-s { font-size: 10px; line-height: 1.5; color: #8a9099; }
+
+  /* 选择盘 / 创建 */
+  .pick-title { font-size: 17px; font-weight: 600; }
+  .pick-sub { margin-top: -4px; font-size: 12px; line-height: 1.5; color: #8a9099; }
+  .pick-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  .pick-row + .pick-row { border-top: 1px solid #eef1f4; }
+  .pick-ico {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: #f2f4f7;
+    display: grid;
+    place-items: center;
+  }
+  .pick-main { flex: 1; min-width: 0; }
+  .pick-name { font-size: 13px; font-weight: 600; }
+  .pick-meta { margin-top: 3px; font-size: 11px; color: #8a9099; }
+  .radio {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #c9ced6;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: transparent;
+  }
+  .pick-row.on .radio { border-color: #0e1116; background: #0e1116; color: #fff; }
+  .seg { display: inline-flex; padding: 2px; border: 1px solid #e4e8ee; border-radius: 15px; }
+  .seg .ct {
+    height: 26px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 13px;
+    background: none;
+    font-size: 12px;
+    color: #6b7280;
+    cursor: pointer;
+  }
+  .seg .ct.on { background: #0e1116; color: #fff; font-weight: 600; }
+  .folder-row { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 10px 16px; cursor: pointer; }
+  .folder-ico {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: #f2f4f7;
+    display: grid;
+    place-items: center;
+  }
+  .folder-main { flex: 1; min-width: 0; }
+  .folder-name { font-size: 13px; font-weight: 600; }
+  .folder-path { margin-top: 2px; font-size: 11px; color: #8a9099; }
+  .filetype-row { display: flex; gap: 8px; padding: 4px 16px 12px 50px; }
+  .filetype {
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid #dfe3e9;
+    border-radius: 15px;
+    background: #fff;
+    font-size: 12px;
+    color: #6b7280;
+    cursor: pointer;
+  }
+  .filetype.on { border-color: #0e1116; color: #0e1116; font-weight: 600; }
+
+  /* AI 推荐 */
+  .rec-stats { display: flex; gap: 20px; padding-bottom: 14px; border-bottom: 1px solid #eef1f4; }
+  .rec-stat { flex: 1; }
+  .rec-stat .k { font-size: 12px; color: #8a9099; }
+  .rec-stat .v { margin-top: 2px; font-size: 17px; font-weight: 600; }
+  .rec-seg { align-self: center; margin: 12px 0 15px; }
+  .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .rec-tile {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f1f3f6;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: #a3a9b2;
+  }
+  .rec-tile:nth-child(3n+2) { background: #eef0f3; }
+  .rec-tile:nth-child(3n) { background: #eaedf1; }
+  .rec-tile > svg { width: 26px; height: 26px; }
+  .rec-check {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 22px;
+    height: 22px;
+    border: 1px solid #c9ced6;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    color: transparent;
+  }
+  .rec-tile.on .rec-check { background: #0e1116; border-color: #0e1116; color: #fff; }
+  .rec-tile.on::after { content: ""; position: absolute; inset: 0; border: 2px solid #0e1116; border-radius: 8px; pointer-events: none; }
+  .rec-ai {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .92);
+    display: grid;
+    place-items: center;
+    color: #0e1116;
+  }
+  .rec-ai svg { width: 12px; height: 12px; }
+
+  /* AI 修图 */
+  .chat-legal { flex: none; padding: 4px 0 2px; text-align: center; font-size: 10px; color: #a3a9b2; }
+  .chat-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none;
+  }
+  .chat-body::-webkit-scrollbar { display: none; }
+  .chat-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 46px 20px 26px;
+    text-align: center;
+  }
+  .chat-logo {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 10px;
+    border: 1px solid #dfe3e9;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+  }
+  .chat-hi { font-size: 20px; font-weight: 600; }
+  .chat-sub { font-size: 14px; }
+  .chat-tip { margin-top: 4px; font-size: 12px; line-height: 1.6; color: #8a9099; }
+  .msg {
+    max-width: 84%;
+    padding: 10px 12px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .msg.user { align-self: flex-end; border-bottom-right-radius: 4px; background: #0e1116; color: #fff; }
+  .msg.ai { align-self: flex-start; border-bottom-left-radius: 4px; background: #f2f4f7; }
+  .chat-input { flex: none; display: flex; align-items: center; gap: 10px; padding: 8px 16px 34px; }
+  .chat-plus {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #dfe3e9;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .chat-field {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid #dfe3e9;
+    border-radius: 19px;
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .chat-field::placeholder { color: #9aa1ab; }
+  .chat-send {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: #0e1116;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  /* 我的 */
+  .sheet-layer { position: absolute; inset: 0; z-index: 90; pointer-events: none; }
+  .sheet-mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 17, 22, .32);
+    opacity: 0;
+    transition: opacity .24s;
+  }
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(100% - 52px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 24px 24px 0 0;
+    background: #fff;
+    transform: translateY(101%);
+    transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+  }
+  .sheet-layer.open { pointer-events: auto; }
+  .sheet-layer.open .sheet-mask { opacity: 1; }
+  .sheet-layer.open .sheet { transform: none; }
+  .sheet-grip { flex: none; width: 36px; height: 5px; margin: 8px auto 0; border-radius: 3px; background: #d7dce3; }
+  .sheet-head { flex: none; height: 54px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+  .sheet-title { font-size: 20px; font-weight: 600; }
+  .sheet-close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: #f2f4f7;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .sheet-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 20px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-width: none;
+  }
+  .sheet-body::-webkit-scrollbar { display: none; }
+  .vip-card { padding: 18px; border-radius: 18px; background: #171a1f; color: #fff; }
+  .vip-top { display: flex; align-items: center; gap: 10px; }
+  .vip-avatar {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border: 1px solid #3a3f47;
+    border-radius: 50%;
+    background: #2b2f36;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+  }
+  .vip-name { font-size: 14px; }
+  .vip-level {
+    margin-left: auto;
+    padding: 3px 8px;
+    border: 1px solid #4a505a;
+    border-radius: 9px;
+    font-size: 10px;
+    color: #e5e7eb;
+  }
+  .vip-exp { margin-top: 16px; font-size: 12px; color: #b6bcc6; }
+  .vip-bar { height: 4px; margin-top: 8px; border-radius: 2px; background: #33383f; overflow: hidden; }
+  .vip-bar > i { display: block; height: 100%; border-radius: 2px; background: #fff; }
+  .vip-btn {
+    width: 100%;
+    height: 40px;
+    margin-top: 16px;
+    border: 0;
+    border-radius: 10px;
+    background: #fff;
+    color: #0e1116;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .credit-card { padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+  .credit-icon {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 8px;
+    background: #f2f4f7;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .credit-num { margin-left: auto; font-size: 14px; font-weight: 600; }
+  .credit-link { font-size: 12px; text-decoration: underline; cursor: pointer; }
+  .group { display: flex; flex-direction: column; gap: 6px; }
+  .group-title { padding-left: 4px; font-size: 12px; color: #9aa1ab; }
+
+  /* 弹窗 */
+  .alert-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 120;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(14, 17, 22, .28);
+  }
+  .alert-mask.on { display: flex; }
+  .alert {
+    width: 280px;
+    overflow: hidden;
+    border: 1px solid #dfe3e9;
+    border-radius: 14px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(14, 17, 22, .16);
+  }
+  .alert-title { padding: 18px 20px 0; font-size: 15px; font-weight: 600; }
+  .alert-msg { padding: 8px 20px 18px; font-size: 12px; line-height: 1.6; color: #6b7280; }
+  .alert-actions { display: flex; border-top: 1px solid #eef1f4; }
+  .ab {
+    flex: 1;
+    height: 44px;
+    border: 0;
+    background: none;
+    font-size: 13px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .ab + .ab { border-left: 1px solid #eef1f4; }
+  .ab--danger { color: #dc2626; }
+  .alert-input {
+    width: calc(100% - 40px);
+    height: 40px;
+    margin: 12px 20px 18px;
+    padding: 0 12px;
+    border: 1px solid #dfe3e9;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+  .alert-list { max-height: 300px; overflow-y: auto; padding-bottom: 6px; text-align: left; }
+  .alert-list .row { cursor: pointer; }
+  .alert-list .row:active { background: #fafbfc; }
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 104px;
+    z-index: 150;
+    max-width: 300px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: rgba(14, 17, 22, .9);
+    color: #fff;
+    font-size: 12.5px;
+    line-height: 1.45;
+    text-align: center;
+    opacity: 0;
+    transform: translate(-50%, 10px);
+    transition: opacity .2s, transform .2s;
+    pointer-events: none;
+  }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .demo-hint {
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #9aa1ab;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-back" viewBox="0 0 9 16"><path d="M8 1L1 8l7 7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 6 10"><path d="M1 1l4 4-4 4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24">
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+  <symbol id="i-person" viewBox="0 0 24 24">
+    <circle cx="12" cy="9" r="3.6"/>
+    <path d="M4.8 20c0-3.4 3.2-6 7.2-6s7.2 2.6 7.2 6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/><path d="M4.3 4.3l3.4 3.4M7.7 4.3l-3.4 3.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/><path d="M6 3.4V6l1.8 1.2"/></symbol>
+  <symbol id="i-dashed" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></symbol>
+  <symbol id="i-pie" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 12 12">
+    <circle cx="6" cy="6" r="5"/>
+    <rect x="4.2" y="3.6" width="1.4" height="4.8" rx=".7" fill="currentColor" stroke="none"/>
+    <rect x="6.4" y="3.6" width="1.4" height="4.8" rx=".7" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-alert" viewBox="0 0 12 12">
+    <path d="M6 1.9 10.6 10.1H1.4Z"/>
+    <path d="M6 4.4v2.4"/>
+    <circle cx="6" cy="8.3" r=".65" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24">
+    <rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>
+    <circle cx="13.8" cy="7.6" r="1.2"/>
+    <path d="M6.5 15.6l3.6-3.4 2.8 2.6 1.9-1.8 2.7 2.5"/>
+  </symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24">
+    <rect x="2" y="7.5" width="5.6" height="13" rx="1.8"/>
+    <rect x="16.4" y="7.5" width="5.6" height="13" rx="1.8"/>
+    <path d="M8.2 10.4h7"/><path d="M13.4 8.6l1.8 1.8-1.8 1.8"/>
+    <path d="M15.8 16.4h-7"/><path d="M10.6 14.6l-1.8 1.8 1.8 1.8"/>
+  </symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="14" height="14" rx="2"/>
+    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+  </symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24">
+    <path d="M3 7.5V6a1 1 0 0 1 1-1h5l2 2.5h8a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+  </symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24">
+    <rect x="3" y="5" width="18" height="14" rx="2"/>
+    <path d="M3 13h18"/>
+    <circle cx="16.5" cy="16" r="1"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></symbol>
+  <symbol id="i-up" viewBox="0 0 16 16"><path d="M8 13V3.4"/><path d="M3.6 7.8L8 3.4l4.4 4.4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24">
+    <path d="M12 2.8l1.7 5.1 5.1 1.7-5.1 1.7-1.7 5.1-1.7-5.1-5.1-1.7 5.1-1.7z"/>
+    <path d="M18.6 15.2l.7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7z"/>
+  </symbol>
+  <symbol id="i-image" viewBox="0 0 24 24">
+    <rect x="3.5" y="4.5" width="17" height="15" rx="2"/>
+    <circle cx="9" cy="10" r="1.4"/>
+    <path d="M4.5 17l4.5-4.2 3.4 3 2.3-2 4.8 4"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 12 12"><path d="M2.2 2.2l7.6 7.6M9.8 2.2L2.2 9.8"/></symbol>
+</svg>
+<div class="phone" id="phone">
+  <div class="island"></div>
+  <div class="status">
+    <span class="time">9:41</span>
+    <span class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+        <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+        <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+        <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+        <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+        <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+        <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+      </svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+        <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+        <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+        <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+  </div>
+
+  <div class="screens">
+    <section class="screen root on" id="scr-home">
+      <div class="header">
+        <div class="page-title">首页</div>
+        <button class="avatar" type="button" aria-label="我的" onclick="openSheet()">
+          <svg class="st-ic lg"><use href="#i-person"/></svg>
+        </button>
+      </div>
+      <div class="content root-content" id="home-content"></div>
+    </section>
+
+    <section class="screen root" id="scr-tasks">
+      <div class="header">
+        <div class="page-title">任务</div>
+        <button class="avatar" type="button" aria-label="我的" onclick="openSheet()">
+          <svg class="st-ic lg"><use href="#i-person"/></svg>
+        </button>
+      </div>
+      <div class="content root-content" id="tasks-content"></div>
+    </section>
+
+    <section class="screen root" id="scr-ai">
+      <div class="header">
+        <div class="page-title">Kocard AI</div>
+        <button class="avatar" type="button" aria-label="我的" onclick="openSheet()">
+          <svg class="st-ic lg"><use href="#i-person"/></svg>
+        </button>
+      </div>
+      <div class="content root-content">
+        <div class="ask">
+          <input type="text" id="ai-input" placeholder="问问 AI…" aria-label="问问 AI"
+                 onkeydown="if(event.key==='Enter')aiAsk()">
+          <div class="ask-foot">
+            <div class="ask-tools">
+              <button class="ask-attach" type="button" aria-label="添加附件" onclick="toast('演示版不上传文件')">
+                <svg class="st-ic" style="width:12px;height:12px"><use href="#i-plus"/></svg>
+              </button>
+              <button class="ask-model" type="button" onclick="toast('演示版固定使用豆包')">
+                豆包
+                <svg width="8" height="5" viewBox="0 0 8 5" fill="none" stroke="#9aa1ab" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l3 3 3-3"/></svg>
+              </button>
+            </div>
+            <span class="ask-send" onclick="aiAsk()" role="button" aria-label="发送">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9aa1ab" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3.4"/><path d="M3.6 7.8L8 3.4l4.4 4.4"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="h0-pair">
+          <div class="card h0-small" onclick="openRecommend()">
+            <div class="h0-ic">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="7" width="13" height="12" rx="2.2"/>
+                <circle cx="8.2" cy="11.2" r="1.2"/>
+                <path d="M3.5 16.4l4-3.6 3.1 2.7 2.3-2 3.6 3.1"/>
+                <path d="M19.2 2.8l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z"/>
+              </svg>
+            </div>
+            <div class="h0-tx">
+              <div class="h0-t">AI 推荐</div>
+              <div class="h0-s">筛选并推荐您可能喜欢的图片</div>
+            </div>
+          </div>
+          <div class="card h0-small" onclick="openChat()">
+            <div class="h0-ic">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3.4 20.6L13.6 10.4"/>
+                <path d="M12.3 9.1l2.6 2.6"/>
+                <path d="M18.6 3.2v3.2M17 4.8h3.2"/>
+                <path d="M7.6 3.4v2.4M6.4 4.6h2.4"/>
+              </svg>
+            </div>
+            <div class="h0-tx">
+              <div class="h0-t">AI 修图</div>
+              <div class="h0-s">Agent 修图，一句话帮您精致美颜</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="scr-detail">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title" id="detail-title"></div>
+        </div>
+        <div class="gear" onclick="openTaskSettings()">
+          <svg class="st-ic lg" style="width:24px;height:24px"><use href="#i-gear"/></svg>
+        </div>
+      </div>
+      <div class="content" id="detail-content"></div>
+    </section>
+
+    <section class="screen" id="scr-settings">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title" id="settings-title"></div>
+        </div>
+      </div>
+      <div class="content" id="settings-content"></div>
+    </section>
+
+    <section class="screen" id="scr-create">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title">同步设置</div>
+        </div>
+      </div>
+      <div class="content" id="create-content"></div>
+      <div class="foot">
+        <button class="btn primary" type="button" onclick="finishCreate()">完成</button>
+      </div>
+    </section>
+
+    <section class="screen" id="scr-pick">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title">选择盘</div>
+        </div>
+      </div>
+      <div class="content" id="pick-content"></div>
+      <div class="foot">
+        <button class="btn primary" type="button" id="pick-next" disabled onclick="pickNext()">下一步</button>
+      </div>
+    </section>
+
+    <section class="screen" id="scr-tasknew">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title">任务设置</div>
+        </div>
+      </div>
+      <div class="content" id="tasknew-content"></div>
+      <div class="foot">
+        <button class="btn" type="button" id="btn-save-start" disabled onclick="startNewTask(true)">保存并开始</button>
+        <button class="btn primary" type="button" id="btn-start" disabled onclick="startNewTask(false)">开始任务</button>
+      </div>
+    </section>
+
+    <section class="screen" id="scr-work">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title" id="work-title"></div>
+        </div>
+      </div>
+      <div class="content" id="work-content"></div>
+      <div class="foot" id="work-foot"></div>
+    </section>
+
+    <section class="screen" id="scr-rec">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title">AI 推荐</div>
+        </div>
+      </div>
+      <div class="content" id="rec-content"></div>
+      <div class="foot">
+        <button class="btn primary" type="button" onclick="recAct('save')">保存至相册</button>
+        <button class="btn primary" type="button" onclick="recAct('copy')">外部素材拷贝</button>
+      </div>
+    </section>
+
+    <section class="screen" id="scr-chat">
+      <div class="header">
+        <div class="nav">
+          <div class="back" onclick="pop()">
+            <svg width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L1 8l7 7"/></svg>
+          </div>
+          <div class="page-title">AI 修图</div>
+        </div>
+      </div>
+      <div class="chat-body" id="chat-body"></div>
+      <div class="chat-legal">内容由AI生成</div>
+      <div class="chat-input">
+        <button class="chat-plus" type="button" aria-label="添加图片" onclick="toast('演示版不上传文件')">
+          <svg class="st-ic" style="width:14px;height:14px"><use href="#i-plus"/></svg>
+        </button>
+        <input class="chat-field" id="chat-input" placeholder="请输入您的修图要求"
+               onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" type="button" aria-label="发送" onclick="sendChat()">
+          <svg class="st-ic" style="width:16px;height:16px"><use href="#i-up"/></svg>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <div class="pill" id="tab-pill"></div>
+    <div class="tab active" data-tab="home" onclick="showTab('home')">首页</div>
+    <div class="tab" data-tab="tasks" onclick="showTab('tasks')">任务</div>
+    <div class="tab" data-tab="ai" onclick="showTab('ai')">AI</div>
+  </div>
+  <div class="home-indicator"></div>
+
+  <div class="sheet-layer" id="sheet-layer">
+    <div class="sheet-mask" onclick="closeSheet()"></div>
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head">
+        <span class="sheet-title">我的</span>
+        <button class="sheet-close" type="button" aria-label="关闭" onclick="closeSheet()">
+          <svg class="st-ic" style="width:13px;height:13px"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <div class="vip-card">
+          <div class="vip-top">
+            <div class="vip-avatar">小ko</div>
+            <span class="vip-name">小ko</span>
+            <span class="vip-level">KOCARD Pro</span>
+          </div>
+          <div class="vip-exp">有效期至 2027-05-16</div>
+          <div class="vip-bar"><i style="width:62%"></i></div>
+          <button class="vip-btn" type="button" onclick="toast('演示版不接入购买')">续费</button>
+        </div>
+        <div class="card credit-card">
+          <span class="credit-icon">AI</span>
+          <span style="font-size:13px">AI 积分</span>
+          <span class="credit-num">12,800</span>
+          <span class="credit-link" onclick="toast('演示版不接入充值')">充值</span>
+        </div>
+        <div class="group">
+          <div class="group-title">账号</div>
+          <div class="card list">
+            <div class="row row--link" onclick="toast('演示版不打开该页面')"><span class="k">账号信息</span><span class="v">138****8866</span><svg class="st-ic" style="width:6px;height:10px"><use href="#i-chev"/></svg></div>
+            <div class="row row--link" onclick="toast('演示版不打开该页面')"><span class="k">绑定信息</span><span class="v">邮箱、手机号</span><svg class="st-ic" style="width:6px;height:10px"><use href="#i-chev"/></svg></div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-title">通用</div>
+          <div class="card list">
+            <div class="row row--link" onclick="toast('演示版不打开该页面')"><span class="k">通知</span><span class="v">已开启</span><svg class="st-ic" style="width:6px;height:10px"><use href="#i-chev"/></svg></div>
+            <div class="row row--link" onclick="toast('演示版不打开该页面')"><span class="k">帮助与反馈</span><svg class="st-ic" style="width:6px;height:10px"><use href="#i-chev"/></svg></div>
+            <div class="row row--link" onclick="toast('演示版不打开该页面')"><span class="k">通用设置</span><svg class="st-ic" style="width:6px;height:10px"><use href="#i-chev"/></svg></div>
+          </div>
+        </div>
+        <div class="card list">
+          <div class="row row--danger" onclick="toast('演示版不退出登录')" style="justify-content:center">退出登录</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-mask" id="mask"></div>
+  <div class="toast" id="toast"></div>
+</div>
+<div class="demo-hint">首页卡片、入口卡、页签、返回、暂停/继续、设置项都能点；设置里可改名、换盘、删除，入口卡能新建任务。</div>
+<script>
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const fmt = n => Number(n).toLocaleString('en-US');
+const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+const icon = (name, size = 12, cls = '') =>
+  `<svg class="st-ic ${cls}" width="${size}" height="${size}"><use href="#i-${name}"/></svg>`;
+const chev = () => `<svg class="st-ic" width="6" height="10" viewBox="0 0 6 10"><use href="#i-chev"/></svg>`;
+const tick = () => `<svg class="st-ic" width="14" height="14" viewBox="0 0 12 12"><path d="M2.5 6.2l2.4 2.4 4.8-5.2"/></svg>`;
+const timeHM = () => {
+  const d = new Date();
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+};
+let seq = 0;
+const uid = () => `n${++seq}`;
+
+const DISKS = [
+  { name: 'Kocard Go', free: '剩余 180 GB', total: '总容量 512 GB', used: 64.8, fmt: 'exFAT' },
+  { name: 'Kocard Lite', free: '剩余 310 GB', total: '总容量 512 GB', used: 39.5, fmt: 'exFAT' },
+  { name: 'EOS_DIGITAL', free: '剩余 38 GB', total: '总容量 128 GB', used: 70.3, fmt: 'exFAT' },
+  { name: 'DJI', free: '剩余 12 GB', total: '总容量 64 GB', used: 81.3, fmt: 'exFAT' }
+];
+const diskByName = name => DISKS.find(d => d.name === name) || DISKS[0];
+
+const state = {
+  tab: 'home',
+  disks: DISKS,
+  tasks: [
+    {
+      id: 'p1', kind: 'photos', title: '相册→Kocard Go', name: '相册 → Kocard Go',
+      status: 'running', done: 1284, total: 3642, unit: '张', size: '41.5 GB',
+      speed: '112 MB/s', remain: '剩余 4 分钟', conn: '已连接',
+      target: 'Kocard Go', dstDisk: DISKS[0],
+      records: [
+        ['10月29日 21:04', '280 张'],
+        ['10月29日 09:12', '412 张'],
+        ['10月26日 09:12', '1,093 张'],
+        ['10月25日 20:36', '437 张']
+      ],
+      auto: true, photo: true, video: true, verify: false, customName: false
+    },
+    {
+      id: 'p2', kind: 'photos', title: '相册→EOS_DIGITAL', name: '相册 → EOS_DIGITAL',
+      status: 'pending', done: 0, total: 10, unit: '张', size: '46 MB',
+      speed: '', remain: '', conn: '未连接',
+      target: 'EOS_DIGITAL', dstDisk: DISKS[2], records: [],
+      auto: true, photo: true, video: true, verify: false, customName: false
+    },
+    {
+      id: 'm1', kind: 'material', title: 'EOS_DIGITAL→Kocard Go', name: 'EOS_DIGITAL → Kocard Go',
+      status: 'running', done: 557, total: 960, unit: '个文件', size: '4.8 GB',
+      speed: '33 MB/s', remain: '剩余 1 分钟', conn: '已连接',
+      source: 'EOS_DIGITAL', target: 'Kocard Go', srcDisk: DISKS[2], dstDisk: DISKS[0],
+      records: [
+        ['10月29日 21:04', '229 个文件'],
+        ['10月26日 09:12', '361 个文件'],
+        ['10月25日 20:36', '144 个文件']
+      ],
+      auto: true, verify: false, customName: false
+    },
+    {
+      id: 'm2', kind: 'material', title: 'DJI→Kocard Go', name: 'DJI → Kocard Go',
+      status: 'done', doneAt: '今天 9:41', done: 428, total: 428, unit: '个文件', size: '6.1 GB',
+      speed: '', remain: '', conn: '已连接',
+      source: 'DJI', target: 'Kocard Go', srcDisk: DISKS[3], dstDisk: DISKS[0],
+      records: [['今天 9:41', '428 个文件']],
+      auto: true, verify: true, customName: false
+    }
+  ],
+  work: [
+    {
+      id: 'c1', title: '假期照片拷贝', size: '4.6 GB', files: 36, at: '14:22',
+      status: 'running', progress: 62,
+      steps: [{ name: '拷贝', pct: 62 }, { name: '校验', pct: 0 }, { name: '上传', pct: 0 }]
+    },
+    {
+      id: 'c2', title: '项目素材备份', size: '8.2 GB', files: 124, at: '10:05',
+      status: 'done', progress: 100,
+      steps: [{ name: '拷贝', pct: 100 }, { name: '校验', pct: 100 }, { name: '上传', pct: 100 }]
+    }
+  ],
+  pick: { mode: null, one: null, src: null, dst: null },
+  create: { mode: null, src: null, dst: null, name: '', auto: true, photo: true, video: true, verify: false, customName: false },
+  newTask: { source: null, tab: 0, advanced: false, name: '', priority: '立即执行', copy: true, upload: false, fileType: 'original', verify: false },
+  aiMessages: []
+};
+
+let stack = [];
+let currentTaskId = null;
+let currentWorkId = null;
+let currentDialog = null;
+let toastTimer = null;
+
+/* ---------- 渲染：首页 ---------- */
+function taskMetaText(t) {
+  if (t.status === 'running') return `${fmt(t.done)} / ${fmt(t.total)} ${t.unit} · ${t.remain}`;
+  if (t.status === 'paused') return `${fmt(t.done)} / ${fmt(t.total)} ${t.unit} · 已暂停`;
+  if (t.status === 'pending') return `${fmt(t.total)} ${t.unit} · 待开始`;
+  if (t.status === 'done') return `${t.kind === 'material' ? '自动拷贝完成' : '备份完成'} · ${t.doneAt}`;
+  return '';
+}
+function statusIcon(t) {
+  if (t.status === 'running') return icon('pie', 12);
+  if (t.status === 'paused') return icon('pause', 12);
+  if (t.status === 'pending') return icon('dashed', 12);
+  return icon('check', 12);
+}
+function taskButton(t) {
+  if (t.status === 'running') return `<button class="cs-btn" type="button" onclick="event.stopPropagation();toggleTask('${t.id}')">暂停</button>`;
+  if (t.status === 'paused') return `<button class="cs-btn" type="button" onclick="event.stopPropagation();toggleTask('${t.id}')">继续</button>`;
+  if (t.status === 'pending' && t.conn === '已连接') return `<button class="cs-btn" type="button" onclick="event.stopPropagation();toggleTask('${t.id}')">开始</button>`;
+  return '';
+}
+function jobHTML(t) {
+  return `<article class="card job" onclick="openTask('${t.id}')">
+    <div class="job-head"><div class="job-head-main">
+      <div class="job-title">${esc(t.title)}</div>
+      <span class="job-tag ${t.conn === '已连接' ? '' : 'off'}">${icon(t.conn === '已连接' ? 'check' : 'x', 10)}${esc(t.conn)}</span>
+    </div></div>
+    <div class="job-meta">
+      <span class="job-state">${statusIcon(t)}<span>${esc(taskMetaText(t))}</span></span>
+      ${taskButton(t)}
+    </div>
+  </article>`;
+}
+function fullEntry(iconName, label, handler) {
+  return `<div class="card h0-row" onclick="${handler}">
+    <div class="h0-ic">${icon(iconName, 30, 'lg')}</div>
+    <div class="h0-tx"><div class="h0-t">${label}</div></div>
+  </div>`;
+}
+function miniEntry(iconName, label, handler) {
+  return `<div class="card add-mini" onclick="${handler}">
+    <div class="h0-ic">${icon(iconName, 26, 'lg')}</div>
+    <div class="h0-tx"><div class="h0-t">${label}</div></div>
+  </div>`;
+}
+function renderHome() {
+  const el = $('#home-content');
+  if (!state.tasks.length) {
+    el.innerHTML = `<div class="add-block">
+      ${fullEntry('photo', '新增手机相册备份', "startPick('photos')")}
+      ${fullEntry('copy', '新增素材自动拷贝', "startPick('material')")}
+      ${fullEntry('copy', '新增外部素材拷贝', 'openTaskNew()')}
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="jobs">${state.tasks.map(jobHTML).join('')}</div>
+    <div class="add-block">
+      <div class="add-sep"></div>
+      <div class="add-pair">
+        ${miniEntry('photo', '新增手机相册备份', "startPick('photos')")}
+        ${miniEntry('copy', '新增素材自动拷贝', "startPick('material')")}
+      </div>
+      ${fullEntry('copy', '新增外部素材拷贝', 'openTaskNew()')}
+    </div>`;
+}
+
+/* ---------- 渲染：任务列表 ---------- */
+function workChip(t) {
+  if (t.status === 'done') return '完成';
+  if (t.status === 'paused') return '已暂停';
+  return '拷贝';
+}
+function renderTasks() {
+  const el = $('#tasks-content');
+  if (!state.work.length) {
+    el.innerHTML = `<div class="empty">${icon('copy', 40, 'lg')}<div>开始拷贝、转码、上传数据</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="task-list">${state.work.map(t => `
+    <div class="card task-item" onclick="openWork('${t.id}')">
+      <div class="task-main">
+        <div class="task-name">${esc(t.title)}</div>
+        <div class="task-meta">${t.size} · ${t.files} 个文件 · ${t.at}</div>
+      </div>
+      <span class="chip ${t.status === 'running' ? 'on' : ''}">${workChip(t)}</span>
+    </div>`).join('')}</div>`;
+}
+
+/* ---------- 渲染：详情 ---------- */
+const findTask = id => state.tasks.find(t => t.id === id);
+const titleHTML = s => esc(s).replace(/→/g, '<span class="title-arrow">→</span>');
+
+function statusHTML(t) {
+  if (t.status === 'running') {
+    return `<div class="card status-card">
+      <div class="cs-row">${icon('pie', 16, 'cs-ic')}
+        <span class="cs-num"><span class="v">${fmt(t.done)}</span><span class="u"> / ${fmt(t.total)} ${t.unit}</span></span>
+        <span class="cs-size">${esc(t.size)}</span>
+      </div>
+      <div class="cs-meta"><span>${esc(t.speed)}</span><span>${esc(t.remain)}</span></div>
+      <button class="cs-btn" type="button" onclick="toggleTask('${t.id}')">暂停</button>
+    </div>`;
+  }
+  if (t.status === 'paused') {
+    return `<div class="card status-card">
+      <div class="cs-row">${icon('pause', 16, 'cs-ic')}
+        <span class="cs-num"><span class="v">${fmt(t.done)}</span><span class="u"> / ${fmt(t.total)} ${t.unit}</span></span>
+        <span class="cs-size">${esc(t.size)}</span>
+      </div>
+      <div class="cs-meta"><span>已暂停</span></div>
+      <button class="cs-btn" type="button" onclick="toggleTask('${t.id}')">继续</button>
+    </div>`;
+  }
+  if (t.status === 'pending') {
+    const action = t.conn === '已连接'
+      ? `<button class="cs-btn" type="button" onclick="toggleTask('${t.id}')">开始</button>` : '';
+    return `<div class="card status-card ${action ? '' : 'noact'}">
+      <div class="cs-row">${icon('clock', 16, 'cs-ic')}
+        <span class="cs-num"><span class="v">${fmt(t.total)}</span><span class="u"> ${t.unit}</span></span>
+        <span class="cs-size">${esc(t.size)}</span>
+      </div>
+      <div class="cs-meta"><span>待开始</span></div>
+      ${action}
+    </div>`;
+  }
+  return `<div class="card status-card noact">
+    <div class="cs-row">${icon('check', 16, 'cs-ic')}
+      <span class="cs-num"><span class="v">${fmt(t.total)}</span><span class="u"> ${t.unit}</span></span>
+      <span class="cs-size">${esc(t.size)}</span>
+    </div>
+    <div class="cs-meta"><span>${t.kind === 'material' ? '自动拷贝完成' : '备份完成'}</span><span>${esc(t.doneAt || '')}</span></div>
+  </div>`;
+}
+function diskHTML(d, conn, link) {
+  if (!d) return '';
+  if (conn !== '已连接') {
+    return `<div class="card disk-files"><div class="disk-files-main slim">
+      <div class="disk-files-head"><div class="disk-name">${esc(d.name)}</div></div>
+      <div class="disk-files-foot"><div class="disk-status off">${icon('x', 12)}未连接</div></div>
+    </div></div>`;
+  }
+  return `<div class="card disk-files"><div class="disk-files-main">
+    <div class="disk-files-head">
+      <div class="disk-name">${esc(d.name)}</div>
+      <button class="disk-open" type="button" onclick="toast('演示版不打开文件 App')">${link}${chev()}</button>
+    </div>
+    <div class="disk-cap">
+      <div class="disk-bar"><i style="width:${d.used}%"></i></div>
+      <div class="disk-cap-row"><span class="disk-state">${esc(d.free)}</span><span class="disk-state">${esc(d.total)}</span></div>
+    </div>
+    <div class="disk-files-foot"><div class="disk-status">${icon('check', 12)}已连接</div><div class="disk-fs">${esc(d.fmt)}</div></div>
+  </div></div>`;
+}
+function diskSections(t) {
+  if (t.kind === 'photos') {
+    return `<div class="section">${diskHTML(t.dstDisk || diskByName(t.target), t.conn, '查看备份文件')}</div>`;
+  }
+  let html = '';
+  if (t.srcDisk) html += `<div class="section">${diskHTML(t.srcDisk, '已连接', '查看源文件夹')}</div>`;
+  if (t.dstDisk) html += `<div class="section">${diskHTML(t.dstDisk, t.conn, '查看目标文件夹')}</div>`;
+  return html;
+}
+function recordsHTML(t) {
+  if (!t.records || !t.records.length) return '';
+  return `<div class="section">
+    <div class="card hist-card"><div class="hist-list">
+      ${t.records.map(r => `<div class="row"><span class="k">${esc(r[0])}</span><span class="v">${esc(r[1])}</span></div>`).join('')}
+    </div></div>
+    <div class="hint hint--c">仅展示最近30天</div>
+  </div>`;
+}
+function renderDetail() {
+  const t = findTask(currentTaskId);
+  if (!t) return;
+  $('#detail-title').innerHTML = titleHTML(t.title);
+  $('#detail-content').innerHTML = statusHTML(t) + diskSections(t) + recordsHTML(t);
+}
+
+/* ---------- 渲染：设置 ---------- */
+function renderSettings() {
+  const t = findTask(currentTaskId);
+  if (!t) return;
+  const photos = t.kind === 'photos';
+  $('#settings-title').textContent = photos ? '相册备份设置' : '自动拷贝设置';
+  $('#settings-content').innerHTML = photos ? `
+    <div class="section">
+      <div class="card list">
+        <div class="row row--name row--link" onclick="openRename()"><span class="k">任务名称</span><span class="v">${esc(t.name)}</span>${chev()}</div>
+        <div class="row"><span class="k">备份盘</span><span class="v">${esc(t.target)}</span></div>
+        <div class="row row--link" onclick="openDiskPicker()"><span class="v">变更磁盘</span>${chev()}</div>
+      </div>
+      <div class="hint">相册将备份到 /Volumes/${esc(t.target)}</div>
+    </div>
+    <div class="section">
+      <div class="card list"><div class="row"><span class="k">自动备份</span><span class="switch ${t.auto ? '' : 'off'}" onclick="toggleFlag(this,'auto')"><i></i></span></div></div>
+      <div class="hint">连接备份磁盘并打开 App 时，会进行自动备份</div>
+    </div>
+    <div class="section">
+      <div class="card list">
+        <div class="row"><span class="k">照片</span><span class="switch ${t.photo ? '' : 'off'}" onclick="toggleFlag(this,'photo')"><i></i></span></div>
+        <div class="row"><span class="k">视频</span><span class="switch ${t.video ? '' : 'off'}" onclick="toggleFlag(this,'video')"><i></i></span></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="card list"><div class="row row--danger" onclick="confirmDelete()" style="justify-content:center"><span>删除</span></div></div>
+      <div class="hint">删除后停止相册备份，已备份的照片和视频不会被删除</div>
+    </div>` : `
+    <div class="section">
+      <div class="card list">
+        <div class="row row--name row--link" onclick="openRename()"><span class="k">任务名称</span><span class="v">${esc(t.name)}</span>${chev()}</div>
+      </div>
+      <div class="hint">素材将拷贝到 /Volumes/${esc(t.target)}/${esc(t.source)}</div>
+    </div>
+    <div class="section">
+      <div class="card list"><div class="row"><span class="k">自动拷贝</span><span class="switch ${t.auto ? '' : 'off'}" onclick="toggleFlag(this,'auto')"><i></i></span></div></div>
+      <div class="hint">连接源盘和目标盘并打开 App 时，会进行自动拷贝</div>
+    </div>
+    <div class="section">
+      <div class="card list"><div class="row"><span class="k">文件校验</span><span class="switch ${t.verify ? '' : 'off'}" onclick="toggleFlag(this,'verify')"><i></i></span></div></div>
+      <div class="hint">逐文件比对哈希，确认写入内容与源文件一致；文件多时会变慢</div>
+    </div>
+    <div class="section">
+      <div class="card list"><div class="row row--danger" onclick="confirmDelete()" style="justify-content:center"><span>删除</span></div></div>
+      <div class="hint">删除后停止自动拷贝，文件不会被删除</div>
+    </div>`;
+}
+
+/* ---------- 导航 ---------- */
+function updateChrome() {
+  $('#tabbar').classList.toggle('hide', stack.length > 0);
+}
+function push(id) {
+  stack.push(id);
+  const el = $('#' + id);
+  el.style.zIndex = String(10 + stack.length);
+  el.classList.add('on');
+  const content = el.querySelector('.content');
+  if (content) content.scrollTop = 0;
+  updateChrome();
+}
+function pop() {
+  const id = stack.pop();
+  if (!id) return;
+  $('#' + id).classList.remove('on');
+  if (!stack.length) {
+    currentTaskId = null;
+    currentWorkId = null;
+  }
+  updateChrome();
+}
+function clearStack() {
+  stack.forEach(id => { const el = $('#' + id); if (el) el.classList.remove('on'); });
+  stack = [];
+  currentTaskId = null;
+  currentWorkId = null;
+  updateChrome();
+}
+function showTab(tab) {
+  clearStack();
+  state.tab = tab;
+  $$('.screen.root').forEach(s => s.classList.toggle('on', s.id === 'scr-' + tab));
+  $$('.tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+  const idx = ['home', 'tasks', 'ai'].indexOf(tab);
+  $('#tab-pill').style.transform = `translateX(${Math.max(0, idx) * 100}%)`;
+}
+
+function openTask(id) {
+  currentTaskId = id;
+  renderDetail();
+  push('scr-detail');
+}
+function toggleTask(id) {
+  const t = findTask(id);
+  if (!t) return;
+  if (t.status === 'running') {
+    t.status = 'paused';
+  } else if (t.status === 'paused') {
+    t.status = 'running';
+  } else if (t.status === 'pending') {
+    if (t.conn !== '已连接') { toast('请先连接卡或磁盘'); return; }
+    t.status = 'running';
+    t.speed = '96 MB/s';
+    t.remain = '剩余 5 分钟';
+  } else {
+    return;
+  }
+  refreshViews();
+}
+function refreshViews() {
+  renderHome();
+  renderTasks();
+  if (stack.includes('scr-detail') && currentTaskId) {
+    const el = $('#detail-content');
+    const y = el.scrollTop;
+    renderDetail();
+    el.scrollTop = y;
+  }
+  if (stack.includes('scr-settings')) renderSettings();
+  if (stack.includes('scr-work') && currentWorkId) {
+    const el = $('#work-content');
+    const y = el.scrollTop;
+    renderWork();
+    el.scrollTop = y;
+  }
+}
+
+/* ---------- 设置 ---------- */
+function openTaskSettings() {
+  if (!currentTaskId) return;
+  renderSettings();
+  push('scr-settings');
+}
+function toggleFlag(el, flag) {
+  const t = findTask(currentTaskId);
+  if (!t) return;
+  t[flag] = !t[flag];
+  el.classList.toggle('off', !t[flag]);
+}
+function openRename() {
+  const t = findTask(currentTaskId);
+  if (!t) return;
+  openDialog({
+    title: '任务名称',
+    input: t.name,
+    buttons: [
+      { label: '取消' },
+      {
+        label: '修改',
+        onClick: value => {
+          const name = (value || '').trim();
+          if (!name) return;
+          t.name = name;
+          t.title = name;
+          t.customName = true;
+          refreshViews();
+          toast('已修改');
+        }
+      }
+    ]
+  });
+}
+function openDiskPicker() {
+  const t = findTask(currentTaskId);
+  if (!t) return;
+  openDialog({
+    title: '变更磁盘',
+    list: state.disks.map(d => ({ label: d.name, value: d.name, selected: d.name === t.target })),
+    buttons: [{ label: '取消' }],
+    onPick: item => {
+      if (item.value === t.target) return;
+      const d = diskByName(item.value);
+      t.target = d.name;
+      t.dstDisk = d;
+      if (!t.customName) {
+        t.name = `相册 → ${d.name}`;
+        t.title = `相册→${d.name}`;
+      }
+      refreshViews();
+      toast(`已切换至 ${d.name}`);
+    }
+  });
+}
+function confirmDelete() {
+  const t = findTask(currentTaskId);
+  if (!t) return;
+  openDialog({
+    title: '删除',
+    message: t.kind === 'photos'
+      ? '此操作无法恢复，<br>已备份的照片和视频不会被删除'
+      : '此操作无法恢复，文件不会被删除',
+    buttons: [
+      { label: '取消' },
+      {
+        label: '删除',
+        danger: true,
+        onClick: () => {
+          state.tasks = state.tasks.filter(x => x.id !== t.id);
+          clearStack();
+          showTab('home');
+          renderHome();
+          toast('已删除');
+        }
+      }
+    ]
+  });
+}
+
+/* ---------- 选择盘与新建 ---------- */
+function pickReady() {
+  const p = state.pick;
+  return p.mode === 'photos' ? !!p.one : (!!p.src && !!p.dst && p.src !== p.dst);
+}
+function pickRowHTML(d, slot) {
+  const on = state.pick[slot] === d.name;
+  return `<div class="pick-row ${on ? 'on' : ''}" onclick="selectPick('${slot}','${d.name}')">
+    <div class="pick-ico">${icon('disk', 20, 'lg')}</div>
+    <div class="pick-main">
+      <div class="pick-name">${esc(d.name)}</div>
+      <div class="pick-meta">${esc(d.free)} · ${esc(d.total)}</div>
+    </div>
+    <span class="radio">${on ? `<svg class="st-ic" width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6.2l2.4 2.4 4.8-5.2"/></svg>` : ''}</span>
+  </div>`;
+}
+function renderPick() {
+  const p = state.pick;
+  if (p.mode === 'photos') {
+    $('#pick-content').innerHTML = `<div class="section" style="gap:8px">
+      <div class="pick-title">选择你的外置硬盘</div>
+      <div class="card list">${DISKS.map(d => pickRowHTML(d, 'one')).join('')}</div>
+    </div>`;
+  } else {
+    $('#pick-content').innerHTML = `
+      <div class="section" style="gap:8px">
+        <div class="pick-title">选择源磁盘</div>
+        <div class="card list">${DISKS.map(d => pickRowHTML(d, 'src')).join('')}</div>
+      </div>
+      <div class="section" style="gap:8px">
+        <div class="pick-title">选择目标磁盘</div>
+        <div class="card list">${DISKS.map(d => pickRowHTML(d, 'dst')).join('')}</div>
+      </div>`;
+  }
+  $('#pick-next').disabled = !pickReady();
+}
+function startPick(mode) {
+  state.pick = { mode, one: null, src: null, dst: null };
+  renderPick();
+  push('scr-pick');
+}
+function selectPick(slot, name) {
+  const p = state.pick;
+  if (slot === 'src' && p.dst === name) { toast('源磁盘和目标磁盘不能相同'); return; }
+  if (slot === 'dst' && p.src === name) { toast('源磁盘和目标磁盘不能相同'); return; }
+  p[slot] = name;
+  renderPick();
+}
+function pickNext() {
+  if (!pickReady()) return;
+  const p = state.pick;
+  const src = p.mode === 'photos' ? null : diskByName(p.src);
+  const dst = diskByName(p.mode === 'photos' ? p.one : p.dst);
+  state.create = {
+    mode: p.mode,
+    src,
+    dst,
+    name: p.mode === 'photos' ? `相册 → ${dst.name}` : `${src.name} → ${dst.name}`,
+    auto: true,
+    photo: true,
+    video: true,
+    verify: false,
+    customName: false
+  };
+  renderCreate();
+  push('scr-create');
+}
+function renderCreate() {
+  const c = state.create;
+  if (c.mode === 'photos') {
+    $('#create-content').innerHTML = `
+      <div class="section">
+        <div class="card list">
+          <div class="row row--name row--link" onclick="renameCreate()"><span class="k">任务名称</span><span class="v">${esc(c.name)}</span>${chev()}</div>
+          <div class="row"><span class="k">备份盘</span><span class="v">${esc(c.dst.name)}</span></div>
+          <div class="row row--link" onclick="openCreateDiskPicker()"><span class="v">变更磁盘</span>${chev()}</div>
+        </div>
+        <div class="hint">照片和视频将备份到 /Volumes/${esc(c.dst.name)}</div>
+      </div>
+      <div class="section">
+        <div class="card list"><div class="row"><span class="k">自动备份</span><span class="switch ${c.auto ? '' : 'off'}" onclick="toggleCreateFlag(this,'auto')"><i></i></span></div></div>
+        <div class="hint">连接备份磁盘并打开 App 时，会进行自动备份</div>
+      </div>
+      <div class="section">
+        <div class="card list">
+          <div class="row"><span class="k">照片</span><span class="switch ${c.photo ? '' : 'off'}" onclick="toggleCreateFlag(this,'photo')"><i></i></span></div>
+          <div class="row"><span class="k">视频</span><span class="switch ${c.video ? '' : 'off'}" onclick="toggleCreateFlag(this,'video')"><i></i></span></div>
+        </div>
+      </div>`;
+  } else {
+    $('#create-content').innerHTML = `
+      <div class="section">
+        <div class="card list">
+          <div class="row row--name row--link" onclick="renameCreate()"><span class="k">任务名称</span><span class="v">${esc(c.name)}</span>${chev()}</div>
+        </div>
+        <div class="hint">素材将拷贝到 /Volumes/${esc(c.dst.name)}/${esc(c.src.name)}</div>
+      </div>
+      <div class="section">
+        <div class="card list"><div class="row"><span class="k">自动拷贝</span><span class="switch ${c.auto ? '' : 'off'}" onclick="toggleCreateFlag(this,'auto')"><i></i></span></div></div>
+        <div class="hint">连接源盘和目标盘并打开 App 时，会进行自动拷贝</div>
+      </div>
+      <div class="section">
+        <div class="card list"><div class="row"><span class="k">文件校验</span><span class="switch ${c.verify ? '' : 'off'}" onclick="toggleCreateFlag(this,'verify')"><i></i></span></div></div>
+        <div class="hint">逐文件比对哈希，确认写入内容与源文件一致；文件多时会变慢</div>
+      </div>`;
+  }
+}
+function toggleCreateFlag(el, flag) {
+  state.create[flag] = !state.create[flag];
+  el.classList.toggle('off', !state.create[flag]);
+}
+function renameCreate() {
+  openDialog({
+    title: '任务名称',
+    input: state.create.name,
+    buttons: [
+      { label: '取消' },
+      {
+        label: '修改',
+        onClick: value => {
+          const name = (value || '').trim();
+          if (!name) return;
+          state.create.name = name;
+          state.create.customName = true;
+          renderCreate();
+        }
+      }
+    ]
+  });
+}
+function openCreateDiskPicker() {
+  const c = state.create;
+  openDialog({
+    title: '变更磁盘',
+    list: state.disks.map(d => ({ label: d.name, value: d.name, selected: d.name === c.dst.name })),
+    buttons: [{ label: '取消' }],
+    onPick: item => {
+      const d = diskByName(item.value);
+      if (d.name === c.dst.name) return;
+      c.dst = d;
+      if (!c.customName) c.name = `相册 → ${d.name}`;
+      renderCreate();
+      toast(`已切换至 ${d.name}`);
+    }
+  });
+}
+function finishCreate() {
+  const c = state.create;
+  if (c.mode === 'photos') {
+    state.tasks.unshift({
+      id: uid(), kind: 'photos', title: c.customName ? c.name : `相册→${c.dst.name}`, name: c.name,
+      status: 'running', done: 0, total: 1820, unit: '张', size: '26.4 GB',
+      speed: '96 MB/s', remain: '剩余 6 分钟', conn: '已连接',
+      target: c.dst.name, dstDisk: c.dst, records: [],
+      auto: c.auto, photo: c.photo, video: c.video, verify: false, customName: c.customName
+    });
+  } else {
+    state.tasks.unshift({
+      id: uid(), kind: 'material', title: c.customName ? c.name : `${c.src.name}→${c.dst.name}`, name: c.name,
+      status: 'running', done: 0, total: 326, unit: '个文件', size: '3.2 GB',
+      speed: '28 MB/s', remain: '剩余 2 分钟', conn: '已连接',
+      source: c.src.name, target: c.dst.name, srcDisk: c.src, dstDisk: c.dst, records: [],
+      auto: c.auto, verify: c.verify, customName: c.customName
+    });
+  }
+  clearStack();
+  showTab('home');
+  renderHome();
+  toast(c.mode === 'photos' ? '已创建相册备份任务' : '已创建素材自动拷贝任务');
+}
+
+/* ---------- 任务设置（外部素材拷贝） ---------- */
+function openTaskNew() {
+  state.newTask = { source: null, tab: 0, advanced: false, name: '', priority: '立即执行', copy: true, upload: false, fileType: 'original', verify: false };
+  renderTaskNew();
+  push('scr-tasknew');
+}
+function updateNewFooter() {
+  const n = state.newTask;
+  const ok = !!n.source && (n.copy || n.upload);
+  $('#btn-start').disabled = !ok;
+  $('#btn-save-start').disabled = !ok;
+}
+function renderTaskNew() {
+  const n = state.newTask;
+  const advancedRows = n.advanced ? `
+    <div class="row row--link" onclick="renameNewTask()"><span class="k">任务名称</span><span class="v">${esc(n.name || n.source?.name || '')}</span>${chev()}</div>
+    <div class="row row--link" onclick="pickPriority()"><span class="k">选择任务优先级</span><span class="v">${esc(n.priority)}</span>${chev()}</div>` : '';
+  const custom = n.tab === 0 ? `
+    <div class="card list">
+      <div class="row row--link" onclick="toggleAdvanced()">
+        <span class="k">高级选项</span>
+        <span style="display:inline-flex;${n.advanced ? 'transform:rotate(90deg)' : ''}">${chev()}</span>
+      </div>
+      ${advancedRows}
+    </div>
+    <div class="card list">
+      <div class="row"><span class="k">文件拷贝</span><span class="switch ${n.copy ? '' : 'off'}" onclick="toggleNewFlag(this,'copy')"><i></i></span></div>
+      ${n.copy ? `
+        <div class="row row--link" onclick="setFileType('original')"><span class="k">原文件</span><span class="v">${n.fileType === 'original' ? tick() : ''}</span></div>
+        <div class="row row--link" onclick="setFileType('transcode')"><span class="k">转码优化 <span style="color:#9aa1ab">HEVC 10Bit</span></span><span class="v">${n.fileType === 'transcode' ? tick() : ''}</span></div>
+        <div class="row"><span class="k">文件校验</span><span class="switch ${n.verify ? '' : 'off'}" onclick="toggleNewFlag(this,'verify')"><i></i></span></div>` : ''}
+    </div>
+    <div class="card list">
+      <div class="row"><span class="k">文件上传</span><span class="switch ${n.upload ? '' : 'off'}" onclick="toggleNewFlag(this,'upload')"><i></i></span></div>
+    </div>` : `<div class="empty" style="padding:56px 0">${icon('copy', 36, 'lg')}<div>暂无快捷预设</div></div>`;
+  $('#tasknew-content').innerHTML = `
+    <div class="section" style="gap:8px">
+      <div class="pick-title">数据源</div>
+      <div class="card list">
+        <div class="row row--link" onclick="pickSource()"><span class="k">文件夹</span><span class="v">${n.source ? esc(n.source.name) : '未选择'}</span>${chev()}</div>
+      </div>
+      ${n.source ? `<div class="hint">${esc(n.source.path)}</div>` : ''}
+    </div>
+    <div class="section" style="gap:12px">
+      <div class="seg">
+        <button class="ct ${n.tab === 0 ? 'on' : ''}" type="button" onclick="setNewTab(0)">自定义</button>
+        <button class="ct ${n.tab === 1 ? 'on' : ''}" type="button" onclick="setNewTab(1)">快捷预设</button>
+      </div>
+      ${custom}
+    </div>`;
+  updateNewFooter();
+}
+function pickSource() {
+  const list = [
+    { label: 'DCIM', value: { name: 'DCIM', path: '/DCIM' } },
+    { label: '下载', value: { name: '下载', path: '/Downloads' } },
+    { label: '旅行素材', value: { name: '旅行素材', path: '/素材/旅行' } }
+  ];
+  openDialog({
+    title: '数据源',
+    list,
+    buttons: [{ label: '取消' }],
+    onPick: item => {
+      state.newTask.source = item.value;
+      if (!state.newTask.name) state.newTask.name = item.value.name;
+      renderTaskNew();
+    }
+  });
+}
+function setNewTab(index) {
+  state.newTask.tab = index;
+  renderTaskNew();
+}
+function toggleAdvanced() {
+  state.newTask.advanced = !state.newTask.advanced;
+  renderTaskNew();
+}
+function renameNewTask() {
+  openDialog({
+    title: '任务名称',
+    input: state.newTask.name || state.newTask.source?.name || '',
+    buttons: [
+      { label: '取消' },
+      { label: '修改', onClick: value => { const name = (value || '').trim(); if (!name) return; state.newTask.name = name; renderTaskNew(); } }
+    ]
+  });
+}
+function pickPriority() {
+  openDialog({
+    title: '选择任务优先级',
+    list: ['立即执行', '排队执行'].map(x => ({ label: x, value: x, selected: x === state.newTask.priority })),
+    buttons: [{ label: '取消' }],
+    onPick: item => { state.newTask.priority = item.value; renderTaskNew(); }
+  });
+}
+function setFileType(type) {
+  state.newTask.fileType = type;
+  renderTaskNew();
+}
+function toggleNewFlag(el, flag) {
+  state.newTask[flag] = !state.newTask[flag];
+  renderTaskNew();
+}
+function startNewTask(saveFirst) {
+  const n = state.newTask;
+  if (!n.source || (!n.copy && !n.upload)) return;
+  state.work.unshift({
+    id: uid(),
+    title: n.name || n.source.name,
+    size: '2.6 GB',
+    files: 58,
+    at: timeHM(),
+    status: 'running',
+    progress: 6,
+    steps: [{ name: '拷贝', pct: 6 }, { name: '校验', pct: 0 }, { name: '上传', pct: 0 }]
+  });
+  clearStack();
+  showTab('tasks');
+  renderTasks();
+  toast(saveFirst ? '已保存并开始' : '任务已开始');
+}
+
+/* ---------- 任务详情 ---------- */
+function openWork(id) {
+  currentWorkId = id;
+  renderWork();
+  push('scr-work');
+}
+function renderWork() {
+  const t = state.work.find(w => w.id === currentWorkId);
+  if (!t) return;
+  $('#work-title').textContent = t.title;
+  $('#work-content').innerHTML = `
+    <div class="section">
+      <div class="card list">
+        <div class="row"><span class="k">大小</span><span class="v">${esc(t.size)}</span></div>
+        <div class="row"><span class="k">文件数量</span><span class="v">${t.files} 个</span></div>
+        <div class="row"><span class="k">创建时间</span><span class="v">${esc(t.at)}</span></div>
+      </div>
+    </div>
+    <div class="section">
+      ${t.steps.map(s => {
+        let right = s.pct === 100 ? '完成' : s.pct === 0 ? '待开始' : `${s.pct}%`;
+        if (t.status === 'paused' && s.pct > 0 && s.pct < 100) right = '已暂停';
+        return `<div class="card phase-card">
+          <div class="phase-head"><span>${s.name}</span><span class="pct">${right}</span></div>
+          <div class="phase-bar"><i style="width:${s.pct}%"></i></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  $('#work-foot').innerHTML = `
+    <button class="btn" type="button" onclick="toast('演示版不打开文件 App')">查看文件</button>
+    ${t.status !== 'done' ? `<button class="btn primary" type="button" onclick="toggleWork()">${t.status === 'paused' ? '继续' : '暂停'}</button>` : ''}`;
+}
+function toggleWork() {
+  const t = state.work.find(w => w.id === currentWorkId);
+  if (!t || t.status === 'done') return;
+  t.status = t.status === 'paused' ? 'running' : 'paused';
+  renderTasks();
+  renderWork();
+}
+
+/* ---------- AI ---------- */
+function openRecommend() {
+  state.recTab = 0;
+  state.recSel = [[], []];
+  renderRecommend();
+  push('scr-rec');
+}
+function renderRecommend() {
+  const tab = state.recTab;
+  const total = tab === 0 ? 9 : 12;
+  $('#rec-content').innerHTML = `
+    <div class="rec-stats">
+      <div class="rec-stat"><div class="k">AI 推荐</div><div class="v">128</div></div>
+      <div class="rec-stat"><div class="k">原文件数量</div><div class="v">3,642</div></div>
+    </div>
+    <div class="seg rec-seg">
+      <button class="ct ${tab === 0 ? 'on' : ''}" type="button" onclick="setRecTab(0)">AI 推荐</button>
+      <button class="ct ${tab === 1 ? 'on' : ''}" type="button" onclick="setRecTab(1)">所有文件</button>
+    </div>
+    <div class="rec-grid">${Array.from({ length: total }, (_, i) => recTile(i, !!state.recSel[tab][i])).join('')}</div>`;
+}
+function recTile(i, on) {
+  return `<div class="rec-tile ${on ? 'on' : ''}" onclick="toggleRec(${i})">
+    ${icon('image', 26, 'lg')}
+    <span class="rec-check">${icon('check', 12, 'lg')}</span>
+    <span class="rec-ai">${icon('spark', 12, 'lg')}</span>
+  </div>`;
+}
+function toggleRec(i) {
+  state.recSel[state.recTab][i] = !state.recSel[state.recTab][i];
+  renderRecommend();
+}
+function setRecTab(t) {
+  state.recTab = t;
+  renderRecommend();
+}
+function recAct(kind) {
+  const count = state.recSel[state.recTab].filter(Boolean).length;
+  if (!count) { toast('请先选择图片'); return; }
+  toast(kind === 'save' ? `已保存 ${count} 张到相册` : `已选择 ${count} 张，演示版不打开外部素材拷贝`);
+}
+function openChat() {
+  renderChat();
+  push('scr-chat');
+  setTimeout(() => {
+    const body = $('#chat-body');
+    if (body) body.scrollTop = body.scrollHeight;
+  }, 60);
+}
+function renderChat() {
+  const body = $('#chat-body');
+  if (!state.aiMessages.length) {
+    body.innerHTML = `<div class="chat-welcome">
+      <div class="chat-logo">${icon('spark', 28, 'lg')}</div>
+      <div class="chat-hi">Hi～</div>
+      <div class="chat-sub">我是您的修图智能助手</div>
+      <div class="chat-tip">上传一张图片，告诉我您想如何修改吧！</div>
+    </div>`;
+  } else {
+    body.innerHTML = state.aiMessages.map(m => `<div class="msg ${m.who}">${esc(m.text)}</div>`).join('');
+  }
+  body.scrollTop = body.scrollHeight;
+}
+function sendChat() {
+  const input = $('#chat-input');
+  const value = input.value.trim();
+  if (!value) return;
+  state.aiMessages.push({ who: 'user', text: value });
+  input.value = '';
+  renderChat();
+  setTimeout(() => {
+    state.aiMessages.push({ who: 'ai', text: '收到，演示版还不能真的修图。你可以继续告诉我想要的风格，比如「提亮一点，皮肤自然一些」。' });
+    renderChat();
+  }, 650);
+}
+function aiAsk() {
+  const input = $('#ai-input');
+  if (!input.value.trim()) return;
+  toast('演示版暂不接入 AI 对话，可打开「AI 修图」体验');
+}
+
+/* ---------- 我的 ---------- */
+function openSheet() { $('#sheet-layer').classList.add('open'); }
+function closeSheet() { $('#sheet-layer').classList.remove('open'); }
+
+/* ---------- 弹窗与提示 ---------- */
+function openDialog(opt) {
+  currentDialog = opt;
+  const mask = $('#mask');
+  let html = `<div class="alert" role="dialog" aria-modal="true">`;
+  if (opt.title) html += `<div class="alert-title">${opt.title}</div>`;
+  if (opt.message) html += `<div class="alert-msg">${opt.message}</div>`;
+  if (opt.input !== undefined) {
+    html += `<input class="alert-input" id="dlg-input" value="${esc(opt.input)}" onkeydown="if(event.key==='Enter')dlgConfirmInput()">`;
+  }
+  if (opt.list) {
+    html += `<div class="alert-list">${opt.list.map((x, i) => `
+      <div class="row" onclick="dlgPick(${i})">
+        <span class="k">${esc(x.label)}</span>
+        ${x.selected ? icon('check', 12) : ''}
+      </div>`).join('')}</div>`;
+  }
+  const buttons = opt.buttons || [{ label: '取消' }];
+  html += `<div class="alert-actions">${buttons.map((b, i) =>
+    `<button class="ab ${b.danger ? 'ab--danger' : ''}" type="button" onclick="dlgBtn(${i})">${esc(b.label)}</button>`).join('')}</div>`;
+  html += `</div>`;
+  mask.innerHTML = html;
+  mask.classList.add('on');
+  setTimeout(() => { const input = $('#dlg-input'); if (input) input.focus(); }, 60);
+}
+function closeDialog() {
+  const mask = $('#mask');
+  mask.classList.remove('on');
+  mask.innerHTML = '';
+  currentDialog = null;
+}
+function dlgBtn(index) {
+  const opt = currentDialog;
+  if (!opt) return;
+  const button = opt.buttons[index];
+  const value = $('#dlg-input') ? $('#dlg-input').value : undefined;
+  closeDialog();
+  if (button && button.onClick) button.onClick(value);
+}
+function dlgConfirmInput() {
+  if (!currentDialog) return;
+  const index = (currentDialog.buttons || []).length - 1;
+  if (index >= 0) dlgBtn(index);
+}
+function dlgPick(index) {
+  const opt = currentDialog;
+  if (!opt || !opt.list) return;
+  const item = opt.list[index];
+  closeDialog();
+  if (opt.onPick) opt.onPick(item);
+}
+function toast(message) {
+  const el = $('#toast');
+  el.textContent = message;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 1600);
+}
+
+/* ---------- 进度模拟 ---------- */
+function simulate() {
+  let changed = false;
+  let completed = null;
+  state.tasks.forEach(t => {
+    if (t.status !== 'running') return;
+    const step = Math.max(1, Math.round(t.total * 0.002));
+    t.done = Math.min(t.total, t.done + step);
+    changed = true;
+    if (t.done >= t.total) {
+      t.status = 'done';
+      t.doneAt = `今天 ${timeHM()}`;
+      t.remain = '';
+      completed = t.title;
+    }
+  });
+  state.work.forEach(t => {
+    if (t.status !== 'running') return;
+    t.progress = Math.min(100, t.progress + 2);
+    t.steps[0].pct = t.progress;
+    if (t.progress >= 100) {
+      t.status = 'done';
+      t.steps.forEach(s => { s.pct = 100; });
+      completed = t.title;
+    }
+    changed = true;
+  });
+  if (!changed) return;
+  renderHome();
+  renderTasks();
+  if (stack.includes('scr-detail') && currentTaskId) {
+    const el = $('#detail-content');
+    const y = el.scrollTop;
+    renderDetail();
+    el.scrollTop = y;
+  }
+  if (stack.includes('scr-settings')) renderSettings();
+  if (stack.includes('scr-work') && currentWorkId) {
+    const el = $('#work-content');
+    const y = el.scrollTop;
+    renderWork();
+    el.scrollTop = y;
+  }
+  if (completed) toast(`${completed} 已完成`);
+}
+
+renderHome();
+renderTasks();
+renderChat();
+updateChrome();
+setInterval(simulate, 4000);
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  if ($('#mask').classList.contains('on')) return;
+  if ($('#sheet-layer').classList.contains('open')) { closeSheet(); return; }
+  if (stack.length) pop();
+});
+</script>
+</body>
+</html>

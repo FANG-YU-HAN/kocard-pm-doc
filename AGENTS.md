@@ -11,9 +11,16 @@ kocard 项目的产品经理工作文档记录，包括需求文档、会议记�
 * 整个公司都是我用来完成这个产品的资源池
 
 
+## 目录结构
+
+- `doc/`：工作底稿，需求、会议、调研、原型、表格都放这里，不对外发布
+- `publish/`：要上线的内容，只有明确要发布时才往里加；`publish/index.html` 由脚本生成
+- `publish/demo/`：手机端全屏 demo（Safari 打开后添加到主屏幕）
+- `plugins/`、`templates/`、`site/`：工具、模板和构建脚本，不是文档内容
+
 ## 文件命名规范
 
-- 文件：`YYYY-MM-DD-标题.md`，如 `2026-10-19-xx需求评审.md`
+- 文件：`YYYY-MM-DD-标题.md`，放在 `doc/`，如 `doc/2026-10-19-xx需求评审.md`
 - 标题使用中文，全部小写字母仅用于英文缩写（如 `prd`、`api`）
 - 不要使用空格，用连字符 `-` 分隔
 
@@ -31,14 +38,21 @@ HTML 版 PRD 统一从模板生成，不要从零写页面：
 
 ```bash
 node plugins/kocard-prd/scripts/new-prd.mjs "文档标题"
-node plugins/kocard-prd/scripts/check-prd.mjs "生成的文件.html" --strict
+node plugins/kocard-prd/scripts/check-prd.mjs "doc/生成的文件.html" --strict
 ```
 
 - 模板与插件说明：`templates/prd/prd-template.html`、`plugins/kocard-prd/README.md`
-- 文件名为 `YYYY-MM-DD-标题.html`，放在仓库根目录
+- 文件名为 `YYYY-MM-DD-标题.html`，脚本会写进 `doc/`
 - 只填内容，不改 `<style>` / `<script>`；不适用的章节整节删除，问题、目标、功能需求、验收除外
 - 交付前检查必须 0 错误、0 警告；占位符未填也算警告
 - Qoder 会通过本地插件 `kocard-prd` 自动套用；其他 Agent 以本节为准
+
+## 发布
+
+- 线上站点由 Cloudflare Pages 构建：构建命令 `node site/build.mjs`，输出目录 `publish`
+- 要发布某篇文档：把它从 `doc/` 移到 `publish/`，运行 `node site/build.mjs` 更新索引，提交推送后自动上线
+- 发布后的文档只有一份，后续修改直接改 `publish/` 里的文件，不要在两处各留一份
+- 不要直接把内部调研、表格、会议记录放进 `publish/`
 
 ## Git 规范
 
