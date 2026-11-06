@@ -1,10 +1,12 @@
-
-
 本文件供 AI Agent（Claude Code / Qoder / Cursor 等）在本仓库中工作时阅读，说明仓库用途、目录约定和工作规范。
 
 ## 仓库用途
 
-kocard 项目的产品经理工作文档记录，包括需求文档、会议记录、调研报告、复盘总结等。
+kocard 项目的产品经理工作文档仓库，包括需求文档、会议记录、调研报告、复盘总结、原型等。
+
+- 本仓库只放工作文档，不对外发布
+- 已发布内容在 `kocard-pm-work` 仓库（Cloudflare Pages 托管），本仓库不保留发布副本
+
 * 我是这个产品的主导者，CEO
 * 老板（P）是我的战略顾问，
 * 领导（F）是我的咨询顾问
@@ -13,10 +15,9 @@ kocard 项目的产品经理工作文档记录，包括需求文档、会议记�
 
 ## 目录结构
 
-- `doc/`：工作底稿，需求、会议、调研、原型、表格都放这里，不对外发布
-- `publish/`：要上线的内容，只有明确要发布时才往里加；`publish/index.html` 由脚本生成
-- `publish/demo/`：手机端全屏 demo（Safari 打开后添加到主屏幕）
-- `plugins/`、`templates/`、`site/`：工具、模板和构建脚本，不是文档内容
+- `doc/`：工作底稿，需求、会议、调研、原型、表格都放这里
+- `doc/assets/`：文档引用的图片、draw.io 源文件等
+- `plugins/`、`templates/`：写 PRD 用的模板、检查脚本与本地插件
 
 ## 文件命名规范
 
@@ -49,10 +50,10 @@ node plugins/kocard-prd/scripts/check-prd.mjs "doc/生成的文件.html" --stric
 
 ## 发布
 
-- 线上站点由 Cloudflare Pages 构建：构建命令 `node site/build.mjs`，输出目录 `publish`
-- 要发布某篇文档：把它从 `doc/` 移到 `publish/`，运行 `node site/build.mjs` 更新索引，提交推送后自动上线
-- 发布后的文档只有一份，后续修改直接改 `publish/` 里的文件，不要在两处各留一份
-- 不要直接把内部调研、表格、会议记录放进 `publish/`
+- 要上线某篇文档：把文件从 `doc/` 移到 `kocard-pm-work` 仓库的 `publish/`
+- 在 `kocard-pm-work` 运行 `node site/build.mjs` 更新索引，提交推送 main 后由 Cloudflare Pages 自动上线
+- 发布后的文档只在 `kocard-pm-work` 的 `publish/` 保留一份，后续修改直接改那边，本仓库不再留副本
+- 不要直接把内部调研、表格、会议记录放进发布仓库
 
 ## Git 规范
 
