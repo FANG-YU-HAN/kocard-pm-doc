@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Kocard 三 tab 原型</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: #0e1116;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 64px;
+  }
+  .doc-head { width: 100%; max-width: 640px; margin: 0 auto 40px; text-align: center; }
+  .doc-title { font-size: 20px; font-weight: 600; letter-spacing: .01em; }
+  .doc-sub { margin-top: 8px; font-size: 12px; line-height: 1.9; color: #6b7280; }
+
+  .phone {
+    position: relative;
+    width: 402px;
+    height: 874px;
+    zoom: 0.8;
+    border: 1px solid #d7dce3;
+    border-radius: 52px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 122px;
+    height: 35px;
+    border: 1px solid #d7dce3;
+    border-radius: 18px;
+  }
+  .status {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 40px;
+  }
+  .time { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+
+  .header {
+    height: 52px;
+    margin-top: 6px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-title { font-size: 20px; font-weight: 600; }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #d7dce3;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #0e1116;
+  }
+
+  .content {
+    padding: 20px 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .section { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    border: 1px solid #dfe3e9;
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .jobs { display: flex; flex-direction: column; gap: 10px; }
+  .job {
+    padding: 15px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .job-head { display: flex; align-items: center; }
+  .job-head-main { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+  .job-title { font-size: 16px; line-height: 22px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .job-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+    padding: 0 7px;
+    border: 1px solid #dfe3e9;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex: none;
+  }
+  .job-tag .st-ic { width: 10px; height: 10px; }
+  .job-nums {
+    font-size: 15px;
+    line-height: 17px;
+    color: #0e1116;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .job-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 30px;
+    font-size: 12px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .job-state { display: inline-flex; align-items: center; gap: 5px; }
+  .job-state .st-ic { flex: none; }
+  .st-ic {
+    flex: none;
+    fill: none;
+    stroke: #0e1116;
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cs-btn {
+    margin-left: auto;
+    height: 30px;
+    padding: 0 14px;
+    border: 1px solid #d7dce3;
+    border-radius: 15px;
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+    color: #0e1116;
+    cursor: pointer;
+  }
+  .cs-btn:active { background: #f4f6f9; }
+
+  /* 新增入口卡组：手机相册备份 → 素材自动备份 → 外部素材拷贝 */
+  .add-block { display: flex; flex-direction: column; gap: 10px; }
+  .add-sep { width: 32px; height: 1px; margin: 6px auto 0; background: #dfe3e9; }
+  .add-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .add-mini { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+  .add-mini .h0-ic { width: 28px; height: 28px; }
+  .add-mini .h0-ic svg { width: 26px; height: 26px; }
+  .add-mini .h0-t { font-size: 16px; }
+  .h0-row { height: 100px; padding: 0 15px; display: flex; align-items: center; gap: 16px; }
+  .h0-ic { flex: none; width: 42px; height: 42px; display: grid; place-items: center; }
+  .h0-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .h0-t { font-size: 18px; font-weight: 600; line-height: 1.25; }
+  .h0-s { font-size: 12px; line-height: 1.45; color: #8a9099; }
+
+  .tabbar {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 34px;
+    height: 58px;
+    border: 1px solid #dfe3e9;
+    border-radius: 29px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+  }
+  .tabbar .pill {
+    position: absolute;
+    left: calc(4px + (100% - 8px) / 3);
+    top: 4px;
+    bottom: 4px;
+    width: calc((100% - 8px) / 3);
+    border: 1px solid #0e1116;
+    border-radius: 25px;
+  }
+  .tab {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #8a9099;
+  }
+  .tab.active { color: #0e1116; font-weight: 600; }
+
+  .home-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    border-radius: 3px;
+    background: #0e1116;
+  }
+
+  .fig { margin-top: 24px; font-size: 12px; color: #9aa1ab; text-align: center; letter-spacing: .04em; }
+</style>
+</head>
+<body>
+  <div class="doc-head">
+    <div class="doc-title">首页 / 拷贝 / AI 三 tab</div>
+    <div class="doc-sub">底部导航改为三个 tab；原首页的任务卡与新增入口整体移到「拷贝」。</div>
+  </div>
+
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status">
+      <span class="time">9:41</span>
+      <span class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+          <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+          <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+          <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+          <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+          <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+          <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+          <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="header">
+      <div class="page-title">拷贝</div>
+      <div class="avatar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="9" r="3.6"/>
+          <path d="M4.8 20c0-3.4 3.2-6 7.2-6s7.2 2.6 7.2 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="jobs">
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-head-main">
+                <div class="job-title">相册→Kocard Go</div>
+                <span class="job-tag"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M3.7 6.1l1.5 1.5 3.1-3.3"/></svg>已连接</span>
+              </div>
+            </div>
+            <div class="job-nums">1,284/3,642 张 · 14.6/41.5 GB</div>
+            <div class="job-meta">
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M6 6V1A5 5 0 0 1 9.54 9.54Z" fill="#0e1116" stroke="none"/></svg>剩余 4 分钟</span>
+              <button class="cs-btn" type="button">暂停</button>
+            </div>
+          </div>
+
+          <div class="card job">
+            <div class="job-head">
+              <div class="job-head-main">
+                <div class="job-title">相册→EOS_DIGITAL</div>
+                <span class="job-tag"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5"/><path d="M4.3 4.3l3.4 3.4M7.7 4.3l-3.4 3.4"/></svg>未连接</span>
+              </div>
+            </div>
+            <div class="job-nums">10 张 · 46 MB</div>
+            <div class="job-meta">
+              <span class="job-state"><svg class="st-ic" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" stroke-dasharray="1.7 1.7"/></svg>待备份</span>
+            </div>
+          </div>
+
+          <div class="add-block">
+            <div class="add-sep"></div>
+            <div class="add-pair">
+              <div class="card add-mini">
+                <div class="h0-ic">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>
+                    <circle cx="13.8" cy="7.6" r="1.2"/>
+                    <path d="M6.5 15.6l3.6-3.4 2.8 2.6 1.9-1.8 2.7 2.5"/>
+                  </svg>
+                </div>
+                <div class="h0-tx">
+                  <div class="h0-t">新增手机相册备份</div>
+                </div>
+              </div>
+
+              <div class="card add-mini">
+                <div class="h0-ic">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2" y="7.5" width="5.6" height="13" rx="1.8"/>
+                    <rect x="16.4" y="7.5" width="5.6" height="13" rx="1.8"/>
+                    <path d="M8.2 10.4h7"/>
+                    <path d="M13.4 8.6l1.8 1.8-1.8 1.8"/>
+                    <path d="M15.8 16.4h-7"/>
+                    <path d="M10.6 14.6l-1.8 1.8 1.8 1.8"/>
+                  </svg>
+                </div>
+                <div class="h0-tx">
+                  <div class="h0-t">新增素材自动备份</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card h0-row">
+              <div class="h0-ic">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="8" y="8" width="14" height="14" rx="2"/>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+              </div>
+              <div class="h0-tx">
+                <div class="h0-t">新增外部素材拷贝</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div class="pill"></div>
+      <div class="tab">首页</div>
+      <div class="tab active">拷贝</div>
+      <div class="tab">AI</div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+
+  <div class="fig">拷贝 tab · 承接原首页的任务卡与新增入口</div>
+</body>
+</html>
