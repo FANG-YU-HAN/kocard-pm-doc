@@ -1,0 +1,108 @@
+<mxfile host="Electron" agent="Qoder">
+  <diagram id="2026-11-12-looki-数据上传链路" name="LOOKI L1 · 数据从拍摄到云端">
+    <mxGraphModel dx="2583" dy="1327" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" parent="1" vertex="1" style="text;html=1;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2933;" value="LOOKI L1 · 数据从拍摄到云端">
+          <mxGeometry x="40" y="16" width="900" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" vertex="1" style="text;html=1;fontSize=10;align=left;verticalAlign=middle;fontColor=#8A97A3;" value="来源：Looki 官方数据隐私说明（2026-08）、创始人孙洋访谈、雷科技 CES 2026 实测 ｜ 标注「推断」的为我的判断，官方未明说">
+          <mxGeometry x="40" y="52" width="1120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="sep0" parent="1" vertex="1" style="line;html=1;strokeColor=#DCE2E7;strokeWidth=1;" value="">
+          <mxGeometry x="40" y="82" width="1120" height="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s1" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;① 采集&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;照片 · 短视频 · 音频 · 时间戳。设备本身没有 GPS，位置由配对手机补，需给 App 定位权限；App 关闭后不再收集位置。&lt;/font&gt;">
+          <mxGeometry x="40" y="100" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;② 本地存储 · 32GB&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;默认不上云。不上传就一直留在设备里，直到你删除、重置设备，或写满后被循环录制规则覆盖。&lt;/font&gt;">
+          <mxGeometry x="40" y="194" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;③ 敏感场景过滤 · 端侧（推断）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;识别敏感环境，直接拦下不上传。官方定性：这只是一层保护，不替代告知他人、取得同意、避开敏感场所。&lt;/font&gt;">
+          <mxGeometry x="40" y="288" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7ECF0;strokeColor=#5B6770;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;④ 授权门 · 两条触发路径&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;手动同步；或打开某个需要云端的功能开关 —— &lt;b&gt;开关一次即批准该功能之后全部上传，不再逐次确认&lt;/b&gt;。授权粒度是功能级，不是传输级。&lt;/font&gt;">
+          <mxGeometry x="40" y="382" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;⑤ 上传&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;设备自己连 Wi-Fi 传字节；走手机流量则每次上传限文件大小。推断：App 只做控制面（授权与调度），不承载数据面 —— 这也解释了家里 Wi-Fi 需浏览器登录时上传必失败。&lt;/font&gt;">
+          <mxGeometry x="40" y="476" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;⑥ Looki 云端加密存储&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;传输中与静态存储均加密，访问严格受限。用到云端 AI 功能时，Looki 与授权供应商按需临时解密所需内容。&lt;/font&gt;">
+          <mxGeometry x="40" y="570" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;⑦ AI 供应商临时处理&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;OpenAI 与 Google（含 Gemini）。按功能最小必要分发，不是每个请求都发给每家。已开 zero-training + zero-retention，不允许用你的内容训练通用模型。&lt;/font&gt;">
+          <mxGeometry x="40" y="664" width="600" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="s8" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;fontColor=#2A3540;fontSize=12;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;spacingRight=12;" value="&lt;b&gt;⑧ AI 生成物写回账号&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; color=&quot;#6B7885&quot;&gt;Moments · Memories · Journal · 每日 Vlog · 宫格漫画 · 摘要。&lt;/font&gt;">
+          <mxGeometry x="40" y="758" width="600" height="76" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" parent="1" source="s1" target="s2" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#93A1AC;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" parent="1" source="s2" target="s3" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#93A1AC;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" parent="1" source="s3" target="s4" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#93A1AC;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" parent="1" source="s4" target="s5" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#5B6770;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#5B6770;" value="放行">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" parent="1" source="s5" target="s6" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#93A1AC;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" parent="1" source="s6" target="s7" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#93A1AC;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#8A97A3;" value="按需">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" parent="1" source="s7" target="s8" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#93A1AC;strokeWidth=1;endArrow=block;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rcap1" parent="1" vertex="1" style="text;html=1;fontSize=11;fontStyle=1;align=left;verticalAlign=middle;fontColor=#5B6770;" value="四类数据，四条删除时间线（官方明确说没有统一计时器）">
+          <mxGeometry x="680" y="100" width="480" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;strokeWidth=1;fontColor=#2A3540;fontSize=11;align=left;verticalAlign=middle;spacingLeft=12;spacingRight=10;" value="&lt;b&gt;设备本地副本&lt;/b&gt; → 上传完成后 &lt;b&gt;12 小时&lt;/b&gt;计划删除">
+          <mxGeometry x="680" y="128" width="480" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;strokeWidth=1;fontColor=#2A3540;fontSize=11;align=left;verticalAlign=middle;spacingLeft=12;spacingRight=10;" value="&lt;b&gt;发给供应商的原始媒体&lt;/b&gt; → 走供应商零留存设置，处理完即弃">
+          <mxGeometry x="680" y="186" width="480" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;strokeWidth=1;fontColor=#2A3540;fontSize=11;align=left;verticalAlign=middle;spacingLeft=12;spacingRight=10;" value="&lt;b&gt;你保存/同步到账号的素材&lt;/b&gt; → 留到你删除或注销账号">
+          <mxGeometry x="680" y="244" width="480" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;strokeWidth=1;fontColor=#2A3540;fontSize=11;align=left;verticalAlign=middle;spacingLeft=12;spacingRight=10;" value="&lt;b&gt;AI 生成物&lt;/b&gt; → 留到你删除或注销账号">
+          <mxGeometry x="680" y="302" width="480" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rnote" parent="1" vertex="1" style="text;html=1;fontSize=10;align=left;verticalAlign=top;fontColor=#8A97A3;whiteSpace=wrap;" value="删原始素材、删生成的 Memory、注销账号是三个不同的动作，App 里分开操作。">
+          <mxGeometry x="680" y="360" width="480" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rcap2" parent="1" vertex="1" style="text;html=1;fontSize=11;fontStyle=1;align=left;verticalAlign=middle;fontColor=#5B6770;" value="合规进度">
+          <mxGeometry x="680" y="404" width="480" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;strokeWidth=1;fontColor=#2A3540;fontSize=10;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;spacingRight=10;" value="已过：SOC 2 Type I（只审某一时点的控制设计）&lt;br&gt;在途：SOC 2 Type II · ISO 27001/27701 · GDPR 对齐 · CCPA/CPRA · HIPAA 场景评估 · EN 18031/RED">
+          <mxGeometry x="680" y="432" width="480" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rcap3" parent="1" vertex="1" style="text;html=1;fontSize=11;fontStyle=1;align=left;verticalAlign=middle;fontColor=#5B6770;" value="三处要打问号">
+          <mxGeometry x="680" y="516" width="480" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93A1AC;strokeWidth=1;dashed=1;fontColor=#2A3540;fontSize=10;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;spacingRight=10;" value="· 云存储用 AWS、数据存用户所在区域、本地最多存 5 天 —— 只有媒体转述，官方那篇没写。&lt;br&gt;· 端侧跑 Loom 筛选模型 —— 由「过滤必须在上传前生效」和「故事模式每 3 分钟录 15 秒」推出，官方未明说部署位置。&lt;br&gt;· 网传「云端只保留一天」是误传，混淆了设备副本 12 小时删除与供应商零留存两件事。">
+          <mxGeometry x="680" y="544" width="480" height="76" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rcap4" parent="1" vertex="1" style="text;html=1;fontSize=11;fontStyle=1;align=left;verticalAlign=middle;fontColor=#5B6770;" value="对 kocard 的两条直接启发">
+          <mxGeometry x="680" y="644" width="480" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r7" parent="1" vertex="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#DCE2E7;strokeWidth=1;fontColor=#2A3540;fontSize=10;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;spacingRight=10;" value="&lt;b&gt;授权粒度&lt;/b&gt;：Looki 选功能级一次授权、长期生效，用「默认不上云 + 设备能随时摘下」换掌控感，而不是逐次弹窗。你的自动备份是同一道题。&lt;br&gt;&lt;br&gt;&lt;b&gt;上传不能绑死 Wi-Fi&lt;/b&gt;：Looki 这条被实测列为主要痛点，而拍摄现场往往根本没网。离线队列 + 断点续传 + 回网自动补传，且要让用户看得见「还有多少没传」。">
+          <mxGeometry x="680" y="672" width="480" height="92" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

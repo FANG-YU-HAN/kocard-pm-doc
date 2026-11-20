@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kocard 我的页原型</title>
+<style>
+  :root {
+    --ink: #141519;
+    --muted: #8a8f98;
+    --faint: #a6aab1;
+    --line: #e9e9ed;
+    --line-soft: #ededf0;
+    --card: #fafafa;
+    --soft: #f2f2f4;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 28px 24px 40px;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  .doc-head {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    text-align: center;
+  }
+  .doc-title { font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+  .doc-meta {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--faint);
+    letter-spacing: .04em;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .device { margin: 0; }
+
+  .phone-shell {
+    position: relative;
+    width: 261px;
+    height: 568px;
+  }
+  .phone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 402px;
+    height: 874px;
+    border: 1px solid #d7dce3;
+    border-radius: 52px;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(14, 17, 22, .04);
+    transform: scale(.65);
+    transform-origin: top left;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 122px;
+    height: 35px;
+    border: 1px solid #d7dce3;
+    border-radius: 18px;
+    z-index: 5;
+  }
+  .status {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 40px;
+  }
+  .time { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+
+  .header {
+    height: 52px;
+    margin-top: 6px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-title { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+  .chev-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: none;
+    display: grid;
+    place-items: center;
+    color: #3c3f45;
+  }
+
+  .content {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 112px;
+    bottom: 24px;
+    padding: 2px 0 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  .ic {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .chev {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    flex: none;
+    fill: none;
+    stroke: #b9bcc2;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .18s ease;
+  }
+
+  /* 会员卡 */
+  .member-card {
+    position: relative;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--card);
+  }
+  .member-top { display: flex; align-items: center; gap: 8px; }
+  .avatar {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #d9d9de;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #6f6f76;
+  }
+  .member-name { font-size: 12px; color: #5f636a; }
+  .member-level {
+    margin-top: 12px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    line-height: 28px;
+  }
+  .member-expiry { margin-top: 5px; font-size: 11px; color: var(--muted); }
+  .badge {
+    position: absolute;
+    top: 44px;
+    right: 16px;
+    width: 44px;
+    height: 48px;
+  }
+  .renew-btn {
+    position: relative;
+    margin-top: 16px;
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: #141519;
+    color: #fff;
+    font-size: 14px;
+  }
+  .renew-btn .ring {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 19px;
+    height: 19px;
+    transform: translateY(-50%);
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 50%;
+  }
+
+  /* AI 积分 */
+  .credits-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    margin-top: 12px;
+    padding: 0 10px 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+  }
+  .credits-card .ic { width: 18px; height: 18px; stroke-width: 1.4; }
+  .credits-label { font-size: 14px; }
+  .credits-value { margin-left: auto; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .charge-btn {
+    height: 26px;
+    padding: 0 12px;
+    border: 1px solid #e5e5e9;
+    border-radius: 13px;
+    background: #fff;
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  /* 设置列表 */
+  .menu-card {
+    margin-top: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .menu-row {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    padding: 0 14px;
+    border: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    text-align: left;
+  }
+  .menu-row.line::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 46px;
+    right: 14px;
+    height: 1px;
+    background: var(--line-soft);
+  }
+  .menu-row.is-open .chev { transform: rotate(90deg); }
+
+  .sub-panel {
+    margin: 0 14px 10px;
+    border-radius: 12px;
+    background: var(--soft);
+    overflow: hidden;
+  }
+  .sub-row {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    font-size: 13.5px;
+    text-align: left;
+  }
+  .sub-row + .sub-row { border-top: 1px solid #e8e8eb; }
+  .sub-row .chev { width: 15px; height: 15px; }
+
+  .logout-btn {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 40px;
+    height: 44px;
+    border: 1px solid #e5e5e9;
+    border-radius: 22px;
+    background: #fff;
+    font-size: 13px;
+    color: #232529;
+  }
+
+  .home-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 9px;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    border-radius: 3px;
+    background: #0e1116;
+  }
+
+  /* ---------- 漫画风格相关页 ---------- */
+  .header--sub { justify-content: flex-start; gap: 10px; }
+  .header--sub .page-title { font-size: 16px; }
+  .back-btn {
+    width: 26px;
+    height: 26px;
+    margin-left: -5px;
+    padding: 0;
+    border: 0;
+    background: none;
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+  }
+
+  .mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .mode-card {
+    position: relative;
+    height: 96px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    text-align: left;
+  }
+  .mode-card.is-active { border: 1.5px solid var(--ink); padding: 13.5px; }
+  .mode-card .ic { width: 20px; height: 20px; }
+  .mode-name { font-size: 14px; }
+  .radio {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #cfd2d7;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .radio--on {
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .auto-card {
+    height: 548px;
+    margin-top: 14px;
+    padding: 34px 24px 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .auto-spark { width: 24px; height: 24px; flex: none; fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+  .auto-title { margin-top: 18px; font-size: 18px; font-weight: 600; }
+  .auto-desc {
+    margin: 12px 0 0;
+    max-width: 310px;
+    font-size: 11.5px;
+    line-height: 1.95;
+    color: #6f747c;
+  }
+  .auto-samples { margin-top: 22px; display: flex; align-items: center; gap: 13px; }
+  .auto-samples img { height: 70px; width: auto; border-radius: 9px; display: block; }
+
+  .cat-card {
+    height: 196px;
+    margin-top: 12px;
+    padding: 20px 0 20px 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .cat-top { display: flex; align-items: center; padding-right: 16px; }
+  .cat-top .ic { width: 20px; height: 20px; }
+  .cat-count {
+    margin-left: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .cat-count svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: #b9bcc2;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cat-title { margin-top: 12px; font-size: 17px; font-weight: 600; }
+  .cat-desc { margin-top: 7px; font-size: 11px; color: var(--muted); }
+  .cat-strip { display: block; margin-top: 14px; height: auto; }
+  .cat-strip--single { width: 314px; }
+  .cat-strip--story { width: 291px; }
+
+  .style-strip { display: block; margin: 0 auto; }
+  .style-strip--single { width: 314px; }
+  .style-strip--story { width: 260px; }
+  .style-caption { margin-top: 18px; text-align: center; font-size: 11px; color: var(--muted); }
+  .style-count { margin-top: 6px; text-align: center; font-size: 12px; color: #3f434a; }
+  .style-grid {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    row-gap: 16px;
+  }
+  .style-item { display: flex; flex-direction: column; align-items: center; }
+  .style-item img { width: 100%; height: auto; display: block; border-radius: 11px; }
+  .style-label { margin-top: 8px; font-size: 12px; color: #4b5058; }
+
+  .sep {
+    width: 100%;
+    max-width: 560px;
+    height: 1px;
+    background: #e6eaf0;
+    margin: 40px 0;
+  }
+
+  .fig {
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 11px;
+    color: #9aa1ab;
+  }
+</style>
+</head>
+<body>
+
+  <header class="doc-head">
+    <div class="doc-title">Kocard 我的页原型</div>
+    <div class="doc-meta">2026-11-17 · 草稿</div>
+  </header>
+
+  <main class="stage">
+    <figure class="device">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="island"></div>
+
+        <div class="status">
+          <span class="time">9:41</span>
+          <span class="status-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+              <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+              <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+              <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+              <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+              <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+              <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+              <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+            </svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+              <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+              <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+              <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="header">
+          <div class="page-title">我的</div>
+          <button class="chev-btn" type="button" aria-label="切换账号">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9.5 12 15.5 18 9.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="content">
+
+          <section class="member-card" aria-label="会员信息">
+            <div class="member-top">
+              <span class="avatar">f</span>
+              <span class="member-name">f2d</span>
+            </div>
+            <div class="member-level">高级会员</div>
+            <div class="member-expiry">有效期至 2027.10.22</div>
+            <svg class="badge" viewBox="0 0 44 48" aria-hidden="true">
+              <path d="M22 2 41 12.9v22.2L22 46 3 35.1V12.9Z" fill="none" stroke="#141519" stroke-width="1.4" stroke-linejoin="round"/>
+              <path d="M13.5 16.5 22 31.5l8.5-15" fill="none" stroke="#141519" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <button class="renew-btn" type="button">
+              续费
+              <span class="ring" aria-hidden="true"></span>
+            </button>
+          </section>
+
+          <section class="credits-card" aria-label="AI 积分">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3.6c.6 4.7 2.7 6.8 7.4 7.4-4.7.6-6.8 2.7-7.4 7.4-.6-4.7-2.7-6.8-7.4-7.4 4.7-.6 6.8-2.7 7.4-7.4Z"/>
+            </svg>
+            <span class="credits-label">AI 积分</span>
+            <span class="credits-value">776</span>
+            <button class="charge-btn" type="button">充值</button>
+          </section>
+
+          <section class="menu-card" aria-label="设置">
+
+            <button class="menu-row" type="button">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="3.4"/>
+                <path d="M4.9 20c.7-3.6 3.6-5.4 7.1-5.4s6.4 1.8 7.1 5.4"/>
+              </svg>
+              账号信息
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+
+            <button class="menu-row line is-open" type="button" aria-expanded="true">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="4.5" width="16" height="15" rx="2"/>
+                <path d="M9.5 4.5v15M4 9.5h16"/>
+              </svg>
+              AI 分析
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+
+            <div class="sub-panel">
+              <button class="sub-row" type="button">
+                漫画风格
+                <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+              </button>
+              <button class="sub-row" type="button">
+                文件上传
+                <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+              </button>
+            </div>
+
+            <button class="menu-row" type="button">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 13a5 5 0 0 0 7.5.5l2.5-2.5a5 5 0 0 0-7-7l-1.5 1.5"/>
+                <path d="M14 11a5 5 0 0 0-7.5-.5L4 13a5 5 0 0 0 7 7l1.5-1.5"/>
+              </svg>
+              绑定信息
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+
+            <button class="menu-row line" type="button">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 16.8c1-1 1.5-2.3 1.5-4.5a4.5 4.5 0 0 1 9 0c0 2.2.5 3.5 1.5 4.5Z"/>
+                <path d="M10.4 19.4a1.9 1.9 0 0 0 3.2 0"/>
+              </svg>
+              通知
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+
+            <button class="menu-row line" type="button">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 6.3C10.3 5 7.9 4.4 5 4.4v12.2c2.9 0 5.3.6 7 1.9 1.7-1.3 4.1-1.9 7-1.9V4.4c-2.9 0-5.3.6-7 1.9Z"/>
+                <path d="M12 6.3v12.2"/>
+              </svg>
+              帮助与反馈
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+
+            <button class="menu-row line" type="button">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              通用设置
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+
+          </section>
+        </div>
+
+          <button class="logout-btn" type="button">退出登录</button>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+      <figcaption class="fig">图1</figcaption>
+    </figure>
+
+    <div class="sep" role="presentation"></div>
+
+    <!-- 图2 漫画风格 · 自动 -->
+    <figure class="device">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="island"></div>
+          <div class="status">
+            <span class="time">9:41</span>
+            <span class="status-icons">
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+                <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+                <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+                <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+              </svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+                <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+                <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+              </svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+                <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+                <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+                <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="header header--sub">
+            <button class="back-btn" type="button" aria-label="返回">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+            </button>
+            <div class="page-title">漫画风格</div>
+          </div>
+
+          <div class="content">
+            <div class="mode-row">
+              <button class="mode-card is-active" type="button">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3.6c.6 4.7 2.7 6.8 7.4 7.4-4.7.6-6.8 2.7-7.4 7.4-.6-4.7-2.7-6.8-7.4-7.4 4.7-.6 6.8-2.7 7.4-7.4Z"/>
+                </svg>
+                <span class="radio radio--on">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4.5 12.5 9.5 17.5 19.5 7"/>
+                  </svg>
+                </span>
+                <span class="mode-name">自动</span>
+              </button>
+              <button class="mode-card" type="button">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="4" y="13" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="13" width="7" height="7" rx="1.8"/>
+                </svg>
+                <span class="radio"></span>
+                <span class="mode-name">自定义</span>
+              </button>
+            </div>
+
+            <section class="auto-card">
+              <svg class="auto-spark" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3.6c.6 4.7 2.7 6.8 7.4 7.4-4.7.6-6.8 2.7-7.4 7.4-.6-4.7-2.7-6.8-7.4-7.4 4.7-.6 6.8-2.7 7.4-7.4Z"/>
+              </svg>
+              <div class="auto-title">自动模式</div>
+              <p class="auto-desc">Kocard会根据备份、拷贝内容，自动确定单幅插画、漫画故事以及旅记漫画的风格与演绎方式。</p>
+              <div class="auto-samples">
+                <img src="assets/2026-11-17-comic-style/auto-1.png" alt="">
+                <img src="assets/2026-11-17-comic-style/auto-2.png" alt="">
+                <img src="assets/2026-11-17-comic-style/auto-3.png" alt="">
+              </div>
+            </section>
+          </div>
+
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+      <figcaption class="fig">图2</figcaption>
+    </figure>
+
+    <div class="sep" role="presentation"></div>
+
+    <!-- 图3 漫画风格 · 自定义 -->
+    <figure class="device">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="island"></div>
+          <div class="status">
+            <span class="time">9:41</span>
+            <span class="status-icons">
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+                <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+                <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+                <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+              </svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+                <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+                <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+              </svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+                <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+                <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+                <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="header header--sub">
+            <button class="back-btn" type="button" aria-label="返回">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+            </button>
+            <div class="page-title">漫画风格</div>
+          </div>
+
+          <div class="content">
+            <div class="mode-row">
+              <button class="mode-card" type="button">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3.6c.6 4.7 2.7 6.8 7.4 7.4-4.7.6-6.8 2.7-7.4 7.4-.6-4.7-2.7-6.8-7.4-7.4 4.7-.6 6.8-2.7 7.4-7.4Z"/>
+                </svg>
+                <span class="radio"></span>
+                <span class="mode-name">自动</span>
+              </button>
+              <button class="mode-card is-active" type="button">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="4" y="13" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="13" width="7" height="7" rx="1.8"/>
+                </svg>
+                <span class="radio radio--on">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4.5 12.5 9.5 17.5 19.5 7"/>
+                  </svg>
+                </span>
+                <span class="mode-name">自定义</span>
+              </button>
+            </div>
+
+            <section class="cat-card">
+              <div class="cat-top">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="4" y="13" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="13" width="7" height="7" rx="1.8"/>
+                </svg>
+                <button class="cat-count" type="button">
+                  已选 13
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+                </button>
+              </div>
+              <div class="cat-title">单幅插画</div>
+              <div class="cat-desc">设置单幅插画的风格偏好</div>
+              <img class="cat-strip cat-strip--single" src="assets/2026-11-17-comic-style/strip-cat-single.png" alt="">
+            </section>
+
+            <section class="cat-card">
+              <div class="cat-top">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="4" y="13" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="13" width="7" height="7" rx="1.8"/>
+                </svg>
+                <button class="cat-count" type="button">
+                  已选 5
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+                </button>
+              </div>
+              <div class="cat-title">漫画故事</div>
+              <div class="cat-desc">设置漫画故事的美术风格和叙事方式</div>
+              <img class="cat-strip cat-strip--story" src="assets/2026-11-17-comic-style/strip-cat-story.png" alt="">
+            </section>
+
+            <section class="cat-card">
+              <div class="cat-top">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="4" width="7" height="7" rx="1.8"/>
+                  <rect x="4" y="13" width="7" height="7" rx="1.8"/>
+                  <rect x="13" y="13" width="7" height="7" rx="1.8"/>
+                </svg>
+                <button class="cat-count" type="button">
+                  已选 5
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+                </button>
+              </div>
+              <div class="cat-title">旅记漫画</div>
+              <div class="cat-desc">设置旅记漫画的美术风格和叙事方式</div>
+              <img class="cat-strip cat-strip--story" src="assets/2026-11-17-comic-style/strip-cat-travel.png" alt="">
+            </section>
+          </div>
+
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+      <figcaption class="fig">图3</figcaption>
+    </figure>
+
+    <div class="sep" role="presentation"></div>
+
+    <!-- 图4 单幅插画 -->
+    <figure class="device">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="island"></div>
+          <div class="status">
+            <span class="time">9:41</span>
+            <span class="status-icons">
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+                <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+                <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+                <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+              </svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+                <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+                <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+              </svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+                <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+                <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+                <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="header header--sub">
+            <button class="back-btn" type="button" aria-label="返回">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+            </button>
+            <div class="page-title">单幅插画</div>
+          </div>
+
+          <div class="content">
+            <img class="style-strip style-strip--single" src="assets/2026-11-17-comic-style/strip-top-single.png" alt="">
+            <div class="style-caption">选择你想使用的风格</div>
+            <div class="style-count">已选 13</div>
+            <div class="style-grid">
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/style-handdrawn.png" alt="">
+                <span class="style-label">手绘动画</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/style-felt.png" alt="">
+                <span class="style-label">毛毡微景</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/style-pencil.png" alt="">
+                <span class="style-label">蜡笔团绘</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/style-watercolor.png" alt="">
+                <span class="style-label">清透水彩</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/style-3d.png" alt="">
+                <span class="style-label">可爱3D</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/style-urban.png" alt="">
+                <span class="style-label">都市漫画</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+      <figcaption class="fig">图4</figcaption>
+    </figure>
+
+    <div class="sep" role="presentation"></div>
+
+    <!-- 图5 漫画故事 -->
+    <figure class="device">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="island"></div>
+          <div class="status">
+            <span class="time">9:41</span>
+            <span class="status-icons">
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+                <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+                <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+                <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+              </svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+                <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+                <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+              </svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+                <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+                <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+                <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="header header--sub">
+            <button class="back-btn" type="button" aria-label="返回">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+            </button>
+            <div class="page-title">漫画故事</div>
+          </div>
+
+          <div class="content">
+            <img class="style-strip style-strip--story" src="assets/2026-11-17-comic-style/strip-top-story.png" alt="">
+            <div class="style-caption">选择你想使用的风格</div>
+            <div class="style-count">已选 5</div>
+            <div class="style-grid">
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-bright.png" alt="">
+                <span class="style-label">明亮</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-handdrawn.png" alt="">
+                <span class="style-label">手绘漫画</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-3d.png" alt="">
+                <span class="style-label">可爱3D</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-watercolor.png" alt="">
+                <span class="style-label">留白水彩</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-warm.png" alt="">
+                <span class="style-label">暖色绘本</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+      <figcaption class="fig">图5</figcaption>
+    </figure>
+
+    <div class="sep" role="presentation"></div>
+
+    <!-- 图6 旅记漫画 -->
+    <figure class="device">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="island"></div>
+          <div class="status">
+            <span class="time">9:41</span>
+            <span class="status-icons">
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+                <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e1116"/>
+                <rect x="4.8" y="5.8" width="3" height="6.2" rx="1" fill="#0e1116"/>
+                <rect x="9.6" y="3.4" width="3" height="8.6" rx="1" fill="#0e1116"/>
+                <rect x="14.4" y="1" width="3" height="11" rx="1" fill="#0e1116"/>
+              </svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+                <path d="M1.5 4.2a9 9 0 0 1 13 0"/>
+                <path d="M4 6.9a5.6 5.6 0 0 1 8 0"/>
+                <path d="M6.5 9.5a2.2 2.2 0 0 1 3 0"/>
+              </svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+                <rect x="0.75" y="0.75" width="19.5" height="10.5" rx="3" stroke="#0e1116" stroke-width="1.2"/>
+                <rect x="2.5" y="2.5" width="11" height="7" rx="1.6" fill="#0e1116"/>
+                <path d="M21.8 4.2v3.6" stroke="#0e1116" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="header header--sub">
+            <button class="back-btn" type="button" aria-label="返回">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+            </button>
+            <div class="page-title">旅记漫画</div>
+          </div>
+
+          <div class="content">
+            <img class="style-strip style-strip--story" src="assets/2026-11-17-comic-style/strip-top-story.png" alt="">
+            <div class="style-caption">选择你想使用的风格</div>
+            <div class="style-count">已选 5</div>
+            <div class="style-grid">
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-bright.png" alt="">
+                <span class="style-label">明亮</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-handdrawn.png" alt="">
+                <span class="style-label">手绘漫画</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-3d.png" alt="">
+                <span class="style-label">可爱3D</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-watercolor.png" alt="">
+                <span class="style-label">留白水彩</span>
+              </div>
+              <div class="style-item">
+                <img src="assets/2026-11-17-comic-style/story-warm.png" alt="">
+                <span class="style-label">暖色绘本</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+      <figcaption class="fig">图6</figcaption>
+    </figure>
+  </main>
+
+</body>
+</html>
